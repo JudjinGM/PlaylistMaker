@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="dim_bottom_main">28dp</dimen>
+    <dimen name="dim_between_content">8dp</dimen>
+    <dimen name="button_corner_radius">14dp</dimen>
+    <dimen name="left_margin_from_content">17dp</dimen>
+    <dimen name="right_margin_from_content">15dp</dimen>
+    <dimen name="content_fixed_height">61dp</dimen>
+    <dimen name="left_margin_from_text">16dp</dimen>
+    <dimen name="padding_for_content">4dp</dimen>
+    <dimen name="setting_image_margin">20dp</dimen>
+    <dimen name="primary_text_size">22sp</dimen>
+    <dimen name="small_text_size">16sp</dimen>
+
+
+</resources>
