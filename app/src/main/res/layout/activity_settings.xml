@@ -24,8 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="14dp"
             android:layout_marginTop="14dp"
-            android:layout_marginBottom="61dp"
-
+            android:layout_marginBottom="40dp"
             android:fontFamily="@font/yandex_sans_display_regular"
             android:text="@string/settings"
             android:textColor="@color/black"
@@ -36,8 +35,10 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/content_fixed_height"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -53,18 +54,18 @@
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:layout_marginEnd="16dp"
             android:layout_weight="0" />
     </LinearLayout>
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="@dimen/content_fixed_height"
+        android:layout_height="wrap_content"
         android:fontFamily="@font/yandex_sans_display_regular"
-        android:gravity="center_vertical"
         android:paddingStart="@dimen/left_margin_from_text"
+        android:paddingTop="@dimen/content_padding"
         android:paddingEnd="16dp"
+        android:paddingBottom="@dimen/content_padding"
         android:text="@string/share"
         android:textColor="@color/black"
         android:textSize="@dimen/small_text_size"
@@ -72,11 +73,12 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="@dimen/content_fixed_height"
-        android:fontFamily="@font/yandex_sans_display_regular"
-        android:gravity="center_vertical"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/content_padding"
+        android:paddingBottom="@dimen/content_padding"
         android:paddingStart="@dimen/left_margin_from_text"
         android:paddingEnd="14dp"
+        android:fontFamily="@font/yandex_sans_display_regular"
         android:text="@string/write_to_support"
         android:textColor="@color/black"
         android:textSize="@dimen/small_text_size"
@@ -84,12 +86,12 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="@dimen/content_fixed_height"
-        android:drawablePadding="14dp"
-        android:fontFamily="@font/yandex_sans_display_regular"
-        android:gravity="center_vertical"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/content_padding"
+        android:paddingBottom="@dimen/content_padding"
         android:paddingStart="@dimen/left_margin_from_text"
         android:paddingEnd="20dp"
+        android:fontFamily="@font/yandex_sans_display_regular"
         android:text="@string/term_of_use"
         android:textColor="@color/black"
         android:textSize="@dimen/small_text_size"

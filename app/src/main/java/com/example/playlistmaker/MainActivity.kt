@@ -15,16 +15,17 @@ class MainActivity : AppCompatActivity() {
         val settingButton = findViewById<Button>(R.id.buttonSettings)
 
         searchButton.setOnClickListener {
-            val searchIntent = Intent(this, SearchActivity::class.java)
-            startActivity(searchIntent)
+            navigateTo(SearchActivity::class.java)
         }
         libraryButton.setOnClickListener {
-            val libraryIntent = Intent(this, LibraryActivity::class.java)
-            startActivity(libraryIntent)
+            navigateTo(LibraryActivity::class.java)
         }
         settingButton.setOnClickListener {
-            val settingsIntent = Intent(this, SettingsActivity::class.java)
-            startActivity(settingsIntent)
+            navigateTo(SettingsActivity::class.java)
         }
+    }
+    private fun navigateTo(clazz: Class<out AppCompatActivity>) {
+        val intent = Intent(this, clazz)
+        startActivity(intent)
     }
 }
