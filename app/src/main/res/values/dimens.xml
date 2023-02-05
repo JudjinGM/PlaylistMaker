@@ -16,11 +16,6 @@
     <dimen name="share_image_margin_end">16dp</dimen>
     <dimen name="support_image_margin_end">14dp</dimen>
     <dimen name="term_of_use_image_margin_end">20dp</dimen>
-
-
-
-
-
     <dimen name="primary_text_size">22sp</dimen>
     <dimen name="small_text_size">16sp</dimen>
 
