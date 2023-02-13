@@ -13,38 +13,29 @@
 
     <ImageView
         android:id="@+id/iconBack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/IconsImageView"
         android:layout_marginStart="@dimen/setting_image_margin"
         android:layout_marginTop="@dimen/setting_image_margin"
         android:contentDescription="@string/settings"
         android:src="@drawable/arrow_back"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="?attr/colorOnPrimary" />
 
     <TextView
         android:id="@+id/toolbar_settings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/SettingsTitleText"
         android:layout_marginStart="@dimen/setting_text_margin_start"
         android:layout_marginTop="@dimen/setting_text_margin_top"
-        android:fontFamily="@font/yandex_sans_display_regular"
         android:text="@string/settings"
-        android:textColor="@color/black"
-        android:textSize="@dimen/primary_text_size"
-        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/iconBack"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/text_dark_theme"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/SettingsTextViewStyle"
         android:layout_marginTop="@dimen/dark_theme_text_margin_top"
-        android:fontFamily="@font/yandex_sans_display_regular"
         android:text="@string/dark_theme"
-        android:textColor="@color/black"
-        android:textSize="@dimen/small_text_size"
         app:layout_constraintStart_toStartOf="@id/margin_start"
         app:layout_constraintTop_toBottomOf="@id/toolbar_settings" />
 
@@ -59,20 +50,14 @@
 
     <TextView
         android:id="@+id/text_share_app"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/content_margin_top"
-        android:fontFamily="@font/yandex_sans_display_regular"
+        style="@style/SettingsTextViewStyle"
         android:text="@string/share"
-        android:textColor="@color/black"
-        android:textSize="@dimen/small_text_size"
         app:layout_constraintStart_toStartOf="@id/margin_start"
         app:layout_constraintTop_toBottomOf="@id/text_dark_theme" />
 
     <ImageView
         android:id="@+id/image_share"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/IconsImageView"
         android:layout_marginEnd="@dimen/share_image_margin_end"
         android:contentDescription="@string/share"
         android:src="@drawable/share"
@@ -82,20 +67,14 @@
 
     <TextView
         android:id="@+id/text_support"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/content_margin_top"
-        android:fontFamily="@font/yandex_sans_display_regular"
+        style="@style/SettingsTextViewStyle"
         android:text="@string/write_to_support"
-        android:textColor="@color/black"
-        android:textSize="@dimen/small_text_size"
         app:layout_constraintStart_toStartOf="@id/margin_start"
         app:layout_constraintTop_toBottomOf="@id/text_share_app" />
 
     <ImageView
         android:id="@+id/image_support"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/IconsImageView"
         android:layout_marginEnd="@dimen/support_image_margin_end"
         android:contentDescription="@string/share"
         android:src="@drawable/support"
@@ -105,20 +84,14 @@
 
     <TextView
         android:id="@+id/text_term"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/content_margin_top"
-        android:fontFamily="@font/yandex_sans_display_regular"
+        style="@style/SettingsTextViewStyle"
         android:text="@string/term_of_use"
-        android:textColor="@color/black"
-        android:textSize="@dimen/small_text_size"
         app:layout_constraintStart_toStartOf="@id/margin_start"
         app:layout_constraintTop_toBottomOf="@id/text_support" />
 
     <ImageView
         android:id="@+id/image_term"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/IconsImageView"
         android:layout_marginEnd="@dimen/term_of_use_image_margin_end"
         android:contentDescription="@string/term_of_use"
         android:src="@drawable/arrow"
