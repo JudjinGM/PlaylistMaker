@@ -1,27 +1,67 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    tools:context=".SearchActivity">
-
-    <EditText
-        android:id="@+id/searchEditText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:hint="@string/search_input_hint"
-        android:inputType="text"
-        android:maxLines="1"
-        android:textColor="?attr/colorOnPrimary"
-        android:textColorHint="?attr/colorOnPrimary" />
+    android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/searchInputCloseIcon"
-        android:layout_width="wrap_content"
+        android:id="@+id/iconBackSearch"
+        style="@style/IconsImageView"
+        android:layout_marginStart="@dimen/title_image_margin"
+        android:layout_marginTop="@dimen/title_image_margin"
+        android:contentDescription="@string/search"
+        android:src="@drawable/arrow_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="?attr/colorOnPrimary" />
+
+    <TextView
+        android:id="@+id/toolbar_search"
+        style="@style/TitleText"
+        android:layout_marginStart="@dimen/title_text_margin_start"
+        android:layout_marginTop="@dimen/title_text_margin_top"
+        android:text="@string/search"
+        app:layout_constraintStart_toEndOf="@+id/iconBackSearch"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:src="@android:drawable/ic_menu_close_clear_cancel"
-        android:visibility="gone" />
-</LinearLayout>
+        android:layout_marginStart="@dimen/main_margin_for_content"
+        android:layout_marginTop="@dimen/margin_top_for_search_bar"
+        android:layout_marginEnd="@dimen/main_margin_for_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_search">
+
+        <EditText
+            android:id="@+id/searchEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rectangle_rounded"
+            android:fontFamily="@font/ys_display_regular"
+            android:paddingStart="@dimen/padding_start_for_search_icon_in_search_bar"
+            android:paddingEnd="@dimen/padding_end_for_search_icon_in_search_bar"
+            android:hint="@string/search"
+            android:inputType="text"
+            android:maxLines="1"
+            android:paddingTop="@dimen/padding_top_for_text_in_search_bar"
+            android:paddingBottom="@dimen/padding_bottom_for_text_in_search_bar"
+            android:textColor="@color/black"
+            android:textColorHint="?attr/colorSecondaryVariant"
+            android:textSize="@dimen/small_text_size"
+            android:drawableStart="@drawable/search_small"
+            android:drawablePadding="@dimen/padding_for_drawable_in_search_bar"
+            android:drawableTint="?attr/colorSecondaryVariant"
+            android:textCursorDrawable="@drawable/cursor" />
+
+        <ImageView
+            android:id="@+id/searchInputCloseIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="@dimen/margin_end_for_clear_icon"
+            android:src="@drawable/x_clear"
+            app:tint="?attr/colorSecondaryVariant"
+            android:visibility="gone"/>
+    </FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

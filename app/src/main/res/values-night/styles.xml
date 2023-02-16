@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+     <style name="SwitchWithKnob">
+         <item name="android:layout_width">wrap_content</item>
+         <item name="android:layout_height">wrap_content</item>
+         <item name="thumbTint">@color/royal_blue</item>
+         <item name="trackTint">@color/royal_blue_opacity49</item>
+     </style>
+
+</resources>

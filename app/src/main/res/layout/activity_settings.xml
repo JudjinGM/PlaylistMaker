@@ -9,13 +9,13 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="16dp" />
+        app:layout_constraintGuide_begin="@dimen/main_margin_for_content" />
 
     <ImageView
         android:id="@+id/iconBack"
         style="@style/IconsImageView"
-        android:layout_marginStart="@dimen/setting_image_margin"
-        android:layout_marginTop="@dimen/setting_image_margin"
+        android:layout_marginStart="@dimen/title_image_margin"
+        android:layout_marginTop="@dimen/title_image_margin"
         android:contentDescription="@string/settings"
         android:src="@drawable/arrow_back"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,9 +24,9 @@
 
     <TextView
         android:id="@+id/toolbar_settings"
-        style="@style/SettingsTitleText"
-        android:layout_marginStart="@dimen/setting_text_margin_start"
-        android:layout_marginTop="@dimen/setting_text_margin_top"
+        style="@style/TitleText"
+        android:layout_marginStart="@dimen/title_text_margin_start"
+        android:layout_marginTop="@dimen/title_text_margin_top"
         android:text="@string/settings"
         app:layout_constraintStart_toEndOf="@+id/iconBack"
         app:layout_constraintTop_toTopOf="parent" />
@@ -41,8 +41,7 @@
 
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/switch_to_dark_theme"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/SwitchWithKnob"
         android:layout_marginEnd="@dimen/dark_theme_switch_margin_end"
         app:layout_constraintBottom_toBottomOf="@id/text_dark_theme"
         app:layout_constraintEnd_toEndOf="parent"

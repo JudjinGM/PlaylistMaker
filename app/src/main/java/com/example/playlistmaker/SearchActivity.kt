@@ -20,6 +20,7 @@ class SearchActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
         outState.putString(SAVED_TEXT, inputSearchText)
     }
+
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         inputSearchText = savedInstanceState.getString(SAVED_TEXT, "")
@@ -29,14 +30,16 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
+        val buttonBack = findViewById<ImageView>(R.id.iconBackSearch)
+        buttonBack.setOnClickListener {
+            finish()
+        }
+
         val inputSearchField = findViewById<EditText>(R.id.searchEditText)
-        inputSearchField.setText(inputSearchText)
 
-        inputSearchField.requestFocus()
+       inputSearchField.setText(inputSearchText)
+       //inputSearchField.requestFocus()
 
-        val inputMethodManager =
-            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.showSoftInput(inputSearchField, InputMethodManager.SHOW_IMPLICIT)
         val clearButton = findViewById<ImageView>(R.id.searchInputCloseIcon)
         clearButton.setOnClickListener {
             inputSearchField.setText("")
@@ -65,9 +68,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
-        return if (s.isNullOrEmpty())
-            View.GONE
-        else
-            View.VISIBLE
+        return if (s.isNullOrEmpty()) View.GONE
+        else View.VISIBLE
     }
 }
