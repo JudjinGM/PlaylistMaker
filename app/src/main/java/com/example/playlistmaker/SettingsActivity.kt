@@ -37,7 +37,7 @@ class SettingsActivity : AppCompatActivity() {
             val subject = getText(R.string.mail_to_support_subject)
             val message = getText(R.string.mail_to_support_message)
             val writeToSupportIntent = Intent(Intent.ACTION_SENDTO)
-            val mailAddress = getText(R.string.developer_email_adress)
+            val mailAddress = getText(R.string.developer_email_address).toString()
             writeToSupportIntent.data = Uri.parse("mailto:")
             writeToSupportIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(mailAddress))
             writeToSupportIntent.putExtra(Intent.EXTRA_SUBJECT, subject)

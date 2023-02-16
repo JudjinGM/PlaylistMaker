@@ -12,6 +12,5 @@
     <string name="mail_to_support_subject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="link_to_agreement">https://yandex.ru/legal/practicum_offer/</string>
     <string name="mail_to_support_message">Спасибо разработчикам и разработчицам за крутое приложение!</string>
-    <string name="developer_email_adress">v4lievil@yandex.ru</string>
-    <string name="search_input_hint">Поиск</string>
+    <string name="developer_email_address">v4lievil@yandex.ru</string>
 </resources>

@@ -36,11 +36,9 @@ class SearchActivity : AppCompatActivity() {
         }
 
         val inputSearchField = findViewById<EditText>(R.id.searchEditText)
+        inputSearchField.setText(inputSearchText)
 
-       inputSearchField.setText(inputSearchText)
-       //inputSearchField.requestFocus()
-
-        val clearButton = findViewById<ImageView>(R.id.searchInputCloseIcon)
+        val clearButton = findViewById<ImageView>(R.id.searchClearIcon)
         clearButton.setOnClickListener {
             inputSearchField.setText("")
 
