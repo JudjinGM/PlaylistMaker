@@ -12,10 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 
 class SearchActivity : AppCompatActivity() {
 
-
-    var inputSearchText: String? = null
-    val defaultText = ""
-
+    private var inputSearchText: String? = null
+    private val defaultText = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,14 +37,17 @@ class SearchActivity : AppCompatActivity() {
         }
 
         val textWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) =
+                Unit
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) =
+                Unit
+
+            override fun afterTextChanged(s: Editable?) {
                 clearButton.visibility = clearButtonVisibility(s)
                 inputSearchText = inputSearchField.text.toString()
             }
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
-
-            override fun afterTextChanged(s: Editable?) = Unit
         }
 
         inputSearchField.addTextChangedListener(textWatcher)
