@@ -11,20 +11,11 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 
 class SearchActivity : AppCompatActivity() {
-    companion object {
-        const val SAVED_TEXT = "SAVED_TEXT"
-    }
+
 
     var inputSearchText: String? = null
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(SAVED_TEXT, inputSearchText)
-    }
+    val defaultText = ""
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        inputSearchText = savedInstanceState.getString(SAVED_TEXT, "")
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,8 +56,22 @@ class SearchActivity : AppCompatActivity() {
         inputSearchField.addTextChangedListener(textWatcher)
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(SAVED_TEXT, inputSearchText)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        inputSearchText = savedInstanceState.getString(SAVED_TEXT, defaultText)
+    }
+
     private fun clearButtonVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) View.GONE
         else View.VISIBLE
+    }
+
+    companion object {
+        const val SAVED_TEXT = "SAVED_TEXT"
     }
 }

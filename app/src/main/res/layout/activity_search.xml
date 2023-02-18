@@ -36,18 +36,20 @@
 
         <EditText
             android:id="@+id/searchEditText"
-            android:maxWidth="480dp"
             style="@style/SearchBarStyle"
             android:drawableStart="@drawable/search_small"
             android:drawablePadding="@dimen/padding_for_drawable_in_search_bar"
             android:hint="@string/search"
+            android:maxWidth="480dp"
             tools:ignore="Autofill,DuplicateSpeakableTextCheck,TouchTargetSizeCheck" />
 
         <ImageView
             android:id="@+id/searchClearIcon"
             style="@style/SearchBarClearIconStyle"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="@dimen/margin_end_for_clear_icon"
+            android:contentDescription="@string/search"
             android:src="@drawable/x_clear"
-            android:visibility="gone"
-            android:contentDescription="@string/search"/>
+            android:visibility="gone" />
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
