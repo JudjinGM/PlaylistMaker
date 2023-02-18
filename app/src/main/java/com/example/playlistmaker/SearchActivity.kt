@@ -40,17 +40,13 @@ class SearchActivity : AppCompatActivity() {
 
         val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // empty
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.visibility = clearButtonVisibility(s)
                 inputSearchText = inputSearchField.text.toString()
             }
 
-            override fun afterTextChanged(s: Editable?) {
-                // empty
-            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
+
+            override fun afterTextChanged(s: Editable?) = Unit
         }
 
         inputSearchField.addTextChangedListener(textWatcher)
