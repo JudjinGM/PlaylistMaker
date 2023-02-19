@@ -22,6 +22,7 @@ class SettingsActivity : AppCompatActivity() {
 
         val shareImageView = findViewById<ImageView>(R.id.image_share)
         val shareTextView = findViewById<TextView>(R.id.text_share_app)
+
         val shareClickListener = View.OnClickListener {
             val shareText = getString(R.string.share_link)
             val shareIntent = Intent(Intent.ACTION_SEND)
@@ -35,6 +36,7 @@ class SettingsActivity : AppCompatActivity() {
 
         val supportImageView = findViewById<ImageView>(R.id.image_support)
         val supportTextView = findViewById<TextView>(R.id.text_support)
+
         val supportClickListener = View.OnClickListener {
             val subject = getString(R.string.mail_to_support_subject)
             val message = getString(R.string.mail_to_support_message)
@@ -52,6 +54,7 @@ class SettingsActivity : AppCompatActivity() {
 
         val agreementImageView = findViewById<ImageView>(R.id.image_term)
         val agreementTextView = findViewById<TextView>(R.id.text_term)
+
         val agreementClickListener = View.OnClickListener {
             val link = getString(R.string.link_to_agreement)
             val agreementIntent = Intent(Intent.ACTION_VIEW)

@@ -12,6 +12,7 @@ import androidx.core.view.isVisible
 
 class SearchActivity : AppCompatActivity() {
 
+    lateinit var inputSearchField: EditText
     private var inputSearchText: String? = null
     private val defaultText = ""
 
@@ -24,8 +25,8 @@ class SearchActivity : AppCompatActivity() {
             finish()
         }
 
-        val inputSearchField = findViewById<EditText>(R.id.searchEditText)
-        inputSearchField.setText(inputSearchText)
+        inputSearchField = findViewById<EditText>(R.id.searchEditText)
+
 
         val clearImageView = findViewById<ImageView>(R.id.searchClearIcon)
         clearImageView.setOnClickListener {
@@ -52,6 +53,7 @@ class SearchActivity : AppCompatActivity() {
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         inputSearchText = savedInstanceState.getString(SAVED_TEXT, defaultText)
+        inputSearchField.setText(inputSearchText)
     }
 
     private fun clearImageViewVisibility(s: CharSequence?): Boolean {
