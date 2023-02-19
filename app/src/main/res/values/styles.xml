@@ -9,8 +9,6 @@
     </style>
 
     <style name="TitleText">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textColor">?attr/colorOnPrimary</item>
         <item name="android:textSize">@dimen/primary_text_size</item>
@@ -18,13 +16,6 @@
     </style>
 
     <style name="ButtonStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_marginStart">@dimen/left_margin_from_content</item>
-        <item name="android:layout_marginTop">@dimen/dim_between_content</item>
-        <item name="android:layout_marginEnd">@dimen/right_margin_from_content</item>
-        <item name="android:layout_marginBottom">@dimen/dim_between_content</item>
-        <item name="android:layout_weight">1</item>
         <item name="android:backgroundTint">@color/white</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:letterSpacing">0</item>
@@ -38,49 +29,26 @@
     </style>
 
     <style name="SettingsTextViewStyle">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginTop">@dimen/content_margin_top</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textColor">?attr/colorOnPrimary</item>
         <item name="android:textSize">@dimen/small_text_size</item>
     </style>
 
-    <style name="IconsImageView">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="tint">?attr/colorSecondary</item>
-    </style>
-
     <style name="SwitchWithKnob">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
         <item name="thumbTint">@color/grey</item>
         <item name="trackTint">@color/another_grey</item>
     </style>
 
     <style name="SearchBarStyle">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
         <item name="android:background">@drawable/rectangle_rounded</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
-        <item name="android:paddingStart">@dimen/padding_start_for_search_icon_in_search_bar</item>
-        <item name="android:paddingEnd">@dimen/padding_end_for_search_icon_in_search_bar</item>
         <item name="android:inputType">text</item>
         <item name="android:maxLines">1</item>
-        <item name="android:paddingTop">@dimen/padding_top_for_text_in_search_bar</item>
-        <item name="android:paddingBottom">@dimen/padding_bottom_for_text_in_search_bar</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:textSize">@dimen/small_text_size</item>
         <item name="android:drawableTint">?attr/colorSecondaryVariant</item>
         <item name="android:textColorHint">?attr/colorSecondaryVariant</item>
         <item name="android:textCursorDrawable">@drawable/cursor</item>
-    </style>
-
-    <style name="SearchBarClearIconStyle">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="tint">?attr/colorSecondaryVariant</item>
     </style>
 
 </resources>

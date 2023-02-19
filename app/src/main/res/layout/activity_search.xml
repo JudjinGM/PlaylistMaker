@@ -6,7 +6,8 @@
 
     <ImageView
         android:id="@+id/iconBackSearch"
-        style="@style/IconsImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/title_image_margin"
         android:layout_marginTop="@dimen/title_image_margin"
         android:contentDescription="@string/search"
@@ -18,6 +19,8 @@
     <TextView
         android:id="@+id/toolbar_search"
         style="@style/TitleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/title_text_margin_start"
         android:layout_marginTop="@dimen/title_text_margin_top"
         android:text="@string/search"
@@ -26,30 +29,39 @@
 
     <FrameLayout
         android:id="@+id/frameLayout"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/main_margin_for_content"
         android:layout_marginTop="@dimen/margin_top_for_search_bar"
         android:layout_marginEnd="@dimen/main_margin_for_content"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar_search">
 
         <EditText
             android:id="@+id/searchEditText"
             style="@style/SearchBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:drawableStart="@drawable/search_small"
             android:drawablePadding="@dimen/padding_for_drawable_in_search_bar"
             android:hint="@string/search"
             android:maxWidth="480dp"
+            android:paddingStart="@dimen/padding_start_for_search_icon_in_search_bar"
+            android:paddingTop="@dimen/padding_top_for_text_in_search_bar"
+            android:paddingEnd="@dimen/padding_end_for_search_icon_in_search_bar"
+            android:paddingBottom="@dimen/padding_bottom_for_text_in_search_bar"
             tools:ignore="Autofill,DuplicateSpeakableTextCheck,TouchTargetSizeCheck" />
 
         <ImageView
             android:id="@+id/searchClearIcon"
-            style="@style/SearchBarClearIconStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
             android:layout_marginEnd="@dimen/margin_end_for_clear_icon"
             android:contentDescription="@string/search"
             android:src="@drawable/x_clear"
-            android:visibility="gone" />
+            android:visibility="gone"
+            app:tint="?attr/colorSecondaryVariant" />
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,35 +9,37 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
 class SettingsActivity : AppCompatActivity() {
+    private val intentEmailType = "text/plain"
+    val chooserTitle = "Share"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        val buttonBack = findViewById<ImageView>(R.id.iconBack)
-        buttonBack.setOnClickListener {
+        val backImageView = findViewById<ImageView>(R.id.iconBack)
+        backImageView.setOnClickListener {
             finish()
         }
 
-        val buttonShare = findViewById<ImageView>(R.id.image_share)
-        val buttonTextShare = findViewById<TextView>(R.id.text_share_app)
+        val shareImageView = findViewById<ImageView>(R.id.image_share)
+        val shareTextView = findViewById<TextView>(R.id.text_share_app)
         val shareClickListener = View.OnClickListener {
-            val shareText = getText(R.string.share_link)
+            val shareText = getString(R.string.share_link)
             val shareIntent = Intent(Intent.ACTION_SEND)
-            shareIntent.type = "text/plain"
+            shareIntent.type = intentEmailType
             shareIntent.putExtra(Intent.EXTRA_TEXT, shareText)
-            startActivity(Intent.createChooser(shareIntent, "Share"))
+            startActivity(Intent.createChooser(shareIntent, chooserTitle))
         }
 
-        buttonShare.setOnClickListener(shareClickListener)
-        buttonTextShare.setOnClickListener(shareClickListener)
+        shareImageView.setOnClickListener(shareClickListener)
+        shareTextView.setOnClickListener(shareClickListener)
 
-        val buttonSupport = findViewById<ImageView>(R.id.image_support)
-        val buttonTextSupport = findViewById<TextView>(R.id.text_support)
+        val supportImageView = findViewById<ImageView>(R.id.image_support)
+        val supportTextView = findViewById<TextView>(R.id.text_support)
         val supportClickListener = View.OnClickListener {
-            val subject = getText(R.string.mail_to_support_subject)
-            val message = getText(R.string.mail_to_support_message)
+            val subject = getString(R.string.mail_to_support_subject)
+            val message = getString(R.string.mail_to_support_message)
             val writeToSupportIntent = Intent(Intent.ACTION_SENDTO)
-            val mailAddress = getText(R.string.developer_email_address).toString()
+            val mailAddress = getString(R.string.developer_email_address)
             writeToSupportIntent.data = Uri.parse("mailto:")
             writeToSupportIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(mailAddress))
             writeToSupportIntent.putExtra(Intent.EXTRA_SUBJECT, subject)
@@ -45,19 +47,19 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(writeToSupportIntent)
         }
 
-        buttonSupport.setOnClickListener(supportClickListener)
-        buttonTextSupport.setOnClickListener(supportClickListener)
+        supportImageView.setOnClickListener(supportClickListener)
+        supportTextView.setOnClickListener(supportClickListener)
 
-        val buttonAgreement = findViewById<ImageView>(R.id.image_term)
-        val buttonTextAgreement = findViewById<TextView>(R.id.text_term)
+        val agreementImageView = findViewById<ImageView>(R.id.image_term)
+        val agreementTextView = findViewById<TextView>(R.id.text_term)
         val agreementClickListener = View.OnClickListener {
-            val link = getText(R.string.link_to_agreement)
+            val link = getString(R.string.link_to_agreement)
             val agreementIntent = Intent(Intent.ACTION_VIEW)
-            agreementIntent.data = Uri.parse(link.toString())
+            agreementIntent.data = Uri.parse(link)
             startActivity(agreementIntent)
         }
 
-        buttonAgreement.setOnClickListener(agreementClickListener)
-        buttonTextAgreement.setOnClickListener(agreementClickListener)
+        agreementImageView.setOnClickListener(agreementClickListener)
+        agreementTextView.setOnClickListener(agreementClickListener)
     }
 }

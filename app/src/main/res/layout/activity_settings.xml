@@ -13,18 +13,21 @@
 
     <ImageView
         android:id="@+id/iconBack"
-        style="@style/IconsImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/title_image_margin"
         android:layout_marginTop="@dimen/title_image_margin"
         android:contentDescription="@string/settings"
         android:src="@drawable/arrow_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="?attr/colorOnPrimary" />
+        app:tint="?attr/colorSecondary" />
 
     <TextView
         android:id="@+id/toolbar_settings"
         style="@style/TitleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/title_text_margin_start"
         android:layout_marginTop="@dimen/title_text_margin_top"
         android:text="@string/settings"
@@ -34,6 +37,8 @@
     <TextView
         android:id="@+id/text_dark_theme"
         style="@style/SettingsTextViewStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dark_theme_text_margin_top"
         android:text="@string/dark_theme"
         app:layout_constraintStart_toStartOf="@id/margin_start"
@@ -42,6 +47,8 @@
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/switch_to_dark_theme"
         style="@style/SwitchWithKnob"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/dark_theme_switch_margin_end"
         app:layout_constraintBottom_toBottomOf="@id/text_dark_theme"
         app:layout_constraintEnd_toEndOf="parent"
@@ -50,52 +57,67 @@
     <TextView
         android:id="@+id/text_share_app"
         style="@style/SettingsTextViewStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/content_margin_top"
         android:text="@string/share"
         app:layout_constraintStart_toStartOf="@id/margin_start"
         app:layout_constraintTop_toBottomOf="@id/text_dark_theme" />
 
     <ImageView
         android:id="@+id/image_share"
-        style="@style/IconsImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/share_image_margin_end"
         android:contentDescription="@string/share"
         android:src="@drawable/share"
         app:layout_constraintBottom_toBottomOf="@id/text_share_app"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/text_share_app" />
+        app:layout_constraintTop_toTopOf="@+id/text_share_app"
+        app:tint="?attr/colorSecondary" />
 
     <TextView
         android:id="@+id/text_support"
         style="@style/SettingsTextViewStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/content_margin_top"
         android:text="@string/write_to_support"
         app:layout_constraintStart_toStartOf="@id/margin_start"
         app:layout_constraintTop_toBottomOf="@id/text_share_app" />
 
     <ImageView
         android:id="@+id/image_support"
-        style="@style/IconsImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/support_image_margin_end"
         android:contentDescription="@string/share"
         android:src="@drawable/support"
         app:layout_constraintBottom_toBottomOf="@id/text_support"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/text_support" />
+        app:layout_constraintTop_toTopOf="@+id/text_support"
+        app:tint="?attr/colorSecondary" />
 
     <TextView
         android:id="@+id/text_term"
         style="@style/SettingsTextViewStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/content_margin_top"
         android:text="@string/term_of_use"
         app:layout_constraintStart_toStartOf="@id/margin_start"
         app:layout_constraintTop_toBottomOf="@id/text_support" />
 
     <ImageView
         android:id="@+id/image_term"
-        style="@style/IconsImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/term_of_use_image_margin_end"
         android:contentDescription="@string/term_of_use"
         android:src="@drawable/arrow"
         app:layout_constraintBottom_toBottomOf="@id/text_term"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/text_term" />
+        app:layout_constraintTop_toTopOf="@+id/text_term"
+        app:tint="?attr/colorSecondary" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,6 +11,7 @@
     <dimen name="title_image_margin">20dp</dimen>
     <dimen name="title_text_margin_start">28dp</dimen>
     <dimen name="title_text_margin_top">14dp</dimen>
+    <dimen name="title_text_margin_bottom">20dp</dimen>
     <dimen name="dark_theme_text_margin_top">61dp</dimen>
     <dimen name="dark_theme_switch_margin_end">18dp</dimen>
     <dimen name="share_image_margin_end">16dp</dimen>

@@ -3,34 +3,54 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="?attr/colorPrimary">
+    android:background="?attr/colorPrimary"
+    android:orientation="vertical">
 
     <TextView
         style="@style/MainTitleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="14dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginStart="@dimen/left_margin_from_text"
+        android:layout_marginTop="@dimen/title_text_margin_top"
+        android:layout_marginBottom="@dimen/title_text_margin_bottom"
         android:text="@string/app_name" />
 
     <Button
         android:id="@+id/buttonSearch"
         style="@style/ButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/left_margin_from_content"
+        android:layout_marginTop="@dimen/dim_between_content"
+        android:layout_marginEnd="@dimen/right_margin_from_content"
+        android:layout_marginBottom="@dimen/dim_between_content"
+        android:layout_weight="1"
         android:text="@string/search"
         app:icon="@drawable/search" />
 
     <Button
         android:id="@+id/buttonLibrary"
         style="@style/ButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/left_margin_from_content"
+        android:layout_marginTop="@dimen/dim_between_content"
+        android:layout_marginEnd="@dimen/right_margin_from_content"
+        android:layout_marginBottom="@dimen/dim_between_content"
+        android:layout_weight="1"
         android:text="@string/library"
         app:icon="@drawable/library" />
 
     <Button
         android:id="@+id/buttonSettings"
         style="@style/ButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/left_margin_from_content"
+        android:layout_marginTop="@dimen/dim_between_content"
+        android:layout_marginEnd="@dimen/right_margin_from_content"
         android:layout_marginBottom="@dimen/dim_bottom_main"
+        android:layout_weight="1"
         android:text="@string/settings"
         app:icon="@drawable/settings" />
 </LinearLayout>
