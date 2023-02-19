@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 
 class SettingsActivity : AppCompatActivity() {
     private val intentEmailType = "text/plain"
-    val chooserTitle = "Share"
+    private val chooserTitle = "Share"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
