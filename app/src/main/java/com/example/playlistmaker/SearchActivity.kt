@@ -3,7 +3,6 @@ package com.example.playlistmaker
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
-import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
@@ -31,7 +30,9 @@ class SearchActivity : AppCompatActivity() {
         val clearImageView = findViewById<ImageView>(R.id.searchClearIcon)
         clearImageView.setOnClickListener {
             inputSearchField.setText(defaultText)
-            hideKeyboard(inputSearchField)
+            val inputMethodManager =
+                getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            inputMethodManager?.hideSoftInputFromWindow(inputSearchField.windowToken, 0)
         }
 
         val textWatcher = object : TextWatcherJustAfterTextChanged {
@@ -58,12 +59,6 @@ class SearchActivity : AppCompatActivity() {
 
     private fun clearImageViewVisibility(s: CharSequence?): Boolean {
         return !s.isNullOrEmpty()
-    }
-
-    private fun hideKeyboard(view: View) {
-        val inputMethodManager =
-            getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-        inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     companion object {
