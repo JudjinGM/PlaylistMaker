@@ -9,8 +9,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
 class SettingsActivity : AppCompatActivity() {
-    private val intentEmailType = "text/plain"
-    private val chooserTitle = "Share"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
@@ -26,9 +25,9 @@ class SettingsActivity : AppCompatActivity() {
         val shareClickListener = View.OnClickListener {
             val shareText = getString(R.string.share_link)
             val shareIntent = Intent(Intent.ACTION_SEND)
-            shareIntent.type = intentEmailType
+            shareIntent.type = INTENT_EMAIL_TYPE
             shareIntent.putExtra(Intent.EXTRA_TEXT, shareText)
-            startActivity(Intent.createChooser(shareIntent, chooserTitle))
+            startActivity(Intent.createChooser(shareIntent, CHOOSER_TITLE))
         }
 
         shareImageView.setOnClickListener(shareClickListener)
@@ -64,5 +63,10 @@ class SettingsActivity : AppCompatActivity() {
 
         agreementImageView.setOnClickListener(agreementClickListener)
         agreementTextView.setOnClickListener(agreementClickListener)
+    }
+
+    private companion object {
+        const val INTENT_EMAIL_TYPE = "text/plain"
+        const val CHOOSER_TITLE = "Share"
     }
 }

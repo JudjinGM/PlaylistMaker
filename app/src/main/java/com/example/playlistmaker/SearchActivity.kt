@@ -11,9 +11,8 @@ import androidx.core.view.isVisible
 
 class SearchActivity : AppCompatActivity() {
 
-    lateinit var inputSearchField: EditText
+    private var inputSearchField: EditText? = null
     private var inputSearchText: String? = null
-    private val defaultText = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,24 +25,23 @@ class SearchActivity : AppCompatActivity() {
 
         inputSearchField = findViewById<EditText>(R.id.searchEditText)
 
-
         val clearImageView = findViewById<ImageView>(R.id.searchClearIcon)
         clearImageView.setOnClickListener {
-            inputSearchField.setText(defaultText)
+            inputSearchField?.setText(DEFAULT_TEXT)
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-            inputMethodManager?.hideSoftInputFromWindow(inputSearchField.windowToken, 0)
+            inputMethodManager?.hideSoftInputFromWindow(inputSearchField?.windowToken, 0)
         }
 
         val textWatcher = object : TextWatcherJustAfterTextChanged {
 
             override fun afterTextChanged(s: Editable?) {
-                clearImageView.isVisible = clearImageViewVisibility(s)
-                inputSearchText = inputSearchField.text.toString()
+                clearImageView.isVisible = checkImageViewVisibility(s)
+                inputSearchText = inputSearchField?.text.toString()
             }
         }
 
-        inputSearchField.addTextChangedListener(textWatcher)
+        inputSearchField?.addTextChangedListener(textWatcher)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -53,15 +51,16 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        inputSearchText = savedInstanceState.getString(SAVED_TEXT, defaultText)
-        inputSearchField.setText(inputSearchText)
+        inputSearchText = savedInstanceState.getString(SAVED_TEXT, DEFAULT_TEXT)
+        inputSearchField?.setText(inputSearchText)
     }
 
-    private fun clearImageViewVisibility(s: CharSequence?): Boolean {
+    private fun checkImageViewVisibility(s: CharSequence?): Boolean {
         return !s.isNullOrEmpty()
     }
 
-    companion object {
+    private companion object {
         const val SAVED_TEXT = "SAVED_TEXT"
+        const val DEFAULT_TEXT = ""
     }
 }
