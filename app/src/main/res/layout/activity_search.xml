@@ -18,7 +18,7 @@
 
     <TextView
         android:id="@+id/toolbar_search"
-        style="@style/TitleText"
+        android:textAppearance="@style/TitleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/title_text_margin_start"
