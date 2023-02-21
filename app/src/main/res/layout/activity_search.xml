@@ -50,8 +50,7 @@
             android:paddingStart="@dimen/padding_start_for_search_icon_in_search_bar"
             android:paddingTop="@dimen/padding_top_for_text_in_search_bar"
             android:paddingEnd="@dimen/padding_end_for_search_icon_in_search_bar"
-            android:paddingBottom="@dimen/padding_bottom_for_text_in_search_bar"
-            tools:ignore="Autofill,DuplicateSpeakableTextCheck,TouchTargetSizeCheck" />
+            android:paddingBottom="@dimen/padding_bottom_for_text_in_search_bar" />
 
         <ImageView
             android:id="@+id/searchClearIcon"
