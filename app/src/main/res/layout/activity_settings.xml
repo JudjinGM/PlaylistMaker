@@ -12,16 +12,14 @@
         app:layout_constraintGuide_begin="@dimen/main_margin_for_content" />
 
     <ImageView
+        style="@style/ArrowBackImage"
         android:id="@+id/iconBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/title_image_margin"
         android:layout_marginTop="@dimen/title_image_margin"
-        android:contentDescription="@string/settings"
-        android:src="@drawable/arrow_back"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="?attr/colorOnPrimary" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/toolbar_settings"

@@ -1,29 +1,26 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/iconBackSearch"
+        style="@style/ArrowBackImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/title_image_margin"
         android:layout_marginTop="@dimen/title_image_margin"
-        android:contentDescription="@string/search"
-        android:src="@drawable/arrow_back"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="?attr/colorOnPrimary" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/toolbar_search"
-        android:textAppearance="@style/TitleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/title_text_margin_start"
         android:layout_marginTop="@dimen/title_text_margin_top"
         android:text="@string/search"
+        android:textAppearance="@style/TitleText"
         app:layout_constraintStart_toEndOf="@+id/iconBackSearch"
         app:layout_constraintTop_toTopOf="parent" />
 
