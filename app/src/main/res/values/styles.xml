@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="MainTitleText">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/primary_text_size</item>
+    </style>
+
+    <style name="TitleText" parent="MainTitleText">
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+    </style>
+
+    <style name="RegularText">
+        <item name="fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">@dimen/small_text_size</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+    </style>
+
+    <style name="ButtonStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:backgroundTint">@color/white</item>
+        <item name="cornerRadius">@dimen/button_corner_radius</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconTint">@color/black</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/primary_text_size</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:textAllCaps">false</item>
+
+    </style>
+
+    <style name="SwitchWithKnob">
+        <item name="thumbTint">@color/grey</item>
+        <item name="trackTint">@color/another_grey</item>
+    </style>
+
+    <style name="SearchBarStyle">
+        <item name="android:background">@drawable/rectangle_rounded</item>
+        <item name="android:inputType">text</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:drawableTint">?attr/colorSecondaryVariant</item>
+        <item name="android:textColorHint">?attr/colorSecondaryVariant</item>
+        <item name="android:textCursorDrawable">@drawable/cursor</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">@dimen/small_text_size</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="ArrowBackImage">
+        <item name="android:contentDescription">@string/image_of_back_button</item>
+        <item name="android:src">@drawable/arrow_back</item>
+        <item name="tint">?attr/colorOnPrimary</item>
+    </style>
+
+</resources>

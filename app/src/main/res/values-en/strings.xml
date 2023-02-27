@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Playlist maker</string>
     <string name="search">Search</string>
     <string name="library">Library</string>
     <string name="settings">Settings</string>
@@ -8,4 +7,6 @@
     <string name="write_to_support">Write to support</string>
     <string name="share">Share app</string>
     <string name="dark_theme">Dark theme</string>
+    <string name="mail_to_support_subject">Message for developers of Playlist Maker</string>
+    <string name="mail_to_support_message">Thank you developers for awesome app!</string>
 </resources>

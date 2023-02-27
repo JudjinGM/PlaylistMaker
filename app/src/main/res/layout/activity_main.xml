@@ -3,23 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/royal_blue"
+    android:background="?attr/colorPrimary"
     android:orientation="vertical">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="14dp"
-        android:layout_marginBottom="20dp"
-        android:fontFamily="@font/yandex_sans_display_regular"
+        android:layout_marginStart="@dimen/left_margin_from_text"
+        android:layout_marginTop="@dimen/title_text_margin_top"
+        android:layout_marginBottom="@dimen/title_text_margin_bottom"
         android:text="@string/app_name"
-        android:textColor="@color/white"
-        android:textSize="@dimen/primary_text_size"
-        android:textStyle="bold"/>
+        android:textAppearance="@style/MainTitleText" />
 
     <Button
         android:id="@+id/buttonSearch"
+        style="@style/ButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/left_margin_from_content"
@@ -27,21 +25,12 @@
         android:layout_marginEnd="@dimen/right_margin_from_content"
         android:layout_marginBottom="@dimen/dim_between_content"
         android:layout_weight="1"
-        android:backgroundTint="@color/white"
-        android:fontFamily="@font/yandex_sans_display_regular"
-        android:letterSpacing="0"
         android:text="@string/search"
-        android:textAllCaps="false"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        android:textSize="@dimen/primary_text_size"
-        app:cornerRadius="@dimen/button_corner_radius"
-        app:icon="@drawable/search"
-        app:iconGravity="textStart"
-        app:iconTint="@color/black" />
+        app:icon="@drawable/search" />
 
     <Button
         android:id="@+id/buttonLibrary"
+        style="@style/ButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/left_margin_from_content"
@@ -49,21 +38,12 @@
         android:layout_marginEnd="@dimen/right_margin_from_content"
         android:layout_marginBottom="@dimen/dim_between_content"
         android:layout_weight="1"
-        android:backgroundTint="@color/white"
-        android:fontFamily="@font/yandex_sans_display_regular"
-        android:letterSpacing="0"
         android:text="@string/library"
-        android:textAllCaps="false"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        android:textSize="@dimen/primary_text_size"
-        app:cornerRadius="@dimen/button_corner_radius"
-        app:icon="@drawable/library"
-        app:iconGravity="textStart"
-        app:iconTint="@color/black" />
+        app:icon="@drawable/library" />
 
     <Button
         android:id="@+id/buttonSettings"
+        style="@style/ButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/left_margin_from_content"
@@ -71,16 +51,6 @@
         android:layout_marginEnd="@dimen/right_margin_from_content"
         android:layout_marginBottom="@dimen/dim_bottom_main"
         android:layout_weight="1"
-        android:backgroundTint="@color/white"
-        android:fontFamily="@font/yandex_sans_display_regular"
-        android:letterSpacing="0"
         android:text="@string/settings"
-        android:textAllCaps="false"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        android:textSize="@dimen/primary_text_size"
-        app:cornerRadius="@dimen/button_corner_radius"
-        app:icon="@drawable/settings"
-        app:iconGravity="textStart"
-        app:iconTint="@color/black" />
+        app:icon="@drawable/settings" />
 </LinearLayout>
