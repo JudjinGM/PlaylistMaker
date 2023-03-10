@@ -17,8 +17,6 @@
     <dimen name="share_image_margin_end">16dp</dimen>
     <dimen name="support_image_margin_end">14dp</dimen>
     <dimen name="term_of_use_image_margin_end">20dp</dimen>
-    <dimen name="primary_text_size">22sp</dimen>
-    <dimen name="small_text_size">16sp</dimen>
     <dimen name="main_margin_for_content">16dp</dimen>
     <dimen name="margin_top_for_search_bar">24dp</dimen>
     <dimen name="padding_start_for_search_icon_in_search_bar">13dp</dimen>
@@ -27,4 +25,21 @@
     <dimen name="padding_bottom_for_text_in_search_bar">8dp</dimen>
     <dimen name="padding_for_drawable_in_search_bar">9dp</dimen>
     <dimen name="margin_end_for_clear_icon">14dp</dimen>
+    <dimen name="track_list_element_min_height">61dp</dimen>
+    <dimen name="album_cover_height_and_width">45dp</dimen>
+    <dimen name="album_cover_margin">8dp</dimen>
+    <dimen name="album_cover_margin_start">13dp</dimen>
+    <dimen name="margin_8">8dp</dimen>
+    <dimen name="margin_14">14dp</dimen>
+    <dimen name="margin_1">1dp</dimen>
+    <dimen name="point_margin">5dp</dimen>
+
+
+    
+    
+    
+    <dimen name="primary_text_size">22sp</dimen>
+    <dimen name="regular_text_size">16sp</dimen>
+    <dimen name="small_text_size">11sp</dimen>
+    
 </resources>
