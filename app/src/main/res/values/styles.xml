@@ -13,8 +13,14 @@
 
     <style name="RegularText">
         <item name="fontFamily">@font/ys_display_regular</item>
-        <item name="android:textSize">@dimen/small_text_size</item>
+        <item name="android:textSize">@dimen/regular_text_size</item>
         <item name="android:textColor">?attr/colorOnPrimary</item>
+    </style>
+
+    <style name="SmallText">
+        <item name="fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">@dimen/small_text_size</item>
+        <item name="android:textColor">?attr/colorSecondary</item>
     </style>
 
     <style name="ButtonStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
@@ -43,7 +49,7 @@
         <item name="android:textColorHint">?attr/colorSecondaryVariant</item>
         <item name="android:textCursorDrawable">@drawable/cursor</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
-        <item name="android:textSize">@dimen/small_text_size</item>
+        <item name="android:textSize">@dimen/regular_text_size</item>
         <item name="android:textColor">@color/black</item>
     </style>
 

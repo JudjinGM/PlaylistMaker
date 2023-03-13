@@ -111,7 +111,7 @@
         android:id="@+id/image_term"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/term_of_use_image_margin_end"
+        android:layout_marginEnd="@dimen/arrow_image_margin_end"
         android:contentDescription="@string/term_of_use"
         android:src="@drawable/arrow"
         app:layout_constraintBottom_toBottomOf="@id/text_term"
