@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="@dimen/track_list_element_min_height"
-    android:orientation="horizontal">
+    android:minHeight="@dimen/track_list_element_min_height">
 
     <ImageView
         android:id="@+id/albumCoverImageView"
