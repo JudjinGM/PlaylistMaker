@@ -14,11 +14,9 @@ class TracksViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val songTime: TextView = itemView.findViewById(R.id.songTimeStampTextView)
 
     fun bind(item: Track) {
-        Glide.with(itemView)
-            .load(item.artworkUrl100)
-            .placeholder(R.drawable.no_album)
+        Glide.with(itemView).load(item.artworkUrl100).placeholder(R.drawable.no_album)
             .centerInside()
-            .transform(RoundedCorners(10))
+            .transform(RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.album_cover_corner_radius)))
             .into(albumCover)
         trackName.text = item.trackName
         artistName.text = item.artistName

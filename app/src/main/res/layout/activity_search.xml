@@ -46,8 +46,8 @@
             android:hint="@string/search"
             android:maxWidth="480dp"
             android:paddingStart="@dimen/padding_start_for_search_icon_in_search_bar"
+            android:paddingEnd="@dimen/search_bar_edit_text_padding_end"
             android:paddingTop="@dimen/padding_top_for_text_in_search_bar"
-            android:paddingEnd="@dimen/padding_end_for_search_icon_in_search_bar"
             android:paddingBottom="@dimen/padding_bottom_for_text_in_search_bar" />
 
         <ImageView
@@ -58,7 +58,6 @@
             android:layout_marginEnd="@dimen/margin_end_for_clear_icon"
             android:contentDescription="@string/search"
             android:src="@drawable/x_clear"
-            android:visibility="gone"
             app:tint="?attr/colorSecondaryVariant" />
     </FrameLayout>
 
