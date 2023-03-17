@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/track_list_element_min_height">
+
+    <ImageView
+        android:id="@+id/albumCoverImageView"
+        android:layout_width="@dimen/album_cover_height_and_width"
+        android:layout_height="@dimen/album_cover_height_and_width"
+        android:layout_marginStart="@dimen/album_cover_margin_start"
+        android:layout_marginTop="@dimen/album_cover_margin"
+        android:layout_marginBottom="@dimen/album_cover_margin"
+        android:scaleType="fitCenter"
+        android:src="@drawable/no_album"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/songNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constrainedWidth="true"
+        android:layout_marginStart="@dimen/margin_8"
+        android:layout_marginTop="@dimen/tracks_text_margin_top"
+        android:layout_marginEnd="@dimen/tracks_text_margin_end"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAppearance="@style/RegularText"
+        app:layout_constraintEnd_toStartOf="@+id/ArrowImageView"
+        app:layout_constraintStart_toEndOf="@id/albumCoverImageView"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Yesterday(Remastered 2009)" />
+
+    <TextView
+        android:id="@+id/artistNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_8"
+        android:layout_marginTop="@dimen/margin_1"
+        android:layout_marginBottom="@dimen/margin_14"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAppearance="@style/SmallText"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/point"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toEndOf="@id/albumCoverImageView"
+        app:layout_constraintTop_toBottomOf="@id/songNameTextView"
+        tools:text="Artist name" />
+
+    <ImageView
+        android:id="@+id/point"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/point"
+        app:layout_constraintBottom_toBottomOf="@id/artistNameTextView"
+        app:layout_constraintEnd_toStartOf="@id/songTimeStampTextView"
+        app:layout_constraintStart_toEndOf="@id/artistNameTextView"
+        app:layout_constraintTop_toTopOf="@id/artistNameTextView"
+        app:tint="?attr/colorSecondary" />
+
+    <TextView
+        android:id="@+id/songTimeStampTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/tracks_text_margin_end"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAppearance="@style/SmallText"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="@id/artistNameTextView"
+        app:layout_constraintEnd_toStartOf="@id/ArrowImageView"
+        app:layout_constraintStart_toEndOf="@id/point"
+        app:layout_constraintTop_toTopOf="@id/artistNameTextView"
+        tools:text="2:23" />
+
+    <ImageView
+        android:id="@+id/ArrowImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/arrow_image_margin_end"
+        android:src="@drawable/arrow"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="?attr/colorSecondary" />
+</androidx.constraintlayout.widget.ConstraintLayout>

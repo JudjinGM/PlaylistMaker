@@ -8,6 +8,8 @@ import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class SearchActivity : AppCompatActivity() {
 
@@ -42,6 +44,14 @@ class SearchActivity : AppCompatActivity() {
         }
 
         inputSearchField?.addTextChangedListener(textWatcher)
+
+        val listOfTrackMock = ListOfTrackMock()
+
+        val tracksRecyclerView = findViewById<RecyclerView>(R.id.tracksRecyclerView)
+        tracksRecyclerView.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        val trackAdapter = TracksAdapter(listOfTrackMock.getList())
+        tracksRecyclerView.adapter = trackAdapter
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
