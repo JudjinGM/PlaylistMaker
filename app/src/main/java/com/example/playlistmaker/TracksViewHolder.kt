@@ -1,13 +1,14 @@
 package com.example.playlistmaker
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import java.text.SimpleDateFormat
+import java.util.*
 
 class TracksViewHolder(parentView: ViewGroup) : RecyclerView.ViewHolder(
     LayoutInflater.from(parentView.context).inflate(R.layout.tracks_view, parentView, false)
@@ -25,6 +26,6 @@ class TracksViewHolder(parentView: ViewGroup) : RecyclerView.ViewHolder(
             .into(albumCover)
         trackName.text = item.trackName
         artistName.text = item.artistName
-        songTime.text = item.trackTime
+        songTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(item.trackTimeMillis)
     }
 }

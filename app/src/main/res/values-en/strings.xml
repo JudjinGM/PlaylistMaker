@@ -9,4 +9,7 @@
     <string name="dark_theme">Dark theme</string>
     <string name="mail_to_support_subject">Message for developers of Playlist Maker</string>
     <string name="mail_to_support_message">Thank you developers for awesome app!</string>
+    <string name="error_search">Nothing found</string>
+    <string name="error_internet">Conection problems\n\nDownload failed. Check\nyour internet connection</string>
+    <string name="refresh">Refresh</string>
 </resources>
