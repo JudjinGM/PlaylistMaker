@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.DiffUtil.DiffResult
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import retrofit2.Call
@@ -55,6 +56,7 @@ class SearchActivity : AppCompatActivity() {
         val clearImageView = findViewById<ImageView>(R.id.searchClearIcon)
         clearImageView.setOnClickListener {
             inputSearchField.setText(DEFAULT_TEXT)
+            clearTrackList()
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(inputSearchField.windowToken, 0)
@@ -129,20 +131,14 @@ class SearchActivity : AppCompatActivity() {
                 refreshButton.visibility = View.GONE
             }
             ResponseStatusCodes.NOTHING_FOUND -> {
-                val updatedTrack = emptyList<Track>()
-                val diffUtil = getDiffResult(oldList = tracks, newList = updatedTrack)
-                tracks.clear()
-                diffUtil.dispatchUpdatesTo(trackAdapter)
+                clearTrackList()
                 placeholderImage.visibility = View.VISIBLE
                 placeholderImage.setImageResource(R.drawable.error_search)
                 errorTextTextView.visibility = View.VISIBLE
                 errorTextTextView.text = getText(R.string.error_search)
             }
             ResponseStatusCodes.NO_CONNECTION -> {
-                val updatedTrack = emptyList<Track>()
-                val diffUtil = getDiffResult(oldList = tracks, newList = updatedTrack)
-                tracks.clear()
-                diffUtil.dispatchUpdatesTo(trackAdapter)
+                clearTrackList()
                 placeholderImage.visibility = View.VISIBLE
                 placeholderImage.setImageResource(R.drawable.error_internet)
                 errorTextTextView.visibility = View.VISIBLE
@@ -171,6 +167,13 @@ class SearchActivity : AppCompatActivity() {
             }
         })
         return diffResult
+    }
+
+    private fun clearTrackList(){
+        val updatedTrack = emptyList<Track>()
+        val diffUtil = getDiffResult(oldList = tracks, newList = updatedTrack)
+        tracks.clear()
+        diffUtil.dispatchUpdatesTo(trackAdapter)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
