@@ -12,6 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import retrofit2.Call
@@ -33,6 +34,7 @@ class SearchActivity : AppCompatActivity() {
     private val retrofit = Retrofit.Builder().baseUrl(itunesBaseUrl).addConverterFactory(
         GsonConverterFactory.create()
     ).build()
+
     private val itunesService = retrofit.create(ItunesApi::class.java)
 
     private val tracks = ArrayList<Track>()
@@ -84,6 +86,9 @@ class SearchActivity : AppCompatActivity() {
             }
             false
         }
+
+        refreshButton.setOnClickListener {
+            search() }
     }
 
     private fun search() {
@@ -95,9 +100,13 @@ class SearchActivity : AppCompatActivity() {
                 when (response.code()) {
                     200 -> {
                         if (response.body()?.results?.isNotEmpty() == true) {
+                            val diffResult = getDiffResult(
+                                oldList = tracks,
+                                newList = response.body()!!.results
+                            )
                             tracks.clear()
                             tracks.addAll(response.body()?.results!!)
-                            trackAdapter.notifyDataSetChanged()
+                            diffResult.dispatchUpdatesTo(trackAdapter)
                             showMessage(ResponseStatusCodes.OK)
                         } else {
                             showMessage(ResponseStatusCodes.NOTHING_FOUND)
@@ -117,24 +126,51 @@ class SearchActivity : AppCompatActivity() {
             ResponseStatusCodes.OK -> {
                 placeholderImage.visibility = View.GONE
                 errorTextTextView.visibility = View.GONE
+                refreshButton.visibility = View.GONE
             }
             ResponseStatusCodes.NOTHING_FOUND -> {
+                val updatedTrack = emptyList<Track>()
+                val diffUtil = getDiffResult(oldList = tracks, newList = updatedTrack)
                 tracks.clear()
-                trackAdapter.notifyDataSetChanged()
+                diffUtil.dispatchUpdatesTo(trackAdapter)
                 placeholderImage.visibility = View.VISIBLE
                 placeholderImage.setImageResource(R.drawable.error_search)
                 errorTextTextView.visibility = View.VISIBLE
                 errorTextTextView.text = getText(R.string.error_search)
             }
             ResponseStatusCodes.NO_CONNECTION -> {
+                val updatedTrack = emptyList<Track>()
+                val diffUtil = getDiffResult(oldList = tracks, newList = updatedTrack)
                 tracks.clear()
-                trackAdapter.notifyDataSetChanged()
+                diffUtil.dispatchUpdatesTo(trackAdapter)
                 placeholderImage.visibility = View.VISIBLE
                 placeholderImage.setImageResource(R.drawable.error_internet)
                 errorTextTextView.visibility = View.VISIBLE
                 errorTextTextView.text = getText(R.string.error_internet)
+                refreshButton.visibility = View.VISIBLE
             }
         }
+    }
+
+    private fun getDiffResult(oldList: List<Track>, newList: List<Track>): DiffUtil.DiffResult {
+        val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+            override fun getOldListSize(): Int {
+                return oldList.size
+            }
+
+            override fun getNewListSize(): Int {
+                return newList.size
+            }
+
+            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                return oldList[oldItemPosition].trackId == newList[newItemPosition].trackId
+            }
+
+            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                return oldList[oldItemPosition] == newList[newItemPosition]
+            }
+        })
+        return diffResult
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
