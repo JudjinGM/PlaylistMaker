@@ -113,6 +113,7 @@ class SearchActivity : AppCompatActivity() {
                             showMessage(ResponseStatusCodes.NOTHING_FOUND)
                         }
                     }
+                    else -> showMessage(ResponseStatusCodes.NO_CONNECTION)
                 }
             }
 
@@ -131,6 +132,7 @@ class SearchActivity : AppCompatActivity() {
             }
             ResponseStatusCodes.NOTHING_FOUND -> {
                 clearTrackList()
+                refreshButton.visibility = View.GONE
                 placeholderImage.visibility = View.VISIBLE
                 placeholderImage.setImageResource(R.drawable.error_search)
                 errorTextTextView.visibility = View.VISIBLE
