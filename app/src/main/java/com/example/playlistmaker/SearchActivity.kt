@@ -37,7 +37,7 @@ class SearchActivity : AppCompatActivity() {
 
     private val itunesService = retrofit.create(ItunesApi::class.java)
 
-    private val tracks = ArrayList<Track>()
+    private val tracks = mutableListOf<Track>()
     private val trackAdapter = TracksAdapter(tracks)
 
 
@@ -99,14 +99,15 @@ class SearchActivity : AppCompatActivity() {
                 response: Response<TrackItunesResponse>
             ) {
                 when (response.code()) {
-                    200 -> {
-                        if (response.body()?.results?.isNotEmpty() == true) {
+                    RESPONSE_SUCCESS -> {
+                        val body:TrackItunesResponse? = response.body()
+                        if (body?.results?.isNotEmpty() == true) {
                             val diffResult = getDiffResult(
                                 oldList = tracks,
-                                newList = response.body()!!.results
+                                newList = body.results
                             )
                             tracks.clear()
-                            tracks.addAll(response.body()?.results!!)
+                            tracks.addAll(body.results)
                             diffResult.dispatchUpdatesTo(trackAdapter)
                             showMessage(ResponseStatusCodes.OK)
                         } else {
@@ -195,6 +196,7 @@ class SearchActivity : AppCompatActivity() {
     private companion object {
         const val SAVED_TEXT = "SAVED_TEXT"
         const val DEFAULT_TEXT = ""
+        const val RESPONSE_SUCCESS = 200
     }
 
     enum class ResponseStatusCodes {
