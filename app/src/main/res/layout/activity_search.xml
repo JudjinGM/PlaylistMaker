@@ -1,8 +1,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/iconBackSearch"
@@ -15,7 +15,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/toolbar_search"
+        android:id="@+id/toolbarSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/title_text_margin_start"
@@ -34,7 +34,7 @@
         android:layout_marginEnd="@dimen/main_margin_for_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_search">
+        app:layout_constraintTop_toBottomOf="@id/toolbarSearch">
 
         <EditText
             android:id="@+id/searchEditText"
@@ -44,11 +44,13 @@
             android:drawableStart="@drawable/search_small"
             android:drawablePadding="@dimen/padding_for_drawable_in_search_bar"
             android:hint="@string/search"
+            android:imeOptions="actionDone"
             android:maxWidth="480dp"
             android:paddingStart="@dimen/padding_start_for_search_icon_in_search_bar"
-            android:paddingEnd="@dimen/search_bar_edit_text_padding_end"
             android:paddingTop="@dimen/padding_top_for_text_in_search_bar"
-            android:paddingBottom="@dimen/padding_bottom_for_text_in_search_bar" />
+            android:paddingEnd="@dimen/search_bar_edit_text_padding_end"
+            android:paddingBottom="@dimen/padding_bottom_for_text_in_search_bar"
+            android:singleLine="true" />
 
         <ImageView
             android:id="@+id/searchClearIcon"
@@ -65,13 +67,49 @@
         android:id="@+id/tracksRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="@dimen/weight_0_dp"
-        app:layout_constraintTop_toBottomOf="@id/frameLayout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_weight="1"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginTop="@dimen/margin_top_for_content"
         android:layout_marginBottom="@dimen/margin_bottom_for_content"
         android:orientation="vertical"
-        tools:listitem="@layout/tracks_view"
-        tools:itemCount="12"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/frameLayout"
+        app:layout_constraintVertical_weight="1" />
+
+    <ImageView
+        android:id="@+id/placeholderSearch"
+        android:layout_width="@dimen/placeholder_image_dimens"
+        android:layout_height="@dimen/placeholder_image_dimens"
+        android:layout_marginTop="@dimen/placeholder_image_margin_top"
+        android:src="@drawable/error_search"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/frameLayout" />
+
+    <TextView
+        android:id="@+id/errorTextTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/error_text_margin_top"
+        android:gravity="center"
+        android:textAppearance="@style/PlaceholderText"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/placeholderSearch"
+        tools:text="@string/error_search" />
+
+    <Button
+        android:id="@+id/refreshButton"
+        style="@style/SmallButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/refresh_button_margin_top"
+        android:text="@string/refresh"
+        android:textAppearance="@style/SmallButtonText"
+        android:visibility="gone"
+        app:cornerRadius="@dimen/refresh_button_corner_radius"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/errorTextTextView" />
 </androidx.constraintlayout.widget.ConstraintLayout>
