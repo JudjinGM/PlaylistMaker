@@ -1,12 +1,14 @@
 package com.example.playlistmaker
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SwitchCompat
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -63,10 +65,32 @@ class SettingsActivity : AppCompatActivity() {
 
         agreementImageView.setOnClickListener(agreementClickListener)
         agreementTextView.setOnClickListener(agreementClickListener)
+
+        val themeSwitcher = findViewById<SwitchCompat>(R.id.switch_to_dark_theme)
+        val sharedPreferences = getSharedPreferences(SETTING_PREFS, MODE_PRIVATE)
+
+        val defaultThemeStatus = this.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+
+        val isDarkThemeEnable = when(defaultThemeStatus){
+            Configuration.UI_MODE_NIGHT_YES -> true
+            else -> false
+        }
+
+        themeSwitcher.isChecked = sharedPreferences.getBoolean(APP_THEME_STATUS, isDarkThemeEnable )
+
+            themeSwitcher.setOnCheckedChangeListener { switcher, isChecked ->
+                (applicationContext as App).switchTheme(isChecked)
+                if (isChecked) {
+                    sharedPreferences.edit().putBoolean(APP_THEME_STATUS, true).apply()
+                } else {
+                    sharedPreferences.edit().putBoolean(APP_THEME_STATUS, false).apply()
+                }
+            }
     }
 
     private companion object {
         const val INTENT_EMAIL_TYPE = "text/plain"
         const val CHOOSER_TITLE = "Share"
     }
+
 }
