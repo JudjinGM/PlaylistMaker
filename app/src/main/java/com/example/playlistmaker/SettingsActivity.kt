@@ -69,14 +69,7 @@ class SettingsActivity : AppCompatActivity() {
         val themeSwitcher = findViewById<SwitchCompat>(R.id.switch_to_dark_theme)
         val sharedPreferences = getSharedPreferences(SETTING_PREFS, MODE_PRIVATE)
 
-        val defaultThemeStatus = this.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-
-        val isDarkThemeEnable = when(defaultThemeStatus){
-            Configuration.UI_MODE_NIGHT_YES -> true
-            else -> false
-        }
-
-        themeSwitcher.isChecked = sharedPreferences.getBoolean(APP_THEME_STATUS, isDarkThemeEnable )
+        themeSwitcher.isChecked = sharedPreferences.getBoolean(APP_THEME_STATUS, App.isDarkThemeEnabled(this) )
 
             themeSwitcher.setOnCheckedChangeListener { switcher, isChecked ->
                 (applicationContext as App).switchTheme(isChecked)
@@ -92,5 +85,4 @@ class SettingsActivity : AppCompatActivity() {
         const val INTENT_EMAIL_TYPE = "text/plain"
         const val CHOOSER_TITLE = "Share"
     }
-
 }
