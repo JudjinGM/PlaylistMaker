@@ -9,8 +9,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.data.model.Track
-import java.text.SimpleDateFormat
-import java.util.*
 
 class TracksViewHolder(parentView: ViewGroup) : RecyclerView.ViewHolder(
     LayoutInflater.from(parentView.context).inflate(R.layout.tracks_view, parentView, false)
@@ -28,6 +26,6 @@ class TracksViewHolder(parentView: ViewGroup) : RecyclerView.ViewHolder(
             .into(albumCover)
         trackName.text = item.trackName
         artistName.text = item.artistName
-        songTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(item.trackTimeMillis)
+        songTime.text = item.trackTimeMillis
     }
 }

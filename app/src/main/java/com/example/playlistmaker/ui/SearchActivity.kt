@@ -17,10 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.data.local.database.TracksDatabase
-import com.example.playlistmaker.data.model.CallbackShow
-import com.example.playlistmaker.data.model.CallbackUpdate
-import com.example.playlistmaker.data.model.ResponseStatusCodes
-import com.example.playlistmaker.data.model.Track
+import com.example.playlistmaker.data.model.*
 import com.example.playlistmaker.data.repositorie.SearchRepository
 import com.example.playlistmaker.network.RetrofitInit
 import com.example.playlistmaker.ui.adapter.TracksAdapter
@@ -84,20 +81,17 @@ class SearchActivity : AppCompatActivity() {
 
         inputSearchField.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                searchRepository.search(
-                    inputSearchText, (
-                            object : CallbackUpdate {
-                                override fun update(oldList: MutableList<Track>) {
-                                    val diffResult =
-                                        getDiffResult(oldList, searchRepository.getTracks())
-                                    diffResult.dispatchUpdatesTo(trackAdapter)
-                                }
-                            }),
-                    (object : CallbackShow {
-                        override fun show(responseStatusCodes: ResponseStatusCodes) {
-                            showMessage(responseStatusCodes)
-                        }
-                    })
+                searchRepository.search(inputSearchText, (object : CallbackUpdate {
+                    override fun update(oldList: MutableList<Track>) {
+                        updateAdapterDiffUtil(
+                            oldList, searchRepository.getTracks(), trackAdapter
+                        )
+                    }
+                }), (object : CallbackShow {
+                    override fun show(responseStatusCodes: ResponseStatusCodes) {
+                        showMessage(responseStatusCodes)
+                    }
+                })
                 )
                 true
             }
@@ -109,8 +103,7 @@ class SearchActivity : AppCompatActivity() {
             searchRepository.search(inputSearchText, (object : CallbackUpdate {
 
                 override fun update(oldList: MutableList<Track>) {
-                    val diffResult = getDiffResult(oldList, searchRepository.getTracks())
-                    diffResult.dispatchUpdatesTo(trackAdapter)
+                    updateAdapterDiffUtil(oldList, searchRepository.getTracks(), trackAdapter)
                 }
 
             }), (object : CallbackShow {
@@ -147,7 +140,9 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun getDiffResult(oldList: List<Track>, newList: List<Track>): DiffUtil.DiffResult {
+    private fun updateAdapterDiffUtil(
+        oldList: List<Track>, newList: List<Track>, tracksAdapter: TracksAdapter
+    ) {
         val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
             override fun getOldListSize(): Int {
                 return oldList.size
@@ -165,14 +160,13 @@ class SearchActivity : AppCompatActivity() {
                 return oldList[oldItemPosition] == newList[newItemPosition]
             }
         })
-        return diffResult
+        diffResult.dispatchUpdatesTo(tracksAdapter)
     }
 
     private fun clearTrackList() {
         val updatedTrack = emptyList<Track>()
-        val diffUtil = getDiffResult(oldList = searchRepository.getTracks(), newList = updatedTrack)
         searchRepository.clearTracks()
-        diffUtil.dispatchUpdatesTo(trackAdapter)
+        updateAdapterDiffUtil(oldList = searchRepository.getTracks(), newList = updatedTrack, trackAdapter)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
