@@ -1,7 +1,6 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -9,6 +8,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
+import com.example.playlistmaker.APP_THEME_STATUS
+import com.example.playlistmaker.App
+import com.example.playlistmaker.R
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -67,18 +69,21 @@ class SettingsActivity : AppCompatActivity() {
         agreementTextView.setOnClickListener(agreementClickListener)
 
         val themeSwitcher = findViewById<SwitchCompat>(R.id.switch_to_dark_theme)
-        val sharedPreferences = getSharedPreferences(SETTING_PREFS, MODE_PRIVATE)
 
-        themeSwitcher.isChecked = sharedPreferences.getBoolean(APP_THEME_STATUS, App.isDarkThemeEnabled(this) )
+        themeSwitcher.isChecked =
+            App.sharedPreferencesRepository.loadBoolean(
+                APP_THEME_STATUS,
+                App.isDarkThemeEnabled(this)
+            )
 
-            themeSwitcher.setOnCheckedChangeListener { switcher, isChecked ->
-                (applicationContext as App).switchTheme(isChecked)
-                if (isChecked) {
-                    sharedPreferences.edit().putBoolean(APP_THEME_STATUS, true).apply()
-                } else {
-                    sharedPreferences.edit().putBoolean(APP_THEME_STATUS, false).apply()
-                }
+        themeSwitcher.setOnCheckedChangeListener { switcher, isChecked ->
+            (applicationContext as App).switchTheme(isChecked)
+            if (isChecked) {
+                App.sharedPreferencesRepository.saveBoolean(APP_THEME_STATUS, true)
+            } else {
+                App.sharedPreferencesRepository.saveBoolean(APP_THEME_STATUS, false)
             }
+        }
     }
 
     private companion object {

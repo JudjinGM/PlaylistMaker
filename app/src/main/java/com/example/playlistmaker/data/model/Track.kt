@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.data.model
 
 data class Track(
     val trackId: Long,

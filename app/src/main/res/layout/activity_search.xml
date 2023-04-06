@@ -66,14 +66,35 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tracksRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/weight_0_dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_top_for_content"
         android:layout_marginBottom="@dimen/margin_bottom_for_content"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constrainedHeight="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/frameLayout"
-        app:layout_constraintVertical_weight="1" />
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintBottom_toTopOf="@id/buttonClearHistory"
+        tools:itemCount="12"
+        tools:listitem="@layout/tracks_view"
+        app:layout_constraintVertical_chainStyle="packed"/>
+
+    <Button
+        android:id="@+id/buttonClearHistory"
+        style="@style/SmallButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/top_margin_for_button_clear_history"
+        android:text="@string/clean_history"
+        android:textAppearance="@style/SmallButtonText"
+        android:visibility="gone"
+        app:cornerRadius="@dimen/refresh_button_corner_radius"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintTop_toBottomOf="@id/tracksRecyclerView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_bias="0" />
 
     <ImageView
         android:id="@+id/placeholderSearch"
@@ -112,4 +133,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/errorTextTextView" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

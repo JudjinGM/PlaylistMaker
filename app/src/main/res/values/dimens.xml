@@ -19,7 +19,7 @@
     <dimen name="arrow_image_margin_end">12dp</dimen>
     <dimen name="main_margin_for_content">16dp</dimen>
     <dimen name="margin_top_for_content">24dp</dimen>
-    <dimen name="margin_bottom_for_content">9dp</dimen>
+    <dimen name="margin_bottom_for_content">0dp</dimen>
     <dimen name="padding_start_for_search_icon_in_search_bar">12dp</dimen>
     <dimen name="padding_end_for_search_icon_in_search_bar">36dp</dimen>
     <dimen name="padding_top_for_text_in_search_bar">9dp</dimen>
@@ -33,12 +33,13 @@
     <dimen name="margin_8">8dp</dimen>
     <dimen name="margin_14">14dp</dimen>
     <dimen name="margin_1">1dp</dimen>
+    <dimen name="top_margin_for_button_clear_history">24dp</dimen>
     <dimen name="search_bar_edit_text_padding_end">36dp</dimen>
     <dimen name="tracks_text_margin_end">16dp</dimen>
     <dimen name="tracks_text_margin_top">12dp</dimen>
     <dimen name="placeholder_image_margin_top">110dp</dimen>
     <dimen name="error_text_margin_top">16dp</dimen>
-<dimen name="refresh_button_margin_top">24dp</dimen>
+    <dimen name="refresh_button_margin_top">24dp</dimen>
     <dimen name="refresh_button_corner_radius">54dp</dimen>
     <dimen name="album_cover_corner_radius">2dp</dimen>
     <dimen name="placeholder_image_dimens">120dp</dimen>

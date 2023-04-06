@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui
 
 import android.content.Context
 import android.os.Bundle
@@ -15,11 +15,15 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.example.playlistmaker.R
+import com.example.playlistmaker.data.local.database.TracksDatabase
+import com.example.playlistmaker.data.model.CallbackShow
+import com.example.playlistmaker.data.model.CallbackUpdate
+import com.example.playlistmaker.data.model.ResponseStatusCodes
+import com.example.playlistmaker.data.model.Track
+import com.example.playlistmaker.data.repositorie.SearchRepository
+import com.example.playlistmaker.network.RetrofitInit
+import com.example.playlistmaker.ui.adapter.TracksAdapter
 
 class SearchActivity : AppCompatActivity() {
 
@@ -30,20 +34,18 @@ class SearchActivity : AppCompatActivity() {
 
     private var inputSearchText: String = DEFAULT_TEXT
 
-    private val itunesBaseUrl = "https://itunes.apple.com"
-    private val retrofit = Retrofit.Builder().baseUrl(itunesBaseUrl).addConverterFactory(
-        GsonConverterFactory.create()
-    ).build()
+    private var retrofit = RetrofitInit()
+    private val itunesService = retrofit.getService()
 
-    private val itunesService = retrofit.create(ItunesApi::class.java)
+    private val tracksDatabase = TracksDatabase.getInstance()
+    private val searchRepository = SearchRepository(itunesService, tracksDatabase)
 
-    private val tracks = mutableListOf<Track>()
-    private val trackAdapter = TracksAdapter(tracks)
-
+    private val trackAdapter = TracksAdapter(tracksDatabase.tracks)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
+
 
         val backImageView = findViewById<ImageView>(R.id.iconBackSearch)
         backImageView.setOnClickListener {
@@ -82,46 +84,41 @@ class SearchActivity : AppCompatActivity() {
 
         inputSearchField.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                search()
+                searchRepository.search(
+                    inputSearchText, (
+                            object : CallbackUpdate {
+                                override fun update(oldList: MutableList<Track>) {
+                                    val diffResult =
+                                        getDiffResult(oldList, searchRepository.getTracks())
+                                    diffResult.dispatchUpdatesTo(trackAdapter)
+                                }
+                            }),
+                    (object : CallbackShow {
+                        override fun show(responseStatusCodes: ResponseStatusCodes) {
+                            showMessage(responseStatusCodes)
+                        }
+                    })
+                )
                 true
             }
             false
         }
 
         refreshButton.setOnClickListener {
-            search() }
-    }
 
-    private fun search() {
-        itunesService.search(inputSearchText).enqueue(object : Callback<TrackItunesResponse> {
-            override fun onResponse(
-                call: Call<TrackItunesResponse>,
-                response: Response<TrackItunesResponse>
-            ) {
-                when (response.code()) {
-                    RESPONSE_SUCCESS -> {
-                        val body:TrackItunesResponse? = response.body()
-                        if (body?.results?.isNotEmpty() == true) {
-                            val diffResult = getDiffResult(
-                                oldList = tracks,
-                                newList = body.results
-                            )
-                            tracks.clear()
-                            tracks.addAll(body.results)
-                            diffResult.dispatchUpdatesTo(trackAdapter)
-                            showMessage(ResponseStatusCodes.OK)
-                        } else {
-                            showMessage(ResponseStatusCodes.NOTHING_FOUND)
-                        }
-                    }
-                    else -> showMessage(ResponseStatusCodes.NO_CONNECTION)
+            searchRepository.search(inputSearchText, (object : CallbackUpdate {
+
+                override fun update(oldList: MutableList<Track>) {
+                    val diffResult = getDiffResult(oldList, searchRepository.getTracks())
+                    diffResult.dispatchUpdatesTo(trackAdapter)
                 }
-            }
 
-            override fun onFailure(call: Call<TrackItunesResponse>, t: Throwable) {
-                showMessage(ResponseStatusCodes.NO_CONNECTION)
-            }
-        })
+            }), (object : CallbackShow {
+                override fun show(responseStatusCodes: ResponseStatusCodes) {
+                    showMessage(responseStatusCodes)
+                }
+            }))
+        }
     }
 
     private fun showMessage(statusCode: ResponseStatusCodes) {
@@ -171,10 +168,10 @@ class SearchActivity : AppCompatActivity() {
         return diffResult
     }
 
-    private fun clearTrackList(){
+    private fun clearTrackList() {
         val updatedTrack = emptyList<Track>()
-        val diffUtil = getDiffResult(oldList = tracks, newList = updatedTrack)
-        tracks.clear()
+        val diffUtil = getDiffResult(oldList = searchRepository.getTracks(), newList = updatedTrack)
+        searchRepository.clearTracks()
         diffUtil.dispatchUpdatesTo(trackAdapter)
     }
 
@@ -196,12 +193,5 @@ class SearchActivity : AppCompatActivity() {
     private companion object {
         const val SAVED_TEXT = "SAVED_TEXT"
         const val DEFAULT_TEXT = ""
-        const val RESPONSE_SUCCESS = 200
-    }
-
-    enum class ResponseStatusCodes {
-        OK,
-        NOTHING_FOUND,
-        NO_CONNECTION,
     }
 }

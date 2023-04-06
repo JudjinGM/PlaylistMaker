@@ -1,0 +1,15 @@
+package com.example.playlistmaker.network
+
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+
+class RetrofitInit {
+    private val itunesBaseUrl = "https://itunes.apple.com"
+    private val retrofit = Retrofit.Builder().baseUrl(itunesBaseUrl).addConverterFactory(
+        GsonConverterFactory.create()
+    ).build()
+
+    fun getService():ItunesApi{
+        return retrofit.create(ItunesApi::class.java)
+    }
+}
