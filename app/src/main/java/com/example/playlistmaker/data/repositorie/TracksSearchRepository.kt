@@ -9,7 +9,7 @@ import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
 
-class TracksRepository(
+class TracksSearchRepository(
     private val itunesService: ItunesApi,
     private val database: TracksDatabase,
 ) : DataRepository<Track, Long> {
@@ -72,10 +72,10 @@ class TracksRepository(
         return database.tracksSearch
     }
 
-    override fun loadData(id: Long): Track? {
+    override fun loadData(key: Long): Track? {
         var result: Track? = null
         for (track in database.tracksSearch) {
-            if (track.trackId == id) {
+            if (track.trackId == key) {
                 result = track
             }
         }
@@ -86,9 +86,9 @@ class TracksRepository(
         database.tracksSearch.clear()
     }
 
-    override fun remove(id: Long) {
+    override fun removeData(key: Long) {
         for (track in database.tracksSearch) {
-            if (track.trackId == id) {
+            if (track.trackId == key) {
                 database.tracksSearch.remove(track)
             }
         }
@@ -97,4 +97,5 @@ class TracksRepository(
     override fun saveData(data: Track) {
         database.tracksSearch.add(data)
     }
+
 }

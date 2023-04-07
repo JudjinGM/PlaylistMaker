@@ -19,6 +19,7 @@ class TracksViewHolder(parentView: ViewGroup) : RecyclerView.ViewHolder(
     private val artistName: TextView = itemView.findViewById(R.id.artistNameTextView)
     private val songTime: TextView = itemView.findViewById(R.id.songTimeStampTextView)
 
+
     fun bind(item: Track) {
         Glide.with(itemView).load(item.artworkUrl100).placeholder(R.drawable.no_album)
             .centerInside()

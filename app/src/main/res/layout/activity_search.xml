@@ -79,6 +79,7 @@
         tools:listitem="@layout/tracks_view"
         app:layout_constraintVertical_chainStyle="packed"/>
 
+
     <Button
         android:id="@+id/buttonClearHistory"
         style="@style/SmallButton"
