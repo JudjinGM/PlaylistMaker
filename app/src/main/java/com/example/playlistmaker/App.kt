@@ -5,9 +5,10 @@ import android.content.Context
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.playlistmaker.data.local.database.SharedPreferencesDatabase
-import com.example.playlistmaker.data.repositorie.SharedPreferencesRepository
+import com.example.playlistmaker.data.repositorie.BooleanRepository
+import com.example.playlistmaker.data.repositorie.SettingsRepository
 
-const val SETTING_PREFS = "settings_preferences"
+const val PLAYLIST_PREFS = "playlist_maker_prefs"
 const val APP_THEME_STATUS = "dark_theme_status"
 
 
@@ -18,9 +19,9 @@ class App : Application() {
         super.onCreate()
 
         sharedPreferencesDatabase = SharedPreferencesDatabase.getInstance(applicationContext)
-        sharedPreferencesRepository = SharedPreferencesRepository(sharedPreferencesDatabase)
+        settingsRepository = SettingsRepository(sharedPreferencesDatabase)
 
-        appTheme = sharedPreferencesRepository.loadBoolean(APP_THEME_STATUS, isDarkThemeEnabled(this))
+        appTheme = settingsRepository.loadBoolean(APP_THEME_STATUS, isDarkThemeEnabled(this))
 
         switchTheme(appTheme)
     }
@@ -38,7 +39,7 @@ class App : Application() {
 
     companion object {
         lateinit var sharedPreferencesDatabase: SharedPreferencesDatabase
-        lateinit var sharedPreferencesRepository: SharedPreferencesRepository
+        lateinit var settingsRepository: BooleanRepository
         fun isDarkThemeEnabled(context: Context): Boolean {
             val result =
                 when (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {

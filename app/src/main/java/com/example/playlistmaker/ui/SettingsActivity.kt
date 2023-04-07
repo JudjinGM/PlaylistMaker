@@ -71,7 +71,7 @@ class SettingsActivity : AppCompatActivity() {
         val themeSwitcher = findViewById<SwitchCompat>(R.id.switch_to_dark_theme)
 
         themeSwitcher.isChecked =
-            App.sharedPreferencesRepository.loadBoolean(
+            App.settingsRepository.loadBoolean(
                 APP_THEME_STATUS,
                 App.isDarkThemeEnabled(this)
             )
@@ -79,9 +79,9 @@ class SettingsActivity : AppCompatActivity() {
         themeSwitcher.setOnCheckedChangeListener { switcher, isChecked ->
             (applicationContext as App).switchTheme(isChecked)
             if (isChecked) {
-                App.sharedPreferencesRepository.saveBoolean(APP_THEME_STATUS, true)
+                App.settingsRepository.saveBoolean(APP_THEME_STATUS, true)
             } else {
-                App.sharedPreferencesRepository.saveBoolean(APP_THEME_STATUS, false)
+                App.settingsRepository.saveBoolean(APP_THEME_STATUS, false)
             }
         }
     }

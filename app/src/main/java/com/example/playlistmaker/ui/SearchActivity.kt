@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.data.local.database.TracksDatabase
 import com.example.playlistmaker.data.model.*
-import com.example.playlistmaker.data.repositorie.SearchRepository
+import com.example.playlistmaker.data.repositorie.TracksRepository
 import com.example.playlistmaker.network.RetrofitInit
 import com.example.playlistmaker.ui.adapter.TracksAdapter
 
@@ -35,14 +35,13 @@ class SearchActivity : AppCompatActivity() {
     private val itunesService = retrofit.getService()
 
     private val tracksDatabase = TracksDatabase.getInstance()
-    private val searchRepository = SearchRepository(itunesService, tracksDatabase)
+    private val tracksRepository = TracksRepository(itunesService, tracksDatabase)
 
-    private val trackAdapter = TracksAdapter(tracksDatabase.tracks)
+    private val trackAdapter = TracksAdapter(tracksDatabase.tracksSearch)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-
 
         val backImageView = findViewById<ImageView>(R.id.iconBackSearch)
         backImageView.setOnClickListener {
@@ -81,10 +80,10 @@ class SearchActivity : AppCompatActivity() {
 
         inputSearchField.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                searchRepository.search(inputSearchText, (object : CallbackUpdate {
+                tracksRepository.search(inputSearchText, (object : CallbackUpdate {
                     override fun update(oldList: MutableList<Track>) {
                         updateAdapterDiffUtil(
-                            oldList, searchRepository.getTracks(), trackAdapter
+                            oldList, tracksRepository.loadAllData(), trackAdapter
                         )
                     }
                 }), (object : CallbackShow {
@@ -100,10 +99,10 @@ class SearchActivity : AppCompatActivity() {
 
         refreshButton.setOnClickListener {
 
-            searchRepository.search(inputSearchText, (object : CallbackUpdate {
+            tracksRepository.search(inputSearchText, (object : CallbackUpdate {
 
                 override fun update(oldList: MutableList<Track>) {
-                    updateAdapterDiffUtil(oldList, searchRepository.getTracks(), trackAdapter)
+                    updateAdapterDiffUtil(oldList, tracksRepository.loadAllData(), trackAdapter)
                 }
 
             }), (object : CallbackShow {
@@ -165,8 +164,8 @@ class SearchActivity : AppCompatActivity() {
 
     private fun clearTrackList() {
         val updatedTrack = emptyList<Track>()
-        searchRepository.clearTracks()
-        updateAdapterDiffUtil(oldList = searchRepository.getTracks(), newList = updatedTrack, trackAdapter)
+        tracksRepository.clearDatabase()
+        updateAdapterDiffUtil(oldList = tracksRepository.loadAllData(), newList = updatedTrack, trackAdapter)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
