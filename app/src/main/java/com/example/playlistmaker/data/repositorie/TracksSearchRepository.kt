@@ -1,6 +1,6 @@
 package com.example.playlistmaker.data.repositorie
 
-import com.example.playlistmaker.data.local.database.TracksDatabase
+import com.example.playlistmaker.data.local.database.TracksStorage
 import com.example.playlistmaker.data.model.*
 import com.example.playlistmaker.network.ItunesApi
 import retrofit2.Call
@@ -11,7 +11,7 @@ import java.util.*
 
 class TracksSearchRepository(
     private val itunesService: ItunesApi,
-    private val database: TracksDatabase,
+    private val database: TracksStorage,
 ) : DataRepository<Track, Long> {
 
     fun search(query: String, callbackUpdate: CallbackUpdate, callbackShow: CallbackShow) {
@@ -64,7 +64,7 @@ class TracksSearchRepository(
         const val RESPONSE_SUCCESS = 200
     }
 
-    override fun saveAllData(dataList: MutableList<Track>) {
+     fun saveAllData(dataList: MutableList<Track>) {
         database.tracksSearch.addAll(dataList)
     }
 

@@ -6,22 +6,23 @@ import android.text.Editable
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.App
 import com.example.playlistmaker.R
-import com.example.playlistmaker.data.local.database.TracksDatabase
-import com.example.playlistmaker.data.model.*
-import com.example.playlistmaker.data.repositorie.TrackHistoryRepository
+import com.example.playlistmaker.data.local.database.TracksStorage
+import com.example.playlistmaker.data.model.CallbackShow
+import com.example.playlistmaker.data.model.CallbackUpdate
+import com.example.playlistmaker.data.model.ResponseStatusCodes
+import com.example.playlistmaker.data.model.Track
+import com.example.playlistmaker.data.repositorie.TrackListenHistoryRepository
 import com.example.playlistmaker.data.repositorie.TracksSearchRepository
 import com.example.playlistmaker.network.RetrofitInit
-import com.example.playlistmaker.ui.adapter.TracksSearchAdapter
+import com.example.playlistmaker.ui.adapter.TracksAdapter
 
 class SearchActivity : AppCompatActivity() {
 
@@ -35,13 +36,13 @@ class SearchActivity : AppCompatActivity() {
     private var retrofit = RetrofitInit()
     private val itunesService = retrofit.getService()
 
-    private val tracksSearchDatabase = TracksDatabase.getInstance()
+    private val tracksSearchDatabase = TracksStorage.getInstance()
     private val tracksSearchRepository = TracksSearchRepository(itunesService, tracksSearchDatabase)
-    private val trackHistoryRepository = TrackHistoryRepository(tracksSearchDatabase)
+    private val trackListenHistoryRepository =
+        TrackListenHistoryRepository(App.sharedPreferencesDatabase)
 
-
-    private val trackSearchAdapter = TracksSearchAdapter(tracksSearchDatabase.tracksSearch)
-    private val trackHistoryAdapter = TracksSearchAdapter(tracksSearchDatabase.tracksSearch)
+    private val trackSearchAdapter = TracksAdapter(tracksSearchDatabase.tracksSearch)
+    private val trackListenHistoryAdapter = TracksAdapter(tracksSearchDatabase.tracksSearch)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,15 +80,6 @@ class SearchActivity : AppCompatActivity() {
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         tracksSearchRecyclerView.adapter = trackSearchAdapter
 
-        val trackHistoryRecyclerView = findViewById<RecyclerView>(R.id.tracksRecyclerView)
-        trackHistoryRecyclerView.layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        trackHistoryRecyclerView.adapter = trackHistoryAdapter
-
-
-
-
-
         placeholderImage = findViewById(R.id.placeholderSearch)
         errorTextTextView = findViewById(R.id.errorTextTextView)
         refreshButton = findViewById(R.id.refreshButton)
@@ -116,7 +108,9 @@ class SearchActivity : AppCompatActivity() {
             tracksSearchRepository.search(inputSearchText, (object : CallbackUpdate {
 
                 override fun update(oldList: MutableList<Track>) {
-                    updateAdapterDiffUtil(oldList, tracksSearchRepository.loadAllData(), trackSearchAdapter)
+                    updateAdapterDiffUtil(
+                        oldList, tracksSearchRepository.loadAllData(), trackSearchAdapter
+                    )
                 }
 
             }), (object : CallbackShow {
@@ -125,7 +119,17 @@ class SearchActivity : AppCompatActivity() {
                 }
             }))
         }
+
+        trackSearchAdapter.onTrackClicked = { track ->
+            //trackListenHistoryRepository.saveData(track)
+            Toast.makeText(
+                this,
+                "track ${track.trackName} clicked, ${trackListenHistoryRepository.getSize()}",
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
+
 
     private fun showMessage(statusCode: ResponseStatusCodes) {
         when (statusCode) {
@@ -154,7 +158,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun updateAdapterDiffUtil(
-        oldList: List<Track>, newList: List<Track>, tracksSearchAdapter: TracksSearchAdapter
+        oldList: List<Track>, newList: List<Track>, tracksAdapter: TracksAdapter
     ) {
         val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
             override fun getOldListSize(): Int {
@@ -173,13 +177,17 @@ class SearchActivity : AppCompatActivity() {
                 return oldList[oldItemPosition] == newList[newItemPosition]
             }
         })
-        diffResult.dispatchUpdatesTo(tracksSearchAdapter)
+        diffResult.dispatchUpdatesTo(tracksAdapter)
     }
 
     private fun clearTrackList() {
         val updatedTrack = emptyList<Track>()
         tracksSearchRepository.clearDatabase()
-        updateAdapterDiffUtil(oldList = tracksSearchRepository.loadAllData(), newList = updatedTrack, trackSearchAdapter)
+        updateAdapterDiffUtil(
+            oldList = tracksSearchRepository.loadAllData(),
+            newList = updatedTrack,
+            trackSearchAdapter
+        )
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

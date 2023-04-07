@@ -2,16 +2,15 @@ package com.example.playlistmaker.data.local.database
 
 import com.example.playlistmaker.data.model.Track
 
-class TracksDatabase private constructor(
+class TracksStorage private constructor(
     val tracksSearch: MutableList<Track>,
-    val trackHistory: MutableList<Track>
 ) {
 
     companion object {
-        private lateinit var instance: TracksDatabase
-        fun getInstance(): TracksDatabase {
+        private lateinit var instance: TracksStorage
+        fun getInstance(): TracksStorage {
             if (!::instance.isInitialized) {
-                instance = TracksDatabase(mutableListOf(), mutableListOf())
+                instance = TracksStorage(mutableListOf())
             }
             return instance
         }

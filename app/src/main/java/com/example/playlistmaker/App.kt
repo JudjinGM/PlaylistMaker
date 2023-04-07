@@ -9,7 +9,8 @@ import com.example.playlistmaker.data.repositorie.BooleanRepository
 import com.example.playlistmaker.data.repositorie.SettingsRepository
 
 const val PLAYLIST_PREFS = "playlist_maker_prefs"
-const val APP_THEME_STATUS = "dark_theme_status"
+const val APP_THEME_STATUS = "app_theme_status"
+const val TRACKS_LISTEN_HISTORY = "tracks_listen_history"
 
 
 class App : Application() {

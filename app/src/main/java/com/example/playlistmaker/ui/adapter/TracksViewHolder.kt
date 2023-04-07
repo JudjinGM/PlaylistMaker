@@ -10,14 +10,16 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.data.model.Track
 
-class TracksViewHolder(parentView: ViewGroup) : RecyclerView.ViewHolder(
+class TracksViewHolder(parentView: ViewGroup, private val onTrackClicked: ((Track) -> Unit)?) : RecyclerView.ViewHolder(
     LayoutInflater.from(parentView.context).inflate(R.layout.tracks_view, parentView, false)
 
 ) {
+
     private val albumCover: ImageView = itemView.findViewById(R.id.albumCoverImageView)
     private val trackName: TextView = itemView.findViewById(R.id.songNameTextView)
     private val artistName: TextView = itemView.findViewById(R.id.artistNameTextView)
     private val songTime: TextView = itemView.findViewById(R.id.songTimeStampTextView)
+
 
 
     fun bind(item: Track) {
@@ -28,5 +30,10 @@ class TracksViewHolder(parentView: ViewGroup) : RecyclerView.ViewHolder(
         trackName.text = item.trackName
         artistName.text = item.artistName
         songTime.text = item.trackTimeMillis
+
+        itemView.setOnClickListener{
+            onTrackClicked?.invoke(item)
+        }
+
     }
 }
