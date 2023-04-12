@@ -8,9 +8,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
-import com.example.playlistmaker.APP_THEME_STATUS
 import com.example.playlistmaker.App
 import com.example.playlistmaker.R
+import com.example.playlistmaker.data.local.database.LocalDatabase.Companion.APP_THEME_STATUS
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -71,7 +71,7 @@ class SettingsActivity : AppCompatActivity() {
         val themeSwitcher = findViewById<SwitchCompat>(R.id.switch_to_dark_theme)
 
         themeSwitcher.isChecked =
-            App.settingsRepository.loadBoolean(
+            App.settingsRepository.loadBooleanSetting(
                 APP_THEME_STATUS,
                 App.isDarkThemeEnabled(this)
             )
@@ -79,9 +79,9 @@ class SettingsActivity : AppCompatActivity() {
         themeSwitcher.setOnCheckedChangeListener { switcher, isChecked ->
             (applicationContext as App).switchTheme(isChecked)
             if (isChecked) {
-                App.settingsRepository.saveBoolean(APP_THEME_STATUS, true)
+                App.settingsRepository.saveBooleanSetting(APP_THEME_STATUS, true)
             } else {
-                App.settingsRepository.saveBoolean(APP_THEME_STATUS, false)
+                App.settingsRepository.saveBooleanSetting(APP_THEME_STATUS, false)
             }
         }
     }

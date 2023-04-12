@@ -2,12 +2,10 @@ package com.example.playlistmaker.data.local.database
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
-import com.example.playlistmaker.PLAYLIST_PREFS
-import com.example.playlistmaker.TRACKS_LISTEN_HISTORY
 import com.example.playlistmaker.data.model.Track
 import com.google.gson.Gson
 
-class SharedPreferencesDatabase private constructor(context: Context) {
+class LocalDatabase private constructor(context: Context) {
 
     private val sharedPreferences = context.getSharedPreferences(PLAYLIST_PREFS, MODE_PRIVATE)
 
@@ -17,18 +15,6 @@ class SharedPreferencesDatabase private constructor(context: Context) {
 
     fun loadBoolean(key: String, default: Boolean): Boolean {
         return sharedPreferences.getBoolean(key, default)
-    }
-
-    fun saveString(key: String, value: String) {
-        sharedPreferences.edit().putString(key, value).apply()
-    }
-
-    fun loadString(key: String, default: String): String? {
-        return sharedPreferences.getString(key, default)
-    }
-
-    fun remove(key: String) {
-        sharedPreferences.edit().remove(key).apply()
     }
 
     fun loadListenHistoryTracks(): Array<Track> {
@@ -45,12 +31,16 @@ class SharedPreferencesDatabase private constructor(context: Context) {
 
     companion object {
 
-        private lateinit var instance: SharedPreferencesDatabase
+        private lateinit var instance: LocalDatabase
 
-        fun getInstance(context: Context): SharedPreferencesDatabase {
+        fun getInstance(context: Context): LocalDatabase {
             if (!::instance.isInitialized)
-                instance = SharedPreferencesDatabase(context)
+                instance = LocalDatabase(context)
             return instance
         }
+
+        const val PLAYLIST_PREFS = "playlist_maker_prefs"
+        const val APP_THEME_STATUS = "app_theme_status"
+        const val TRACKS_LISTEN_HISTORY = "tracks_listen_history"
     }
 }

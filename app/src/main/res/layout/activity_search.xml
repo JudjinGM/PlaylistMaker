@@ -60,8 +60,25 @@
             android:layout_marginEnd="@dimen/margin_end_for_clear_icon"
             android:contentDescription="@string/search"
             android:src="@drawable/x_clear"
-            app:tint="?attr/colorSecondaryVariant" />
+            app:tint="?attr/colorSecondaryVariant"
+            android:visibility="gone"/>
     </FrameLayout>
+
+    <TextView
+        android:id="@+id/headerSearchHistoryTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/header_search_history_top_margin"
+        android:layout_marginBottom="@dimen/header_search_history_bot_margin"
+        android:text="@string/recent_searches"
+        android:textAppearance="@style/PlaceholderText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/frameLayout"
+        app:layout_constraintBottom_toTopOf="@id/tracksRecyclerView"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintVertical_chainStyle="packed"
+        android:visibility="gone"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tracksRecyclerView"
@@ -71,14 +88,12 @@
         android:layout_marginBottom="@dimen/margin_bottom_for_content"
         android:orientation="vertical"
         app:layout_constrainedHeight="true"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/frameLayout"
-        app:layout_constraintVertical_bias="0"
         app:layout_constraintBottom_toTopOf="@id/buttonClearHistory"
-        tools:itemCount="12"
-        tools:listitem="@layout/tracks_view"
-        app:layout_constraintVertical_chainStyle="packed"/>
-
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/headerSearchHistoryTextView"
+        app:layout_constraintVertical_bias="0"
+        tools:itemCount="3"
+        tools:listitem="@layout/tracks_view" />
 
     <Button
         android:id="@+id/buttonClearHistory"
@@ -91,10 +106,10 @@
         android:visibility="gone"
         app:cornerRadius="@dimen/refresh_button_corner_radius"
         app:layout_constrainedHeight="true"
-        app:layout_constraintTop_toBottomOf="@id/tracksRecyclerView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tracksRecyclerView"
         app:layout_constraintVertical_bias="0" />
 
     <ImageView

@@ -20,8 +20,6 @@ class TracksViewHolder(parentView: ViewGroup, private val onTrackClicked: ((Trac
     private val artistName: TextView = itemView.findViewById(R.id.artistNameTextView)
     private val songTime: TextView = itemView.findViewById(R.id.songTimeStampTextView)
 
-
-
     fun bind(item: Track) {
         Glide.with(itemView).load(item.artworkUrl100).placeholder(R.drawable.no_album)
             .centerInside()
@@ -34,6 +32,5 @@ class TracksViewHolder(parentView: ViewGroup, private val onTrackClicked: ((Trac
         itemView.setOnClickListener{
             onTrackClicked?.invoke(item)
         }
-
     }
 }

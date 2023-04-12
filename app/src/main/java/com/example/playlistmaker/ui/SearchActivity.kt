@@ -2,27 +2,28 @@ package com.example.playlistmaker.ui
 
 import android.content.Context
 import android.os.Bundle
-import android.text.Editable
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.App
 import com.example.playlistmaker.R
-import com.example.playlistmaker.data.local.database.TracksStorage
+import com.example.playlistmaker.data.local.database.TracksSearchStorage
 import com.example.playlistmaker.data.model.CallbackShow
 import com.example.playlistmaker.data.model.CallbackUpdate
-import com.example.playlistmaker.data.model.ResponseStatusCodes
+import com.example.playlistmaker.data.model.PlaceholderStatus
 import com.example.playlistmaker.data.model.Track
-import com.example.playlistmaker.data.repositorie.TrackListenHistoryRepository
-import com.example.playlistmaker.data.repositorie.TracksSearchRepository
-import com.example.playlistmaker.network.RetrofitInit
+import com.example.playlistmaker.data.repositorie.tracksRepository.SearchRepository
+import com.example.playlistmaker.data.local.database.TrackListenHistoryLocalDataSource
+import com.example.playlistmaker.data.local.database.TracksSearchLocalDataSource
+import com.example.playlistmaker.data.local.database.TracksSearchRemoteDataSource
+import com.example.playlistmaker.network.RetrofitFactory
 import com.example.playlistmaker.ui.adapter.TracksAdapter
+
 
 class SearchActivity : AppCompatActivity() {
 
@@ -30,164 +31,157 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var placeholderImage: ImageView
     private lateinit var errorTextTextView: TextView
     private lateinit var refreshButton: Button
+    private lateinit var headerSearchHistoryTextView: TextView
+    private lateinit var buttonClearHistory: Button
+    private lateinit var clearImageView: ImageView
+    private lateinit var tracksRecyclerView: RecyclerView
+    private lateinit var backImageView: ImageView
 
     private var inputSearchText: String = DEFAULT_TEXT
 
-    private var retrofit = RetrofitInit()
+    private var retrofit = RetrofitFactory()
     private val itunesService = retrofit.getService()
 
-    private val tracksSearchDatabase = TracksStorage.getInstance()
-    private val tracksSearchRepository = TracksSearchRepository(itunesService, tracksSearchDatabase)
-    private val trackListenHistoryRepository =
-        TrackListenHistoryRepository(App.sharedPreferencesDatabase)
+    private val tracksSearchStorage = TracksSearchStorage
 
-    private val trackSearchAdapter = TracksAdapter(tracksSearchDatabase.tracksSearch)
-    private val trackListenHistoryAdapter = TracksAdapter(tracksSearchDatabase.tracksSearch)
+    private val tracksSearchRemote = TracksSearchRemoteDataSource(itunesService)
+    private val tracksSearchLocal = TracksSearchLocalDataSource(tracksSearchStorage)
+    private val trackListenHistoryLocal =
+        TrackListenHistoryLocalDataSource(App.localDatabase)
 
+    private val searchRepository =
+        SearchRepository(tracksSearchRemote, tracksSearchLocal, trackListenHistoryLocal)
+
+    private val tracksAdapter = TracksAdapter(searchRepository.getSearchTracks())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        val backImageView = findViewById<ImageView>(R.id.iconBackSearch)
+        viewsInit()
+        setOnClicksAndAction()
+
+        tracksRecyclerView.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        tracksRecyclerView.adapter = tracksAdapter
+
+        val textWatcher = object : TextWatcherJustOnTextChanged {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                clearImageView.isVisible = checkImageViewVisibility(s)
+                inputSearchText = inputSearchField.text.toString()
+                if (inputSearchField.hasFocus() && s?.isEmpty() == true && !searchRepository.isListenHistoryIsEmpty()) {
+                    tracksAdapter.updateAdapter(searchRepository.getListOfListenHistoryTracks())
+                    showPlaceholder(PlaceholderStatus.PLACEHOLDER_HISTORY)
+                } else {
+                    tracksAdapter.updateAdapter(searchRepository.getSearchTracks())
+                    showPlaceholder(PlaceholderStatus.NO_PLACEHOLDER)
+                }
+            }
+        }
+        inputSearchField.addTextChangedListener(textWatcher)
+
+        inputSearchField.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus && inputSearchField.text.isEmpty() && !searchRepository.isListenHistoryIsEmpty()) {
+                tracksAdapter.updateAdapter(searchRepository.getListOfListenHistoryTracks())
+                showPlaceholder(PlaceholderStatus.PLACEHOLDER_HISTORY)
+                Toast.makeText(
+                    this,
+                    "setOnFocusChangeListener",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                tracksAdapter.updateAdapter(searchRepository.getSearchTracks())
+                showPlaceholder(PlaceholderStatus.NO_PLACEHOLDER)
+            }
+        }
+        inputSearchField.requestFocus()
+    }
+
+    private fun viewsInit() {
+        backImageView = findViewById(R.id.iconBackSearch)
+        inputSearchField = findViewById(R.id.searchEditText)
+        clearImageView = findViewById(R.id.searchClearIcon)
+        tracksRecyclerView = findViewById(R.id.tracksRecyclerView)
+        placeholderImage = findViewById(R.id.placeholderSearch)
+        errorTextTextView = findViewById(R.id.errorTextTextView)
+        refreshButton = findViewById(R.id.refreshButton)
+        headerSearchHistoryTextView = findViewById(R.id.headerSearchHistoryTextView)
+        buttonClearHistory = findViewById(R.id.buttonClearHistory)
+    }
+
+    private fun setOnClicksAndAction() {
+
         backImageView.setOnClickListener {
             finish()
         }
 
-        inputSearchField = findViewById(R.id.searchEditText)
-
-        val clearImageView = findViewById<ImageView>(R.id.searchClearIcon)
         clearImageView.setOnClickListener {
-            inputSearchField.setText(DEFAULT_TEXT)
             clearTrackList()
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(inputSearchField.windowToken, 0)
+            inputSearchField.setText(DEFAULT_TEXT)
         }
 
-        val textWatcher = object : TextWatcherJustAfterTextChanged {
-
-            override fun afterTextChanged(s: Editable?) {
-                clearImageView.isVisible = checkImageViewVisibility(s)
-                inputSearchText = inputSearchField.text.toString()
-            }
+        buttonClearHistory.setOnClickListener {
+            showPlaceholder(PlaceholderStatus.NO_PLACEHOLDER)
+            clearTrackSearchHistory()
         }
 
-        inputSearchField.addTextChangedListener(textWatcher)
-
-        val tracksSearchRecyclerView = findViewById<RecyclerView>(R.id.tracksRecyclerView)
-        tracksSearchRecyclerView.layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        tracksSearchRecyclerView.adapter = trackSearchAdapter
-
-        placeholderImage = findViewById(R.id.placeholderSearch)
-        errorTextTextView = findViewById(R.id.errorTextTextView)
-        refreshButton = findViewById(R.id.refreshButton)
+        tracksAdapter.onTrackClicked = { track ->
+            searchRepository.addTrackToListenHistory(track)
+            Toast.makeText(
+                this,
+                "${track.trackName} ${getText(R.string.added_to_recent_searches)}",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
 
         inputSearchField.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                tracksSearchRepository.search(inputSearchText, (object : CallbackUpdate {
-                    override fun update(oldList: MutableList<Track>) {
-                        updateAdapterDiffUtil(
-                            oldList, tracksSearchRepository.loadAllData(), trackSearchAdapter
-                        )
-                    }
-                }), (object : CallbackShow {
-                    override fun show(responseStatusCodes: ResponseStatusCodes) {
-                        showMessage(responseStatusCodes)
-                    }
-                })
+                searchRepository.searchTracks(
+                    inputSearchText,
+                    callbackUpdate = (object : CallbackUpdate {
+                        override fun update(newTracks: List<Track>) {
+                            tracksAdapter.updateAdapter(newTracks)
+                        }
+                    }),
+                    callbackShow = (object : CallbackShow {
+                        override fun show(status: PlaceholderStatus) {
+                            showPlaceholder(status)
+                        }
+                    })
                 )
                 true
             }
             false
         }
 
-        refreshButton.setOnClickListener {
-
-            tracksSearchRepository.search(inputSearchText, (object : CallbackUpdate {
-
-                override fun update(oldList: MutableList<Track>) {
-                    updateAdapterDiffUtil(
-                        oldList, tracksSearchRepository.loadAllData(), trackSearchAdapter
-                    )
-                }
-
-            }), (object : CallbackShow {
-                override fun show(responseStatusCodes: ResponseStatusCodes) {
-                    showMessage(responseStatusCodes)
-                }
-            }))
+        refreshButton.setOnClickListener        {
+            searchRepository.searchTracks(
+                inputSearchText,
+                callbackUpdate = (object : CallbackUpdate {
+                    override fun update(newTracks: List<Track>) {
+                        tracksAdapter.updateAdapter(newTracks)
+                    }
+                }),
+                callbackShow = (object : CallbackShow {
+                    override fun show(status: PlaceholderStatus) {
+                        showPlaceholder(status)
+                    }
+                })
+            )
         }
-
-        trackSearchAdapter.onTrackClicked = { track ->
-            //trackListenHistoryRepository.saveData(track)
-            Toast.makeText(
-                this,
-                "track ${track.trackName} clicked, ${trackListenHistoryRepository.getSize()}",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-    }
-
-
-    private fun showMessage(statusCode: ResponseStatusCodes) {
-        when (statusCode) {
-            ResponseStatusCodes.OK -> {
-                placeholderImage.visibility = View.GONE
-                errorTextTextView.visibility = View.GONE
-                refreshButton.visibility = View.GONE
-            }
-            ResponseStatusCodes.NOTHING_FOUND -> {
-                clearTrackList()
-                refreshButton.visibility = View.GONE
-                placeholderImage.visibility = View.VISIBLE
-                placeholderImage.setImageResource(R.drawable.error_search)
-                errorTextTextView.visibility = View.VISIBLE
-                errorTextTextView.text = getText(R.string.error_search)
-            }
-            ResponseStatusCodes.NO_CONNECTION -> {
-                clearTrackList()
-                placeholderImage.visibility = View.VISIBLE
-                placeholderImage.setImageResource(R.drawable.error_internet)
-                errorTextTextView.visibility = View.VISIBLE
-                errorTextTextView.text = getText(R.string.error_internet)
-                refreshButton.visibility = View.VISIBLE
-            }
-        }
-    }
-
-    private fun updateAdapterDiffUtil(
-        oldList: List<Track>, newList: List<Track>, tracksAdapter: TracksAdapter
-    ) {
-        val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
-            override fun getOldListSize(): Int {
-                return oldList.size
-            }
-
-            override fun getNewListSize(): Int {
-                return newList.size
-            }
-
-            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return oldList[oldItemPosition].trackId == newList[newItemPosition].trackId
-            }
-
-            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return oldList[oldItemPosition] == newList[newItemPosition]
-            }
-        })
-        diffResult.dispatchUpdatesTo(tracksAdapter)
     }
 
     private fun clearTrackList() {
-        val updatedTrack = emptyList<Track>()
-        tracksSearchRepository.clearDatabase()
-        updateAdapterDiffUtil(
-            oldList = tracksSearchRepository.loadAllData(),
-            newList = updatedTrack,
-            trackSearchAdapter
-        )
+        searchRepository.clearSearchList()
+        tracksAdapter.updateAdapter(searchRepository.getSearchTracks())
+    }
+
+    private fun clearTrackSearchHistory() {
+        searchRepository.clearListenHistory()
+        tracksAdapter.updateAdapter(searchRepository.getListOfListenHistoryTracks())
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -203,6 +197,45 @@ class SearchActivity : AppCompatActivity() {
 
     private fun checkImageViewVisibility(s: CharSequence?): Boolean {
         return !s.isNullOrEmpty()
+    }
+
+    private fun showPlaceholder(status: PlaceholderStatus) {
+        when (status) {
+            PlaceholderStatus.NO_PLACEHOLDER -> {
+                placeholderImage.visibility = View.GONE
+                errorTextTextView.visibility = View.GONE
+                refreshButton.visibility = View.GONE
+                headerSearchHistoryTextView.visibility = View.GONE
+                buttonClearHistory.visibility = View.GONE
+            }
+            PlaceholderStatus.PLACEHOLDER_NOTHING_FOUND -> {
+                clearTrackList()
+                refreshButton.visibility = View.GONE
+                placeholderImage.visibility = View.VISIBLE
+                placeholderImage.setImageResource(R.drawable.error_search)
+                errorTextTextView.visibility = View.VISIBLE
+                errorTextTextView.text = getText(R.string.error_search)
+                headerSearchHistoryTextView.visibility = View.GONE
+                buttonClearHistory.visibility = View.GONE
+            }
+            PlaceholderStatus.NO_CONNECTION -> {
+                clearTrackList()
+                placeholderImage.visibility = View.VISIBLE
+                placeholderImage.setImageResource(R.drawable.error_internet)
+                errorTextTextView.visibility = View.VISIBLE
+                errorTextTextView.text = getText(R.string.error_internet)
+                refreshButton.visibility = View.VISIBLE
+                headerSearchHistoryTextView.visibility = View.GONE
+                buttonClearHistory.visibility = View.GONE
+            }
+            PlaceholderStatus.PLACEHOLDER_HISTORY -> {
+                refreshButton.visibility = View.GONE
+                headerSearchHistoryTextView.visibility = View.GONE
+                buttonClearHistory.visibility = View.GONE
+                headerSearchHistoryTextView.visibility = View.VISIBLE
+                buttonClearHistory.visibility = View.VISIBLE
+            }
+        }
     }
 
     private companion object {
