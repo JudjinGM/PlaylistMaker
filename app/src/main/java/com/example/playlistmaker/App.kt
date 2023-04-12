@@ -4,8 +4,8 @@ import android.app.Application
 import android.content.Context
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.data.local.database.LocalDatabase
-import com.example.playlistmaker.data.local.database.LocalDatabase.Companion.APP_THEME_STATUS
+import com.example.playlistmaker.data.local.database.LocalDataSource
+import com.example.playlistmaker.data.local.database.LocalDataSource.Companion.APP_THEME_STATUS
 import com.example.playlistmaker.data.repositorie.settingRepository.SettingsRepository
 
 
@@ -15,8 +15,8 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        localDatabase = LocalDatabase.getInstance(applicationContext)
-        settingsRepository = SettingsRepository(localDatabase)
+        localDataSource = LocalDataSource.getInstance(applicationContext)
+        settingsRepository = SettingsRepository(localDataSource)
 
         appTheme = settingsRepository.loadBooleanSetting(APP_THEME_STATUS, isDarkThemeEnabled(this))
 
@@ -35,7 +35,7 @@ class App : Application() {
     }
 
     companion object {
-        lateinit var localDatabase: LocalDatabase
+        lateinit var localDataSource: LocalDataSource
         lateinit var settingsRepository: SettingsRepository
         fun isDarkThemeEnabled(context: Context): Boolean {
             val result =

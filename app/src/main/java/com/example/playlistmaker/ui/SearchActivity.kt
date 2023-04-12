@@ -47,7 +47,7 @@ class SearchActivity : AppCompatActivity() {
     private val tracksSearchRemote = TracksSearchRemoteDataSource(itunesService)
     private val tracksSearchLocal = TracksSearchLocalDataSource(tracksSearchStorage)
     private val trackListenHistoryLocal =
-        TrackListenHistoryLocalDataSource(App.localDatabase)
+        TrackListenHistoryLocalDataSource(App.localDataSource)
 
     private val searchRepository =
         SearchRepository(tracksSearchRemote, tracksSearchLocal, trackListenHistoryLocal)
@@ -84,11 +84,6 @@ class SearchActivity : AppCompatActivity() {
             if (hasFocus && inputSearchField.text.isEmpty() && !searchRepository.isListenHistoryIsEmpty()) {
                 tracksAdapter.updateAdapter(searchRepository.getListOfListenHistoryTracks())
                 showPlaceholder(PlaceholderStatus.PLACEHOLDER_HISTORY)
-                Toast.makeText(
-                    this,
-                    "setOnFocusChangeListener",
-                    Toast.LENGTH_SHORT
-                ).show()
             } else {
                 tracksAdapter.updateAdapter(searchRepository.getSearchTracks())
                 showPlaceholder(PlaceholderStatus.NO_PLACEHOLDER)

@@ -5,7 +5,7 @@ import android.content.Context.MODE_PRIVATE
 import com.example.playlistmaker.data.model.Track
 import com.google.gson.Gson
 
-class LocalDatabase private constructor(context: Context) {
+class LocalDataSource private constructor(context: Context) {
 
     private val sharedPreferences = context.getSharedPreferences(PLAYLIST_PREFS, MODE_PRIVATE)
 
@@ -31,11 +31,10 @@ class LocalDatabase private constructor(context: Context) {
 
     companion object {
 
-        private lateinit var instance: LocalDatabase
-
-        fun getInstance(context: Context): LocalDatabase {
+        private lateinit var instance: LocalDataSource
+        fun getInstance(context: Context): LocalDataSource {
             if (!::instance.isInitialized)
-                instance = LocalDatabase(context)
+                instance = LocalDataSource(context)
             return instance
         }
 

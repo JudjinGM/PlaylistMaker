@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import com.example.playlistmaker.App
 import com.example.playlistmaker.R
-import com.example.playlistmaker.data.local.database.LocalDatabase.Companion.APP_THEME_STATUS
+import com.example.playlistmaker.data.local.database.LocalDataSource.Companion.APP_THEME_STATUS
 
 class SettingsActivity : AppCompatActivity() {
 

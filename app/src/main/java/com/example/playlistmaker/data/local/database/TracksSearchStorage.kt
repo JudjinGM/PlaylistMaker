@@ -5,7 +5,6 @@ import com.example.playlistmaker.data.model.Track
 object TracksSearchStorage {
     private var tracks: List<Track> = listOf()
 
-
     fun getAll(): List<Track>{
         return tracks
     }
