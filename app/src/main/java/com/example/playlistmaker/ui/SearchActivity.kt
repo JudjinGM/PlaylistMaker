@@ -12,15 +12,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.App
 import com.example.playlistmaker.R
+import com.example.playlistmaker.data.local.database.TrackListenHistoryLocalDataSource
+import com.example.playlistmaker.data.local.database.TracksSearchLocalDataSource
+import com.example.playlistmaker.data.local.database.TracksSearchRemoteDataSource
 import com.example.playlistmaker.data.local.database.TracksSearchStorage
 import com.example.playlistmaker.data.model.CallbackShow
 import com.example.playlistmaker.data.model.CallbackUpdate
 import com.example.playlistmaker.data.model.PlaceholderStatus
 import com.example.playlistmaker.data.model.Track
 import com.example.playlistmaker.data.repositorie.tracksRepository.SearchRepository
-import com.example.playlistmaker.data.local.database.TrackListenHistoryLocalDataSource
-import com.example.playlistmaker.data.local.database.TracksSearchLocalDataSource
-import com.example.playlistmaker.data.local.database.TracksSearchRemoteDataSource
 import com.example.playlistmaker.network.RetrofitFactory
 import com.example.playlistmaker.ui.adapter.TracksAdapter
 
@@ -68,10 +68,13 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearImageView.isVisible = checkImageViewVisibility(s)
                 inputSearchText = inputSearchField.text.toString()
+                if (inputSearchField.hasFocus() && s?.isEmpty() == true) {
+                    clearTrackList()
+                }
                 if (inputSearchField.hasFocus() && s?.isEmpty() == true && searchRepository.isListenHistoryIsNotEmpty()) {
                     tracksAdapter.updateAdapter(searchRepository.getListOfListenHistoryTracks())
                     showPlaceholder(PlaceholderStatus.PLACEHOLDER_HISTORY)
-                } else {
+                }   else {
                     tracksAdapter.updateAdapter(searchRepository.getSearchTracks())
                     showPlaceholder(PlaceholderStatus.NO_PLACEHOLDER)
                 }
@@ -151,7 +154,7 @@ class SearchActivity : AppCompatActivity() {
             false
         }
 
-        refreshButton.setOnClickListener        {
+        refreshButton.setOnClickListener {
             searchRepository.searchTracks(
                 inputSearchText,
                 callbackUpdate = (object : CallbackUpdate {
