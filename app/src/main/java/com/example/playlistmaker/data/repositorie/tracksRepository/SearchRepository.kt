@@ -22,7 +22,7 @@ class SearchRepository(
             override fun update(newTracks: List<Track>) {
                 tracksSearchLocalDataSource.clearDatabase()
                 tracksSearchLocalDataSource.saveAllTracks(newTracks)
-                callbackUpdate.update(newTracks)
+                callbackUpdate.update(tracksSearchLocalDataSource.loadAllTracks())
             }
         }), (object : CallbackShow {
             override fun show(status: PlaceholderStatus) {

@@ -24,7 +24,6 @@ import com.example.playlistmaker.data.local.database.TracksSearchRemoteDataSourc
 import com.example.playlistmaker.network.RetrofitFactory
 import com.example.playlistmaker.ui.adapter.TracksAdapter
 
-
 class SearchActivity : AppCompatActivity() {
 
     private lateinit var inputSearchField: EditText

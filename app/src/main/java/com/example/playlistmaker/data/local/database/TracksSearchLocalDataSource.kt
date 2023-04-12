@@ -7,7 +7,7 @@ class TracksSearchLocalDataSource(
 ) : DataSource {
 
     override fun loadAllTracks(): List<Track> {
-        return database.getAll()
+        return database.tracks
     }
 
     override fun saveAllTracks(listOfTracks: List<Track>) {
@@ -16,7 +16,7 @@ class TracksSearchLocalDataSource(
 
     override fun loadTrack(id: Long): Track? {
         var result: Track? = null
-        for (track in database.getAll()) {
+        for (track in database.tracks) {
             if (track.trackId == id) {
                 result = track
             }
@@ -25,7 +25,7 @@ class TracksSearchLocalDataSource(
     }
 
     override fun removeTrack(id: Long) {
-        for (track in database.getAll()) {
+        for (track in database.tracks) {
             if (track.trackId == id) {
                 database.remove(track)
             }
@@ -39,5 +39,4 @@ class TracksSearchLocalDataSource(
     override fun clearDatabase() {
         database.clearTrackStorage()
     }
-
 }
