@@ -69,7 +69,7 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearImageView.isVisible = checkImageViewVisibility(s)
                 inputSearchText = inputSearchField.text.toString()
-                if (inputSearchField.hasFocus() && s?.isEmpty() == true && !searchRepository.isListenHistoryIsEmpty()) {
+                if (inputSearchField.hasFocus() && s?.isEmpty() == true && searchRepository.isListenHistoryIsNotEmpty()) {
                     tracksAdapter.updateAdapter(searchRepository.getListOfListenHistoryTracks())
                     showPlaceholder(PlaceholderStatus.PLACEHOLDER_HISTORY)
                 } else {
@@ -81,7 +81,7 @@ class SearchActivity : AppCompatActivity() {
         inputSearchField.addTextChangedListener(textWatcher)
 
         inputSearchField.setOnFocusChangeListener { v, hasFocus ->
-            if (hasFocus && inputSearchField.text.isEmpty() && !searchRepository.isListenHistoryIsEmpty()) {
+            if (hasFocus && inputSearchField.text.isEmpty() && searchRepository.isListenHistoryIsNotEmpty()) {
                 tracksAdapter.updateAdapter(searchRepository.getListOfListenHistoryTracks())
                 showPlaceholder(PlaceholderStatus.PLACEHOLDER_HISTORY)
             } else {

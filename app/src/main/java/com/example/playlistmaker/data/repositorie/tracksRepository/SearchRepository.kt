@@ -52,8 +52,8 @@ class SearchRepository(
         trackListenHistoryLocalDataSource.clearDatabase()
     }
 
-    fun isListenHistoryIsEmpty(): Boolean {
-        return trackListenHistoryLocalDataSource.getSize() == 0
+    fun isListenHistoryIsNotEmpty(): Boolean {
+        return trackListenHistoryLocalDataSource.getSize() != 0
     }
 
 }
