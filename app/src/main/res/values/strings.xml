@@ -4,7 +4,7 @@
     <string name="library">Медиатека</string>
     <string name="settings">Настройки</string>
     <string name="dark_theme">Темная тема</string>
-    <string name="write_to_support" translatable="false">Написать в поддержку</string>
+    <string name="write_to_support">Написать в поддержку</string>
     <string name="term_of_use">Пользовательское соглашение</string>
     <string name="share">Поделиться приложением</string>
     <string name="share_link" translatable="false">"https://practicum.yandex.ru/android-developer/"</string>
@@ -16,5 +16,8 @@
     <string name="error_search">Ничего не нашлось</string>
     <string name="error_internet">Проблемы со связью\n\nЗагрузка не удалась. Проверьте\nподключение к интернету</string>
     <string name="refresh">Обновить</string>
+    <string name="clean_history">Очистить историю</string>
+    <string name="recent_searches">Вы искали</string>
+    <string name="added_to_recent_searches">добавлено в историю поиска</string>
 
 </resources>

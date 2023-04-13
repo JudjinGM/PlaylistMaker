@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui
 
 import android.content.Intent
 import android.net.Uri
@@ -7,6 +7,10 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SwitchCompat
+import com.example.playlistmaker.App
+import com.example.playlistmaker.R
+import com.example.playlistmaker.data.local.database.LocalDataSource.Companion.APP_THEME_STATUS
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -63,6 +67,23 @@ class SettingsActivity : AppCompatActivity() {
 
         agreementImageView.setOnClickListener(agreementClickListener)
         agreementTextView.setOnClickListener(agreementClickListener)
+
+        val themeSwitcher = findViewById<SwitchCompat>(R.id.switch_to_dark_theme)
+
+        themeSwitcher.isChecked =
+            App.settingsRepository.loadBooleanSetting(
+                APP_THEME_STATUS,
+                App.isDarkThemeEnabled(this)
+            )
+
+        themeSwitcher.setOnCheckedChangeListener { switcher, isChecked ->
+            (applicationContext as App).switchTheme(isChecked)
+            if (isChecked) {
+                App.settingsRepository.saveBooleanSetting(APP_THEME_STATUS, true)
+            } else {
+                App.settingsRepository.saveBooleanSetting(APP_THEME_STATUS, false)
+            }
+        }
     }
 
     private companion object {

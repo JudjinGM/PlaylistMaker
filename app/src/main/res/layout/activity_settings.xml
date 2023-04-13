@@ -12,8 +12,8 @@
         app:layout_constraintGuide_begin="@dimen/main_margin_for_content" />
 
     <ImageView
-        style="@style/ArrowBackImage"
         android:id="@+id/iconBack"
+        style="@style/ArrowBackImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/title_image_margin"
@@ -28,9 +28,9 @@
         android:layout_marginStart="@dimen/title_text_margin_start"
         android:layout_marginTop="@dimen/title_text_margin_top"
         android:text="@string/settings"
+        android:textAppearance="@style/TitleText"
         app:layout_constraintStart_toEndOf="@+id/iconBack"
-        app:layout_constraintTop_toTopOf="parent"
-        android:textAppearance="@style/TitleText"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/text_dark_theme"
@@ -38,10 +38,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dark_theme_text_margin_top"
         android:text="@string/dark_theme"
-        app:layout_constraintStart_toStartOf="@id/margin_start"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_settings"
         android:textAppearance="@style/RegularText"
-        />
+        app:layout_constraintStart_toStartOf="@id/margin_start"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_settings" />
 
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/switch_to_dark_theme"
