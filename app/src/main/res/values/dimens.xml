@@ -40,7 +40,7 @@
     <dimen name="placeholder_image_margin_top">110dp</dimen>
     <dimen name="error_text_margin_top">16dp</dimen>
     <dimen name="header_search_history_top_margin">50dp</dimen>
-    <dimen name="header_search_history_bot_margin">-4dp</dimen>
+    <dimen name="header_search_history_bottom_margin">-4dp</dimen>
     <dimen name="refresh_button_margin_top">24dp</dimen>
     <dimen name="refresh_button_corner_radius">54dp</dimen>
     <dimen name="album_cover_corner_radius">2dp</dimen>

@@ -7,7 +7,7 @@ import com.example.playlistmaker.data.model.Track
 
 class TracksAdapter(
     var tracks: List<Track>,
-    var onTrackClicked: ((Track) -> Unit)? = null
+    var onTrackClicked: ((Track) -> Unit)={ }
 ) : RecyclerView.Adapter<TracksViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TracksViewHolder {

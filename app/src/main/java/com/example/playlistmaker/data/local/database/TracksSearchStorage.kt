@@ -5,10 +5,8 @@ import com.example.playlistmaker.data.model.Track
 object TracksSearchStorage {
     private val tracksMutable = mutableListOf<Track>()
     val tracks: List<Track>
-        get()=
-        tracksMutable.toList()
-
-
+        get() = tracksMutable.toList()
+    
     fun saveAll(newTracks: List<Track>) {
         tracksMutable.clear()
         tracksMutable.addAll(ArrayList(newTracks))
@@ -19,7 +17,7 @@ object TracksSearchStorage {
     }
 
     fun remove(track: Track) {
-       tracksMutable.remove(track)
+        tracksMutable.remove(track)
     }
 
     fun add(track: Track) {

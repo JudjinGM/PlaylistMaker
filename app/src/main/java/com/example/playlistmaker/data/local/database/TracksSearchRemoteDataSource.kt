@@ -8,7 +8,7 @@ import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
 
-class TracksSearchRemoteDataSource (private val itunesService: ItunesApi,){
+class TracksSearchRemoteDataSource(private val itunesService: ItunesApi) {
 
     fun search(query: String, callbackUpdate: CallbackUpdate, callbackShow: CallbackShow) {
         itunesService.search(query).enqueue(object : Callback<TrackItunesResponse> {
@@ -43,9 +43,7 @@ class TracksSearchRemoteDataSource (private val itunesService: ItunesApi,){
                     trackId = track.trackId,
                     trackName = track.trackName,
                     artistName = track.artistName,
-                    trackTimeMillis = SimpleDateFormat(
-                        "mm:ss", Locale.getDefault()
-                    ).format(track.trackTimeMillis),
+                    trackTimeMillis = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis),
                     artworkUrl100 = track.artworkUrl100
                 )
             )

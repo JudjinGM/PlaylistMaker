@@ -10,7 +10,7 @@ import com.example.playlistmaker.data.repositorie.settingRepository.SettingsRepo
 
 
 class App : Application() {
-    var appTheme: Boolean = false
+    var isDarkTheme: Boolean = false
 
     override fun onCreate() {
         super.onCreate()
@@ -18,13 +18,13 @@ class App : Application() {
         localDataSource = LocalDataSource.getInstance(applicationContext)
         settingsRepository = SettingsRepository(localDataSource)
 
-        appTheme = settingsRepository.loadBooleanSetting(APP_THEME_STATUS, isDarkThemeEnabled(this))
+        isDarkTheme = settingsRepository.loadBooleanSetting(APP_THEME_STATUS, isDarkThemeEnabled(this))
 
-        switchTheme(appTheme)
+        switchTheme(isDarkTheme)
     }
 
     fun switchTheme(darkThemeEnabled: Boolean) {
-        appTheme = darkThemeEnabled
+        isDarkTheme = darkThemeEnabled
         AppCompatDelegate.setDefaultNightMode(
             if (darkThemeEnabled) {
                 AppCompatDelegate.MODE_NIGHT_YES

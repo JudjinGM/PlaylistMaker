@@ -69,7 +69,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/header_search_history_top_margin"
-        android:layout_marginBottom="@dimen/header_search_history_bot_margin"
+        android:layout_marginBottom="@dimen/header_search_history_bottom_margin"
         android:text="@string/recent_searches"
         android:textAppearance="@style/PlaceholderText"
         app:layout_constraintEnd_toEndOf="parent"

@@ -9,13 +9,9 @@ class LocalDataSource private constructor(context: Context) {
 
     private val sharedPreferences = context.getSharedPreferences(PLAYLIST_PREFS, MODE_PRIVATE)
 
-    fun saveBoolean(key: String, value: Boolean) {
-        sharedPreferences.edit().putBoolean(key, value).apply()
-    }
+    fun saveBoolean(key: String, value: Boolean) = sharedPreferences.edit().putBoolean(key, value).apply()
 
-    fun loadBoolean(key: String, default: Boolean): Boolean {
-        return sharedPreferences.getBoolean(key, default)
-    }
+    fun loadBoolean(key: String, default: Boolean): Boolean = sharedPreferences.getBoolean(key, default)
 
     fun loadListenHistoryTracks(): Array<Track> {
         val json = sharedPreferences.getString(TRACKS_LISTEN_HISTORY, null) ?: return emptyArray()
