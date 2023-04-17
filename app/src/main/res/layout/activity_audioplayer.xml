@@ -8,29 +8,29 @@
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidLineStart"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="@dimen/zero_dp"
         android:orientation="vertical"
         app:layout_constraintGuide_begin="@dimen/main_margin_for_content" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidLineEnd"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="@dimen/zero_dp"
         android:orientation="vertical"
         app:layout_constraintGuide_end="@dimen/main_margin_for_content" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidLineSecondStart"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="@dimen/zero_dp"
         android:orientation="vertical"
         app:layout_constraintGuide_begin="24dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidLineSecondEnd"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="@dimen/zero_dp"
         android:orientation="vertical"
         app:layout_constraintGuide_end="24dp" />
 
@@ -47,9 +47,9 @@
 
     <ImageView
         android:id="@+id/albumCoverPlayerImageView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="42dp"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="@dimen/zero_dp"
+        android:layout_marginTop="@dimen/top_margin_album_cover"
         android:contentDescription="@string/album_cover_image"
         android:scaleType="centerCrop"
         android:src="@drawable/album"
@@ -63,7 +63,7 @@
         android:id="@+id/songNamePlayerTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="@dimen/margin_top_for_content"
         android:ellipsize="end"
         android:maxLines="1"
         android:textAppearance="@style/TitleText"
@@ -78,7 +78,7 @@
         android:id="@+id/artistNamePlayerTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/margin_top_for_artist_name"
         android:ellipsize="end"
         android:maxLines="1"
         android:textAppearance="@style/RegularTextAnotherVariant"
@@ -102,11 +102,11 @@
         android:id="@+id/playImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="@dimen/margin_top_for_play_button"
         android:contentDescription="@string/play_button_image"
         android:src="@drawable/play_button"
-        app:layout_constraintStart_toEndOf="@id/libraryImageView"
         app:layout_constraintEnd_toStartOf="@id/likeImageView"
+        app:layout_constraintStart_toEndOf="@id/libraryImageView"
         app:layout_constraintTop_toBottomOf="@id/artistNamePlayerTextView" />
 
     <ImageView
@@ -123,7 +123,7 @@
         android:id="@+id/timeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="@dimen/margin_top_for_time"
         android:ellipsize="end"
         android:maxLines="1"
         android:text="@string/time_placeholder"
@@ -136,7 +136,7 @@
         android:id="@+id/durationTextTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="39dp"
+        android:layout_marginTop="@dimen/margin_top_for_text_between_play"
         android:ellipsize="end"
         android:maxLines="1"
         android:text="@string/duration"
@@ -162,7 +162,7 @@
         android:id="@+id/albumTextTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="17dp"
+        android:layout_marginTop="@dimen/margin_top_for_text"
         android:ellipsize="end"
         android:maxLines="1"
         android:text="@string/album"
@@ -188,7 +188,7 @@
         android:id="@+id/yearTextTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="17dp"
+        android:layout_marginTop="@dimen/margin_top_for_text"
         android:ellipsize="end"
         android:maxLines="1"
         android:text="@string/year"
@@ -214,7 +214,7 @@
         android:id="@+id/genreTextTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="17dp"
+        android:layout_marginTop="@dimen/margin_top_for_text"
         android:ellipsize="end"
         android:maxLines="1"
         android:text="@string/genre"
@@ -240,8 +240,8 @@
         android:id="@+id/countryTextTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="17dp"
-        android:layout_marginBottom="28dp"
+        android:layout_marginTop="@dimen/margin_top_for_text"
+        android:layout_marginBottom="@dimen/margin_bottom_for_text"
         android:ellipsize="end"
         android:maxLines="1"
         android:text="@string/country"
@@ -264,5 +264,4 @@
         app:layout_constraintStart_toEndOf="@id/countryTextTextView"
         app:layout_constraintTop_toTopOf="@id/countryTextTextView"
         tools:text="@string/country" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
