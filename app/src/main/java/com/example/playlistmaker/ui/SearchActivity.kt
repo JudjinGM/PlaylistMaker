@@ -235,7 +235,6 @@ class SearchActivity : AppCompatActivity() {
             }
         }
     }
-
      companion object {
         const val SAVED_TEXT = "SAVED_TEXT"
         const val DEFAULT_TEXT = ""
