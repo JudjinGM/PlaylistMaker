@@ -23,6 +23,12 @@
         <item name="android:textColor">?attr/colorOnPrimary</item>
     </style>
 
+    <style name="RegularTextAnotherVariant">
+        <item name="fontFamily">@font/ys_display_medium</item>
+        <item name="android:textSize">@dimen/button_text_size</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+    </style>
+
     <style name="SmallButtonText">
         <item name="fontFamily">@font/ys_display_medium</item>
         <item name="android:textSize">@dimen/button_text_size</item>
@@ -46,6 +52,19 @@
         <item name="android:letterSpacing">0</item>
         <item name="android:textAllCaps">false</item>
     </style>
+
+    <style name="AudioPlayerSmallText">
+        <item name="fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">@dimen/small_text_size_second_variant</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+    </style>
+
+    <style name="AudioPlayerSmallTextGrey">
+        <item name="fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">@dimen/small_text_size_second_variant</item>
+        <item name="android:textColor">@color/grey</item>
+    </style>
+
 
     <style name="SwitchWithKnob">
         <item name="thumbTint">@color/grey</item>

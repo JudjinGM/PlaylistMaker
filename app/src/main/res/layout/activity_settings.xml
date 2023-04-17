@@ -5,21 +5,22 @@
     android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/margin_start"
+        android:id="@+id/guidLineStart"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
         app:layout_constraintGuide_begin="@dimen/main_margin_for_content" />
 
     <ImageView
-        android:id="@+id/iconBack"
+        android:id="@+id/backSettingImageView"
         style="@style/ArrowBackImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/title_image_margin"
         android:layout_marginTop="@dimen/title_image_margin"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/back_button_image" />
 
     <TextView
         android:id="@+id/toolbar_settings"
@@ -29,7 +30,7 @@
         android:layout_marginTop="@dimen/title_text_margin_top"
         android:text="@string/settings"
         android:textAppearance="@style/TitleText"
-        app:layout_constraintStart_toEndOf="@+id/iconBack"
+        app:layout_constraintStart_toEndOf="@+id/backSettingImageView"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -39,7 +40,7 @@
         android:layout_marginTop="@dimen/dark_theme_text_margin_top"
         android:text="@string/dark_theme"
         android:textAppearance="@style/RegularText"
-        app:layout_constraintStart_toStartOf="@id/margin_start"
+        app:layout_constraintStart_toStartOf="@id/guidLineStart"
         app:layout_constraintTop_toBottomOf="@id/toolbar_settings" />
 
     <androidx.appcompat.widget.SwitchCompat
@@ -59,7 +60,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/content_margin_top"
         android:text="@string/share"
-        app:layout_constraintStart_toStartOf="@id/margin_start"
+        app:layout_constraintStart_toStartOf="@id/guidLineStart"
         app:layout_constraintTop_toBottomOf="@id/text_dark_theme" />
 
     <ImageView
@@ -80,8 +81,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/content_margin_top"
-        android:text="@string/write_to_support"
-        app:layout_constraintStart_toStartOf="@id/margin_start"
+        android:text="@string/support_image"
+        app:layout_constraintStart_toStartOf="@id/guidLineStart"
         app:layout_constraintTop_toBottomOf="@id/text_share_app" />
 
     <ImageView
@@ -89,7 +90,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/support_image_margin_end"
-        android:contentDescription="@string/share"
+        android:contentDescription="@string/share_image"
         android:src="@drawable/support"
         app:layout_constraintBottom_toBottomOf="@id/text_support"
         app:layout_constraintEnd_toEndOf="parent"
@@ -103,7 +104,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/content_margin_top"
         android:text="@string/term_of_use"
-        app:layout_constraintStart_toStartOf="@id/margin_start"
+        app:layout_constraintStart_toStartOf="@id/guidLineStart"
         app:layout_constraintTop_toBottomOf="@id/text_support" />
 
     <ImageView

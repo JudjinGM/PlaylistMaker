@@ -44,7 +44,11 @@ class TracksSearchRemoteDataSource(private val itunesService: ItunesApi) {
                     trackName = track.trackName,
                     artistName = track.artistName,
                     trackTimeMillis = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis),
-                    artworkUrl100 = track.artworkUrl100
+                    artworkUrl100 = track.artworkUrl100,
+                    collectionName = track.collectionName,
+                    releaseDate = track.releaseDate,
+                    country = track.country,
+                    primaryGenreName = track.primaryGenreName
                 )
             )
         }

@@ -2,7 +2,7 @@ package com.example.playlistmaker.data.local.database
 
 import com.example.playlistmaker.data.model.Track
 
-interface DataSource  {
+interface DataSource {
     fun loadAllTracks(): List<Track>
     fun saveAllTracks(listOfTracks: List<Track>)
     fun saveTrack(track: Track)

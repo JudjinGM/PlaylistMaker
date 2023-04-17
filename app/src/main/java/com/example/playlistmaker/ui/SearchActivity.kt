@@ -1,6 +1,7 @@
 package com.example.playlistmaker.ui
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -23,6 +24,7 @@ import com.example.playlistmaker.data.model.Track
 import com.example.playlistmaker.data.repositorie.tracksRepository.SearchRepository
 import com.example.playlistmaker.network.RetrofitFactory
 import com.example.playlistmaker.ui.adapter.TracksAdapter
+import com.google.gson.Gson
 
 class SearchActivity : AppCompatActivity() {
 
@@ -95,7 +97,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun viewsInit() {
-        backImageView = findViewById(R.id.iconBackSearch)
+        backImageView = findViewById(R.id.backSearchImageView)
         inputSearchField = findViewById(R.id.searchEditText)
         clearImageView = findViewById(R.id.searchClearIcon)
         tracksRecyclerView = findViewById(R.id.tracksRecyclerView)
@@ -127,11 +129,10 @@ class SearchActivity : AppCompatActivity() {
 
         tracksAdapter.onTrackClicked = { track ->
             searchRepository.addTrackToListenHistory(track)
-            Toast.makeText(
-                this,
-                "${track.trackName} ${getText(R.string.added_to_recent_searches)}",
-                Toast.LENGTH_SHORT
-            ).show()
+            val intent = Intent(this, AudioPlayerActivity::class.java)
+            val json = Gson().toJson(track)
+            intent.putExtra(TRACK, json )
+            startActivity(intent)
         }
 
         inputSearchField.setOnEditorActionListener { _, actionId, _ ->
@@ -235,8 +236,9 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private companion object {
+     companion object {
         const val SAVED_TEXT = "SAVED_TEXT"
         const val DEFAULT_TEXT = ""
+        const val TRACK = "track"
     }
 }
