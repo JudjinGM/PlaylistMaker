@@ -37,11 +37,8 @@ class AudioPlayerActivity : AppCompatActivity() {
         track = Gson().fromJson(intent.getStringExtra(TRACK), Track::class.java)
 
         viewInit()
-
         contentInit()
-
         onClicks()
-
     }
 
     private fun viewInit() {

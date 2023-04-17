@@ -60,5 +60,5 @@ class TrackListenHistoryLocalDataSource(
     fun getSize(): Int {
         return localDataSource.loadListenHistoryTracks().toMutableList().size
     }
-    
+
 }
