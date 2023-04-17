@@ -1,7 +1,6 @@
 package com.example.playlistmaker.ui
 
 import android.os.Bundle
-import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +12,8 @@ import com.example.playlistmaker.ui.SearchActivity.Companion.TRACK
 import com.google.gson.Gson
 
 class AudioPlayerActivity : AppCompatActivity() {
+
+    private lateinit var track: Track
 
     private lateinit var backPlayerImageView: ImageView
     private lateinit var albumCoverPlayerImageView: ImageView
@@ -27,8 +28,6 @@ class AudioPlayerActivity : AppCompatActivity() {
     private lateinit var yearTextView: TextView
     private lateinit var genreTextView: TextView
     private lateinit var countryTextView: TextView
-
-    private lateinit var track: Track
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,23 +67,10 @@ class AudioPlayerActivity : AppCompatActivity() {
         songNameTextView.text = track.trackName
         artistNameTextView.text = track.artistName
         durationTextView.text = track.trackTimeMillis
-
-        if (track.collectionName.isNotEmpty()) {
-            albumTextView.text = track.collectionName
-        } else albumTextView.visibility = View.GONE
-
-        if (track.releaseDate.isNotEmpty()) {
-            yearTextView.text = track.getShortReleaseDate()
-        } else yearTextView.visibility = View.GONE
-
-        if (track.primaryGenreName.isNotEmpty()) {
-            genreTextView.text = track.primaryGenreName
-        } else genreTextView.visibility = View.GONE
-
-        if (track.country.isNotEmpty()) {
-            countryTextView.text = track.country
-        } else countryTextView.visibility = View.GONE
-
+        albumTextView.text = track.collectionName
+        yearTextView.text = track.getShortReleaseDate()
+        genreTextView.text = track.primaryGenreName
+        countryTextView.text = track.country
     }
 
     private fun onClicks() {
