@@ -24,7 +24,6 @@ import com.example.playlistmaker.data.model.Track
 import com.example.playlistmaker.data.repositorie.tracksRepository.SearchRepository
 import com.example.playlistmaker.network.RetrofitFactory
 import com.example.playlistmaker.ui.adapter.TracksAdapter
-import com.google.gson.Gson
 
 class SearchActivity : AppCompatActivity() {
 
@@ -130,8 +129,7 @@ class SearchActivity : AppCompatActivity() {
         tracksAdapter.onTrackClicked = { track ->
             searchRepository.addTrackToListenHistory(track)
             val intent = Intent(this, AudioPlayerActivity::class.java)
-            val json = Gson().toJson(track)
-            intent.putExtra(TRACK, json )
+            intent.putExtra(TRACK, track )
             startActivity(intent)
         }
 

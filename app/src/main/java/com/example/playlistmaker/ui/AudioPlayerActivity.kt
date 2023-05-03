@@ -1,5 +1,7 @@
 package com.example.playlistmaker.ui
 
+import android.os.Build
+import android.os.Build.VERSION
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
@@ -9,7 +11,6 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.data.model.Track
 import com.example.playlistmaker.ui.SearchActivity.Companion.TRACK
-import com.google.gson.Gson
 
 class AudioPlayerActivity : AppCompatActivity() {
 
@@ -33,7 +34,9 @@ class AudioPlayerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_audioplayer)
 
-        track = Gson().fromJson(intent.getStringExtra(TRACK), Track::class.java)
+        track = if(VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+            intent.getParcelableExtra(TRACK, Track::class.java) ?: Track()
+        } else intent.getParcelableExtra(TRACK) ?: Track()
 
         viewInit()
         contentInit()
