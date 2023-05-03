@@ -5,14 +5,15 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/iconBackSearch"
+        android:id="@+id/backSearchImageView"
         style="@style/ArrowBackImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/title_image_margin"
         android:layout_marginTop="@dimen/title_image_margin"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/back_button_image" />
 
     <TextView
         android:id="@+id/toolbarSearch"
@@ -22,7 +23,7 @@
         android:layout_marginTop="@dimen/title_text_margin_top"
         android:text="@string/search"
         android:textAppearance="@style/TitleText"
-        app:layout_constraintStart_toEndOf="@+id/iconBackSearch"
+        app:layout_constraintStart_toEndOf="@+id/backSearchImageView"
         app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
@@ -121,7 +122,8 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/frameLayout" />
+        app:layout_constraintTop_toBottomOf="@id/frameLayout"
+        android:contentDescription="@string/error" />
 
     <TextView
         android:id="@+id/errorTextTextView"

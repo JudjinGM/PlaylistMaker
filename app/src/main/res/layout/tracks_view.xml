@@ -17,7 +17,8 @@
         android:src="@drawable/no_album"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/album_cover_image" />
 
     <TextView
         android:id="@+id/songNameTextView"
@@ -64,7 +65,8 @@
         app:layout_constraintEnd_toStartOf="@id/songTimeStampTextView"
         app:layout_constraintStart_toEndOf="@id/artistNameTextView"
         app:layout_constraintTop_toTopOf="@id/artistNameTextView"
-        app:tint="?attr/colorSecondary" />
+        app:tint="?attr/colorSecondary"
+        android:contentDescription="@string/Point" />
 
     <TextView
         android:id="@+id/songTimeStampTextView"
@@ -90,5 +92,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="?attr/colorSecondary" />
+        app:tint="?attr/colorSecondary"
+        android:contentDescription="@string/select_image" />
 </androidx.constraintlayout.widget.ConstraintLayout>

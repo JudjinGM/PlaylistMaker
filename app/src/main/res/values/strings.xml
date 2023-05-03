@@ -12,12 +12,27 @@
     <string name="mail_to_support_message">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="developer_email_address" translatable="false">v4lievil@yandex.ru</string>
     <string name="link_to_agreement" translatable="false">https://yandex.ru/legal/practicum_offer/</string>
-    <string name="image_of_back_button" translatable="false">"Изображение для кнопки назад"</string>
     <string name="error_search">Ничего не нашлось</string>
     <string name="error_internet">Проблемы со связью\n\nЗагрузка не удалась. Проверьте\nподключение к интернету</string>
     <string name="refresh">Обновить</string>
     <string name="clean_history">Очистить историю</string>
     <string name="recent_searches">Вы искали</string>
     <string name="added_to_recent_searches">добавлено в историю поиска</string>
-
+    <string name="duration">Длительность</string>
+    <string name="album">Альбом</string>
+    <string name="genre">Жанр</string>
+    <string name="year">Год</string>
+    <string name="time_placeholder" translatable="false">00:00</string>
+    <string name="country">Страна</string>
+    <string name="library_button_image">Кнопка добавить в медиатеку</string>
+    <string name="play_button_image">Кнопка играть песню</string>
+    <string name="like_button_image">Кнопка нравиться</string>
+    <string name="album_cover_image">Обложка альбома</string>
+    <string name="back_button_image">Кнопка назад</string>
+    <string name="select_image">Вабрать</string>
+    <string name="support_image">Написать в поддержку</string>
+    <string name="share_image">Поделиться</string>
+    <string name="image_of_back_button">image_of_back_button</string>
+    <string name="error">Ошибка</string>
+    <string name="Point">Точка</string>
 </resources>

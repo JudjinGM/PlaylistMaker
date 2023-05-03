@@ -15,4 +15,20 @@
     <string name="clean_history">Clean recent searches</string>
     <string name="recent_searches">Recent searches</string>
     <string name="added_to_recent_searches">added to recent searches</string>
+    <string name="duration">Duration</string>
+    <string name="album">Album</string>
+    <string name="genre">Genre</string>
+    <string name="year">Year</string>
+    <string name="country">Country</string>
+    <string name="library_button_image">Add to library button</string>
+    <string name="play_button_image">Play song button</string>
+    <string name="like_button_image">Like song button</string>
+    <string name="album_cover_image">Album cover</string>
+    <string name="back_button_image">Back button</string>
+    <string name="select_image">Select</string>
+    <string name="share_image">Share</string>
+    <string name="support_image">Write to support</string>
+    <string name="image_of_back_button">image_of_back_button</string>
+    <string name="error">Error</string>
+    <string name="Point">Point</string>
 </resources>
