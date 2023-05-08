@@ -13,18 +13,20 @@ data class Track(
     val releaseDate: String = "",
     val country: String = "",
     val primaryGenreName: String = "",
+    val previewUrl: String = ""
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
         parcel.readLong(),
-        parcel.readString()  ?: "",
-        parcel.readString()  ?: "",
-        parcel.readString()  ?: "",
-        parcel.readString()  ?: "",
-        parcel.readString()  ?: "",
-        parcel.readString()  ?: "",
-        parcel.readString()  ?: "",
-        parcel.readString()  ?: ""
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
     ) {
     }
 
@@ -40,6 +42,7 @@ data class Track(
         parcel.writeString(releaseDate)
         parcel.writeString(country)
         parcel.writeString(primaryGenreName)
+        parcel.writeString(previewUrl)
     }
 
     override fun describeContents(): Int {

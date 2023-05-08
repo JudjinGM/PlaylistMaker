@@ -11,6 +11,8 @@ import java.util.*
 class TracksSearchRemoteDataSource(private val itunesService: ItunesApi) {
 
     fun search(query: String, callbackUpdate: CallbackUpdate, callbackShow: CallbackShow) {
+        callbackShow.show(PlaceholderStatus.PLACEHOLDER_PROGRESS_BAR)
+
         itunesService.search(query).enqueue(object : Callback<TrackItunesResponse> {
             override fun onResponse(
                 call: Call<TrackItunesResponse>, response: Response<TrackItunesResponse>
@@ -44,11 +46,12 @@ class TracksSearchRemoteDataSource(private val itunesService: ItunesApi) {
                     trackName = track.trackName,
                     artistName = track.artistName,
                     trackTimeMillis = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis),
-                    artworkUrl100 = track.artworkUrl100,
-                    collectionName = track.collectionName,
-                    releaseDate = track.releaseDate,
-                    country = track.country,
-                    primaryGenreName = track.primaryGenreName
+                    artworkUrl100 = track.artworkUrl100 ?:"",
+                    collectionName = track.collectionName ?:"",
+                    releaseDate = track.releaseDate ?:"",
+                    country = track.country ?:"",
+                    primaryGenreName = track.primaryGenreName ?:"",
+                    previewUrl = track.previewUrl ?:"",
                 )
             )
         }

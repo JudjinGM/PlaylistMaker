@@ -26,6 +26,7 @@
     <string name="country">Страна</string>
     <string name="library_button_image">Кнопка добавить в медиатеку</string>
     <string name="play_button_image">Кнопка играть песню</string>
+    <string name="pause_button_image">Кнопка поставить на паузу песню</string>
     <string name="like_button_image">Кнопка нравиться</string>
     <string name="album_cover_image">Обложка альбома</string>
     <string name="back_button_image">Кнопка назад</string>
@@ -35,4 +36,6 @@
     <string name="image_of_back_button">image_of_back_button</string>
     <string name="error">Ошибка</string>
     <string name="Point">Точка</string>
+    <string name="cant_play_song">Не удается воспроизвести песню</string>
+
 </resources>
