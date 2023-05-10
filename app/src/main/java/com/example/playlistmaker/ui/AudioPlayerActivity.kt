@@ -45,6 +45,7 @@ class AudioPlayerActivity : AppCompatActivity() {
     private var currentPlayingTimeMillis: Long = 0L // the current time elapsed since the pause
     private var elapsedTime: Long = 0L // the current time that passes while the music is playing
     private var isRunnablePosted = false // to check that only one Runnable is currently running
+    private var isTrackLiked = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +54,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         track = if (VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(TRACK, Track::class.java) ?: Track()
         } else intent.getParcelableExtra(TRACK) ?: Track()
-        //if in intent somehow no track, i set default empty track
+        //if in intent somehow has no track, I set default empty track
 
         mainTreadHandler = Handler(Looper.getMainLooper())
 
@@ -112,6 +113,16 @@ class AudioPlayerActivity : AppCompatActivity() {
         playImageView.setOnClickListener {
             playbackControl()
         }
+
+        likeImageView.setOnClickListener {
+            isTrackLiked = if (!isTrackLiked) {
+                likeImageView.setImageResource(R.drawable.like_button_like)
+                true
+            } else {
+                likeImageView.setImageResource(R.drawable.like_button_no_like)
+                false
+            }
+        }
     }
 
     private fun preparePlayer() {
@@ -124,7 +135,7 @@ class AudioPlayerActivity : AppCompatActivity() {
                 updateTimeTextView()
             }
         } catch (e: Exception) {
-           showError()
+            showError()
         }
         // just in case if there is a problem with mediaPlayer set up exception may occur
 
@@ -165,6 +176,7 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     private fun updateTimeTextView() {
         val startTime: Long = System.currentTimeMillis()
+        var isRunnableExecute = false
         val newRunnable = object : Runnable {
             override fun run() {
                 when (playerState) {
@@ -180,19 +192,19 @@ class AudioPlayerActivity : AppCompatActivity() {
                         timeTextView.text =
                             millisToTimeFormat(elapsedTime + currentPlayingTimeMillis)
                         mainTreadHandler.postDelayed(this, DELAY)
+                        isRunnableExecute = true
                     }
                     PlayerStatus.STATE_PAUSED -> {
                         mainTreadHandler.removeCallbacks(this)
-                        if (!isRunnablePosted) {
+                        if (!isRunnableExecute) {
                             currentPlayingTimeMillis += elapsedTime
                             timeTextView.text = millisToTimeFormat(currentPlayingTimeMillis)
                         }
-
                     }
                 }
             }
         }
-        if (isRunnablePosted) { //checking if already Runnable posted
+        if (isRunnablePosted) { //checking if already Runnable posted so it's just one Runnable in a time
             mainTreadHandler.removeCallbacks(newRunnable)
         }
         mainTreadHandler.post(newRunnable)
@@ -203,11 +215,12 @@ class AudioPlayerActivity : AppCompatActivity() {
         return SimpleDateFormat("mm:ss", Locale.getDefault()).format(millis)
     }
 
-    private fun showError(){
+    private fun showError() {
         Toast.makeText(this, R.string.cant_play_song, Toast.LENGTH_LONG).show()
     }
+
     companion object {
         private const val DELAY =
-            10L // if delay set higher, when play button pressed quickly the time may fails
+            10L // if delay set higher, when play button pressed quickly, the time may fails
     }
 }
