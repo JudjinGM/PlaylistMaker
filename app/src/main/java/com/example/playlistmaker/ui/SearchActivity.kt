@@ -283,7 +283,7 @@ class SearchActivity : AppCompatActivity() {
         const val DEFAULT_TEXT = ""
         const val TRACK = "track"
         private const val CLICK_DEBOUNCE_DELAY = 1000L
-        private const val SEARCH_DEBOUNCE_DELAY = 1000L
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
 
     }
 }
