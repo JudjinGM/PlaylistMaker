@@ -11,9 +11,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/title_image_margin"
         android:layout_marginTop="@dimen/title_image_margin"
+        android:contentDescription="@string/back_button_image"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="@string/back_button_image" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/toolbarSearch"
@@ -45,7 +45,6 @@
             android:drawableStart="@drawable/search_small"
             android:drawablePadding="@dimen/padding_for_drawable_in_search_bar"
             android:hint="@string/search"
-            android:imeOptions="actionDone"
             android:maxWidth="480dp"
             android:paddingStart="@dimen/padding_start_for_search_icon_in_search_bar"
             android:paddingTop="@dimen/padding_top_for_text_in_search_bar"
@@ -61,8 +60,8 @@
             android:layout_marginEnd="@dimen/margin_end_for_clear_icon"
             android:contentDescription="@string/search"
             android:src="@drawable/x_clear"
-            app:tint="?attr/colorSecondaryVariant"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            app:tint="?attr/colorSecondaryVariant" />
     </FrameLayout>
 
     <TextView
@@ -73,13 +72,13 @@
         android:layout_marginBottom="@dimen/header_search_history_bottom_margin"
         android:text="@string/recent_searches"
         android:textAppearance="@style/PlaceholderText"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/tracksRecyclerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/frameLayout"
-        app:layout_constraintBottom_toTopOf="@id/tracksRecyclerView"
         app:layout_constraintVertical_bias="0"
-        app:layout_constraintVertical_chainStyle="packed"
-        android:visibility="gone"/>
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tracksRecyclerView"
@@ -118,12 +117,12 @@
         android:layout_width="@dimen/placeholder_image_dimens"
         android:layout_height="@dimen/placeholder_image_dimens"
         android:layout_marginTop="@dimen/placeholder_image_margin_top"
+        android:contentDescription="@string/error"
         android:src="@drawable/error_search"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/frameLayout"
-        android:contentDescription="@string/error" />
+        app:layout_constraintTop_toBottomOf="@id/frameLayout" />
 
     <TextView
         android:id="@+id/errorTextTextView"
@@ -152,4 +151,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/errorTextTextView" />
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/margin_top_progress_bar"
+        android:indeterminateTint="@color/another_blue"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/frameLayout" />
 </androidx.constraintlayout.widget.ConstraintLayout>

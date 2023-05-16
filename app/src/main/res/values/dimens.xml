@@ -24,6 +24,7 @@
     <dimen name="margin_top_for_time">4dp</dimen>
     <dimen name="margin_top_for_text_between_play">39dp</dimen>
     <dimen name="margin_top_for_text">17dp</dimen>
+    <dimen name="margin_top_progress_bar">144dp</dimen>
     <dimen name="margin_bottom_for_content">0dp</dimen>
     <dimen name="margin_bottom_for_text">28dp</dimen>
     <dimen name="padding_start_for_search_icon_in_search_bar">12dp</dimen>

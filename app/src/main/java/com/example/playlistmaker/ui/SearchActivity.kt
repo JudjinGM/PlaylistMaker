@@ -3,8 +3,9 @@ package com.example.playlistmaker.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -36,6 +37,13 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var clearImageView: ImageView
     private lateinit var tracksRecyclerView: RecyclerView
     private lateinit var backImageView: ImageView
+    private lateinit var progressBar: ProgressBar
+
+
+    private var isClickAllowed = true
+
+    private val handler = Handler(Looper.getMainLooper())
+    private val searchRunnable = Runnable { searchRequest()}
 
     private var inputSearchText: String = DEFAULT_TEXT
 
@@ -66,16 +74,21 @@ class SearchActivity : AppCompatActivity() {
         tracksRecyclerView.adapter = tracksAdapter
 
         val textWatcher = object : TextWatcherJustOnTextChanged {
+
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearImageView.isVisible = checkImageViewVisibility(s)
                 inputSearchText = inputSearchField.text.toString()
-                if (inputSearchField.hasFocus() && s?.isEmpty() == true) {
-                    clearTrackList()
-                }
-                if (inputSearchField.hasFocus() && s?.isEmpty() == true && searchRepository.isListenHistoryIsNotEmpty()) {
+
+                if (inputSearchField.hasFocus() && (s?.isEmpty() == true || s?.isBlank() == true ) && searchRepository.isListenHistoryIsNotEmpty()) {
                     tracksAdapter.updateAdapter(searchRepository.getListOfListenHistoryTracks())
                     showPlaceholder(PlaceholderStatus.PLACEHOLDER_HISTORY)
-                }   else {
+                }
+                else if (inputSearchField.hasFocus() && (s?.isEmpty() == true || s?.isBlank() == true )) {
+                    clearTrackList()
+                    showPlaceholder(PlaceholderStatus.NO_PLACEHOLDER)
+                }
+                else {
+                    searchDebounced()
                     tracksAdapter.updateAdapter(searchRepository.getSearchTracks())
                     showPlaceholder(PlaceholderStatus.NO_PLACEHOLDER)
                 }
@@ -105,6 +118,8 @@ class SearchActivity : AppCompatActivity() {
         refreshButton = findViewById(R.id.refreshButton)
         headerSearchHistoryTextView = findViewById(R.id.headerSearchHistoryTextView)
         buttonClearHistory = findViewById(R.id.buttonClearHistory)
+        progressBar = findViewById(R.id.progressBar)
+
     }
 
     private fun setOnClicksAndAction() {
@@ -127,31 +142,14 @@ class SearchActivity : AppCompatActivity() {
         }
 
         tracksAdapter.onTrackClicked = { track ->
-            searchRepository.addTrackToListenHistory(track)
-            val intent = Intent(this, AudioPlayerActivity::class.java)
-            intent.putExtra(TRACK, track )
-            startActivity(intent)
+            if(clickDebounce()) {
+                searchRepository.addTrackToListenHistory(track)
+                val intent = Intent(this, AudioPlayerActivity::class.java)
+                intent.putExtra(TRACK, track)
+                startActivity(intent)
+            }
         }
 
-        inputSearchField.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                searchRepository.searchTracks(
-                    inputSearchText,
-                    callbackUpdate = (object : CallbackUpdate {
-                        override fun update(newTracks: List<Track>) {
-                            tracksAdapter.updateAdapter(newTracks)
-                        }
-                    }),
-                    callbackShow = (object : CallbackShow {
-                        override fun show(status: PlaceholderStatus) {
-                            showPlaceholder(status)
-                        }
-                    })
-                )
-                true
-            }
-            false
-        }
 
         refreshButton.setOnClickListener {
             searchRepository.searchTracks(
@@ -203,6 +201,7 @@ class SearchActivity : AppCompatActivity() {
                 refreshButton.visibility = View.GONE
                 headerSearchHistoryTextView.visibility = View.GONE
                 buttonClearHistory.visibility = View.GONE
+                progressBar.visibility = View.GONE
             }
             PlaceholderStatus.PLACEHOLDER_NOTHING_FOUND -> {
                 clearTrackList()
@@ -213,6 +212,7 @@ class SearchActivity : AppCompatActivity() {
                 errorTextTextView.text = getText(R.string.error_search)
                 headerSearchHistoryTextView.visibility = View.GONE
                 buttonClearHistory.visibility = View.GONE
+                progressBar.visibility = View.GONE
             }
             PlaceholderStatus.NO_CONNECTION -> {
                 clearTrackList()
@@ -223,19 +223,67 @@ class SearchActivity : AppCompatActivity() {
                 refreshButton.visibility = View.VISIBLE
                 headerSearchHistoryTextView.visibility = View.GONE
                 buttonClearHistory.visibility = View.GONE
+                progressBar.visibility = View.GONE
             }
             PlaceholderStatus.PLACEHOLDER_HISTORY -> {
+                placeholderImage.visibility = View.GONE
+                errorTextTextView.visibility = View.GONE
                 refreshButton.visibility = View.GONE
                 headerSearchHistoryTextView.visibility = View.GONE
                 buttonClearHistory.visibility = View.GONE
                 headerSearchHistoryTextView.visibility = View.VISIBLE
                 buttonClearHistory.visibility = View.VISIBLE
+                progressBar.visibility = View.GONE
+            }
+            PlaceholderStatus.PLACEHOLDER_PROGRESS_BAR -> {
+                placeholderImage.visibility = View.GONE
+                errorTextTextView.visibility = View.GONE
+                refreshButton.visibility = View.GONE
+                headerSearchHistoryTextView.visibility = View.GONE
+                buttonClearHistory.visibility = View.GONE
+                progressBar.visibility = View.VISIBLE
             }
         }
     }
-     companion object {
+
+    private fun clickDebounce():Boolean{
+        val current = isClickAllowed
+        if(isClickAllowed){
+            isClickAllowed = false
+            handler.postDelayed({isClickAllowed = true}, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
+    }
+
+    private fun searchRequest(){
+        if(inputSearchText.isNotEmpty() || inputSearchText.isNotBlank()) {
+            searchRepository.searchTracks(
+                inputSearchText,
+                callbackUpdate = (object : CallbackUpdate {
+                    override fun update(newTracks: List<Track>) {
+                        tracksAdapter.updateAdapter(newTracks)
+                    }
+                }),
+                callbackShow = (object : CallbackShow {
+                    override fun show(status: PlaceholderStatus) {
+                        showPlaceholder(status)
+                    }
+                })
+            )
+        }
+    }
+
+    private fun searchDebounced(){
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+
+    companion object {
         const val SAVED_TEXT = "SAVED_TEXT"
         const val DEFAULT_TEXT = ""
         const val TRACK = "track"
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+
     }
 }
