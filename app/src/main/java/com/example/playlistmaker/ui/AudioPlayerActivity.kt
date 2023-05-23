@@ -5,6 +5,7 @@ import android.os.Build.VERSION
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -12,19 +13,16 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.data.MediaPlayerImplementation
 import com.example.playlistmaker.domain.model.PlayerStatus
 import com.example.playlistmaker.domain.model.PlayerStatus.*
 import com.example.playlistmaker.domain.model.Track
-import com.example.playlistmaker.domain.usecases.MediaPlayerControlUseCase
-import com.example.playlistmaker.domain.usecases.MediaPlayerInitUseCaseImpl
-import com.example.playlistmaker.domain.usecases.MediaPlayerPlaybackControlUseCase
+import com.example.playlistmaker.presenter.AudioPlayerPresenter
 import com.example.playlistmaker.presenter.AudioPlayerView
 import com.example.playlistmaker.ui.SearchActivity.Companion.TRACK
 import java.text.SimpleDateFormat
 import java.util.*
 
-class AudioPlayerActivity : AppCompatActivity() {
+class AudioPlayerActivity : AppCompatActivity(), AudioPlayerView {
 
     private lateinit var track: Track
 
@@ -42,26 +40,13 @@ class AudioPlayerActivity : AppCompatActivity() {
     private lateinit var genreTextView: TextView
     private lateinit var countryTextView: TextView
 
-    private val mediaPlayer = MediaPlayerImplementation()
-
-    private var playerState = STATE_DEFAULT
-
-    private lateinit var urlForMusicPreview: String
     private lateinit var mainTreadHandler: Handler
-
-    private var currentPlayingPosition = 0L
+    private lateinit var trackTimeUpdateRunnable: Runnable
+    private var isRunnablePosted = false
 
     private var isTrackLiked = false
 
-    private val mediaPlayerInitUseCase = MediaPlayerInitUseCaseImpl(mediaPlayer) { playerStatus ->
-        playerState = playerStatus
-    }
-    private val mediaPlayerControlUseCase = MediaPlayerControlUseCase(mediaPlayer) { playerStatus ->
-        playerState = playerStatus
-    }
-
-    private val mediaPlayerPlaybackControlUseCase =
-        MediaPlayerPlaybackControlUseCase(mediaPlayerControlUseCase) { showError() }
+    private lateinit var presenter: AudioPlayerPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,21 +55,22 @@ class AudioPlayerActivity : AppCompatActivity() {
         mainTreadHandler = Handler(Looper.getMainLooper())
 
         track = getTrack()
+        presenter = AudioPlayerPresenter(this, track)
+
         viewInit()
         viewsContentInit()
         onClicks()
-
-        mediaPlayerInitUseCase.initPlayer(urlForMusicPreview)
     }
 
     override fun onPause() {
         super.onPause()
-        mediaPlayerControlUseCase.pausePlayer()
+        presenter.pauseMediaPlayer()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer.release()
+        mainTreadHandler.removeCallbacks(trackTimeUpdateRunnable)
+        presenter.releaseMediaPlayer()
     }
 
     private fun getTrack(): Track {
@@ -112,8 +98,6 @@ class AudioPlayerActivity : AppCompatActivity() {
     }
 
     private fun viewsContentInit() {
-        urlForMusicPreview = track.previewUrl
-
         Glide.with(this).load(track.getCoverArtwork()).placeholder(R.drawable.album).centerInside()
             .transform(RoundedCorners(resources.getDimensionPixelSize(R.dimen.album_cover_player_corner_radius)))
             .into(albumCoverPlayerImageView)
@@ -132,8 +116,7 @@ class AudioPlayerActivity : AppCompatActivity() {
             finish()
         }
         playImageView.setOnClickListener {
-            mediaPlayerPlaybackControlUseCase.execute(playerState)
-            playerStatusUIUpdate(playerState)
+            presenter.playClick()
         }
 
         likeImageView.setOnClickListener {
@@ -147,58 +130,62 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
     }
 
-    private fun playerStatusUIUpdate(playerStatus: PlayerStatus) {
+    override fun uiUpdate(playerStatus: PlayerStatus) {
+        updateTimeTextView(playerStatus)
+        Log.d("STATUS", "$playerStatus")
         when (playerStatus) {
             STATE_DEFAULT, STATE_PREPARED, STATE_ERROR -> {
                 playImageView.setImageResource(R.drawable.play_button)
-                updateTimeTextView()
             }
             STATE_PLAYING -> {
                 playImageView.setImageResource(R.drawable.pause_button)
-                updateTimeTextView()
             }
             STATE_PAUSED -> {
                 playImageView.setImageResource(R.drawable.play_button)
-                updateTimeTextView()
             }
         }
     }
 
-    private fun updateTimeTextView() {
-        val newRunnable = object : Runnable {
+    private fun updateTimeTextView(playerStatus: PlayerStatus) {
+        if (isRunnablePosted) {
+            mainTreadHandler.removeCallbacks(trackTimeUpdateRunnable)
+        }
+        trackTimeUpdateRunnable = getTrackTimeUpdateRunnable(playerStatus)
+        mainTreadHandler.post(trackTimeUpdateRunnable)
+        isRunnablePosted = true
+    }
+
+
+    private fun getTrackTimeUpdateRunnable(playerStatus: PlayerStatus): Runnable {
+        val result = object : Runnable {
             override fun run() {
-                when (playerState) {
+                when (playerStatus) {
                     STATE_DEFAULT, STATE_PREPARED, STATE_ERROR -> {
                         mainTreadHandler.removeCallbacks(this)
-                        currentPlayingPosition = 0L
-                        timeTextView.text = millisToTimeFormat(currentPlayingPosition)
+                        timeTextView.text = millisToTimeFormat(0L)
                     }
                     STATE_PLAYING -> {
-                        currentPlayingPosition = mediaPlayer.getCurrentPosition()
-                        timeTextView.text = millisToTimeFormat(currentPlayingPosition)
+                        timeTextView.text = millisToTimeFormat(presenter.getTimeForUI())
                         mainTreadHandler.postDelayed(this, DELAY)
                     }
                     STATE_PAUSED -> {
-                        mainTreadHandler.removeCallbacks(this)
-                        currentPlayingPosition = mediaPlayer.getCurrentPosition()
-                        timeTextView.text = millisToTimeFormat(currentPlayingPosition)
+                        timeTextView.text = millisToTimeFormat(presenter.getTimeForUI())
                     }
                 }
             }
         }
-        mainTreadHandler.post(newRunnable)
+        return result
     }
 
     private fun millisToTimeFormat(millis: Long): String {
         return SimpleDateFormat("mm:ss", Locale.getDefault()).format(millis)
     }
 
-
-    private fun showError() {
+    override fun showError() {
         Toast.makeText(this, R.string.cant_play_song, Toast.LENGTH_LONG).show()
     }
 
     companion object {
-        private const val DELAY = 300L
+        private const val DELAY = 100L
     }
 }
