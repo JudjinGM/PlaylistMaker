@@ -17,6 +17,7 @@ import com.example.playlistmaker.domain.model.PlayerStatus
 import com.example.playlistmaker.domain.model.PlayerStatus.*
 import com.example.playlistmaker.domain.model.Track
 import com.example.playlistmaker.presenter.AudioPlayerPresenter
+import com.example.playlistmaker.presenter.AudioPlayerPresenterCreator
 import com.example.playlistmaker.presenter.AudioPlayerView
 import com.example.playlistmaker.ui.SearchActivity.Companion.TRACK
 import java.text.SimpleDateFormat
@@ -55,8 +56,8 @@ class AudioPlayerActivity : AppCompatActivity(), AudioPlayerView {
         mainTreadHandler = Handler(Looper.getMainLooper())
 
         track = getTrack()
-        presenter = AudioPlayerPresenter(this, track)
-
+        val audioPlayerPresenterCreator = AudioPlayerPresenterCreator(track)
+        presenter = audioPlayerPresenterCreator.createPresenter(this)
         viewInit()
         viewsContentInit()
         onClicks()
@@ -154,7 +155,6 @@ class AudioPlayerActivity : AppCompatActivity(), AudioPlayerView {
         mainTreadHandler.post(trackTimeUpdateRunnable)
         isRunnablePosted = true
     }
-
 
     private fun getTrackTimeUpdateRunnable(playerStatus: PlayerStatus): Runnable {
         val result = object : Runnable {
