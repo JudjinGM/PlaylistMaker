@@ -1,50 +1,41 @@
 package com.example.playlistmaker
 
 import android.app.Application
-import android.content.Context
-import android.content.res.Configuration
-import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.data.local.database.LocalDataSource
-import com.example.playlistmaker.data.local.database.LocalDataSource.Companion.APP_THEME_STATUS
-import com.example.playlistmaker.data.repositorie.settingRepository.SettingsRepository
+import com.example.playlistmaker.data.dataSourceImpl.SettingsLocalDataSourceImpl
+import com.example.playlistmaker.data.dataSources.SettingsLocalDataSource
+import com.example.playlistmaker.data.repositoryImpl.SettingsRepositoryImpl
+import com.example.playlistmaker.data.storage.SettingsLocalDatabase
+import com.example.playlistmaker.data.storage.TracksListenHistoryLocalDatabase
+import com.example.playlistmaker.domain.usecases.GetThemeUseCase
+import com.example.playlistmaker.domain.usecases.SetThemeUseCase
 
 
 class App : Application() {
-    var isDarkTheme: Boolean = false
+    private lateinit var getThemeUseCase: GetThemeUseCase
+    private lateinit var setThemeUseCase: SetThemeUseCase
 
     override fun onCreate() {
         super.onCreate()
 
-        localDataSource = LocalDataSource.getInstance(applicationContext)
-        settingsRepository = SettingsRepository(localDataSource)
+        tracksListenHistoryLocalDatabase =
+            TracksListenHistoryLocalDatabase.getInstance(applicationContext)
 
-        isDarkTheme = settingsRepository.loadBooleanSetting(APP_THEME_STATUS, isDarkThemeEnabled(this))
+        settingsLocalDatabase = SettingsLocalDatabase.getInstance(applicationContext)
+        settingsLocalDataSource = SettingsLocalDataSourceImpl(settingsLocalDatabase)
+        settingsRepository = SettingsRepositoryImpl(settingsLocalDataSource)
+        getThemeUseCase = GetThemeUseCase(settingsRepository, this)
+        setThemeUseCase = SetThemeUseCase()
 
-        switchTheme(isDarkTheme)
-    }
+        val isDarkTheme = getThemeUseCase.execute()
 
-    fun switchTheme(darkThemeEnabled: Boolean) {
-        isDarkTheme = darkThemeEnabled
-        AppCompatDelegate.setDefaultNightMode(
-            if (darkThemeEnabled) {
-                AppCompatDelegate.MODE_NIGHT_YES
-            } else {
-                AppCompatDelegate.MODE_NIGHT_NO
-            }
-        )
+        setThemeUseCase.execute(isDarkTheme)
     }
 
     companion object {
-        lateinit var localDataSource: LocalDataSource
-        lateinit var settingsRepository: SettingsRepository
-        fun isDarkThemeEnabled(context: Context): Boolean {
-            val result =
-                when (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-                    Configuration.UI_MODE_NIGHT_YES -> true
-                    else -> false
-                }
-            return result
-        }
+        lateinit var tracksListenHistoryLocalDatabase: TracksListenHistoryLocalDatabase
+        lateinit var settingsLocalDatabase: SettingsLocalDatabase
+        lateinit var settingsLocalDataSource: SettingsLocalDataSource
+        lateinit var settingsRepository: SettingsRepositoryImpl
     }
 }
 

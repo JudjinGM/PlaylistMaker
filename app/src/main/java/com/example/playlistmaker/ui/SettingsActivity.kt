@@ -10,21 +10,53 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import com.example.playlistmaker.App
 import com.example.playlistmaker.R
-import com.example.playlistmaker.data.local.database.LocalDataSource.Companion.APP_THEME_STATUS
+import com.example.playlistmaker.data.storage.SettingsLocalDatabase.Companion.APP_THEME_STATUS
+import com.example.playlistmaker.domain.usecases.GetThemeUseCase
+import com.example.playlistmaker.domain.usecases.SetThemeUseCase
 
 class SettingsActivity : AppCompatActivity() {
+    private lateinit var backImageView: ImageView
+    private lateinit var shareImageView: ImageView
+    private lateinit var shareTextView: TextView
+    private lateinit var supportImageView: ImageView
+    private lateinit var supportTextView: TextView
+    private lateinit var agreementImageView: ImageView
+    private lateinit var agreementTextView: TextView
+    private lateinit var themeSwitcher: SwitchCompat
+
+    private lateinit var getThemeUseCase: GetThemeUseCase
+    private lateinit var setThemeUseCase: SetThemeUseCase
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        val backImageView = findViewById<ImageView>(R.id.backSettingImageView)
+        getThemeUseCase = GetThemeUseCase(settingsRepository = App.settingsRepository, this)
+        setThemeUseCase = SetThemeUseCase()
+
+        contentInit()
+        setOnClicks()
+
+    }
+
+    private fun contentInit() {
+        backImageView = findViewById(R.id.backSettingImageView)
+        shareImageView = findViewById(R.id.image_share)
+        shareTextView = findViewById(R.id.text_share_app)
+        supportImageView = findViewById(R.id.image_support)
+        supportTextView = findViewById(R.id.text_support)
+        agreementImageView = findViewById(R.id.image_term)
+        agreementTextView = findViewById(R.id.text_term)
+        themeSwitcher = findViewById(R.id.switch_to_dark_theme)
+
+        themeSwitcher.isChecked = getThemeUseCase.execute()
+    }
+
+    private fun setOnClicks() {
         backImageView.setOnClickListener {
             finish()
         }
-
-        val shareImageView = findViewById<ImageView>(R.id.image_share)
-        val shareTextView = findViewById<TextView>(R.id.text_share_app)
 
         val shareClickListener = View.OnClickListener {
             val shareText = getString(R.string.share_link)
@@ -37,8 +69,6 @@ class SettingsActivity : AppCompatActivity() {
         shareImageView.setOnClickListener(shareClickListener)
         shareTextView.setOnClickListener(shareClickListener)
 
-        val supportImageView = findViewById<ImageView>(R.id.image_support)
-        val supportTextView = findViewById<TextView>(R.id.text_support)
 
         val supportClickListener = View.OnClickListener {
             val subject = getString(R.string.mail_to_support_subject)
@@ -55,8 +85,6 @@ class SettingsActivity : AppCompatActivity() {
         supportImageView.setOnClickListener(supportClickListener)
         supportTextView.setOnClickListener(supportClickListener)
 
-        val agreementImageView = findViewById<ImageView>(R.id.image_term)
-        val agreementTextView = findViewById<TextView>(R.id.text_term)
 
         val agreementClickListener = View.OnClickListener {
             val link = getString(R.string.link_to_agreement)
@@ -68,20 +96,12 @@ class SettingsActivity : AppCompatActivity() {
         agreementImageView.setOnClickListener(agreementClickListener)
         agreementTextView.setOnClickListener(agreementClickListener)
 
-        val themeSwitcher = findViewById<SwitchCompat>(R.id.switch_to_dark_theme)
-
-        themeSwitcher.isChecked =
-            App.settingsRepository.loadBooleanSetting(
-                APP_THEME_STATUS,
-                App.isDarkThemeEnabled(this)
-            )
-
-        themeSwitcher.setOnCheckedChangeListener { switcher, isChecked ->
-            (applicationContext as App).switchTheme(isChecked)
+        themeSwitcher.setOnCheckedChangeListener { _, isChecked ->
+            setThemeUseCase.execute(isChecked)
             if (isChecked) {
-                App.settingsRepository.saveBooleanSetting(APP_THEME_STATUS, true)
+                App.settingsRepository.setSettingBoolean(APP_THEME_STATUS, true)
             } else {
-                App.settingsRepository.saveBooleanSetting(APP_THEME_STATUS, false)
+                App.settingsRepository.setSettingBoolean(APP_THEME_STATUS, false)
             }
         }
     }

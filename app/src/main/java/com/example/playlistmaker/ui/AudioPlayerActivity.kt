@@ -1,6 +1,5 @@
 package com.example.playlistmaker.ui
 
-import android.media.MediaPlayer
 import android.os.Build
 import android.os.Build.VERSION
 import android.os.Bundle
@@ -13,8 +12,14 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.data.model.PlayerStatus
-import com.example.playlistmaker.data.model.Track
+import com.example.playlistmaker.data.MediaPlayerImplementation
+import com.example.playlistmaker.domain.model.PlayerStatus
+import com.example.playlistmaker.domain.model.PlayerStatus.*
+import com.example.playlistmaker.domain.model.Track
+import com.example.playlistmaker.domain.usecases.MediaPlayerControlUseCase
+import com.example.playlistmaker.domain.usecases.MediaPlayerInitUseCaseImpl
+import com.example.playlistmaker.domain.usecases.MediaPlayerPlaybackControlUseCase
+import com.example.playlistmaker.presenter.AudioPlayerView
 import com.example.playlistmaker.ui.SearchActivity.Companion.TRACK
 import java.text.SimpleDateFormat
 import java.util.*
@@ -37,41 +42,57 @@ class AudioPlayerActivity : AppCompatActivity() {
     private lateinit var genreTextView: TextView
     private lateinit var countryTextView: TextView
 
-    private val mediaPlayer = MediaPlayer()
-    private var playerState = PlayerStatus.STATE_DEFAULT
+    private val mediaPlayer = MediaPlayerImplementation()
+
+    private var playerState = STATE_DEFAULT
+
     private lateinit var urlForMusicPreview: String
     private lateinit var mainTreadHandler: Handler
 
-    private var currentPlayingTimeMillis: Long = 0L // the current time elapsed since the pause
-    private var elapsedTime: Long = 0L // the current time that passes while the music is playing
-    private var isRunnablePosted = false // to check that only one Runnable is currently running
+    private var currentPlayingPosition = 0L
+
     private var isTrackLiked = false
+
+    private val mediaPlayerInitUseCase = MediaPlayerInitUseCaseImpl(mediaPlayer) { playerStatus ->
+        playerState = playerStatus
+    }
+    private val mediaPlayerControlUseCase = MediaPlayerControlUseCase(mediaPlayer) { playerStatus ->
+        playerState = playerStatus
+    }
+
+    private val mediaPlayerPlaybackControlUseCase =
+        MediaPlayerPlaybackControlUseCase(mediaPlayerControlUseCase) { showError() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_audioplayer)
 
-        track = if (VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(TRACK, Track::class.java) ?: Track()
-        } else intent.getParcelableExtra(TRACK) ?: Track()
-        //if in intent somehow has no track, I set default empty track
-
         mainTreadHandler = Handler(Looper.getMainLooper())
 
+        track = getTrack()
         viewInit()
-        contentInit()
+        viewsContentInit()
         onClicks()
-        preparePlayer()
+
+        mediaPlayerInitUseCase.initPlayer(urlForMusicPreview)
     }
 
     override fun onPause() {
         super.onPause()
-        pausePlayer()
+        mediaPlayerControlUseCase.pausePlayer()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         mediaPlayer.release()
+    }
+
+    private fun getTrack(): Track {
+        val track = if (VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra(TRACK, Track::class.java) ?: Track()
+        } else intent.getParcelableExtra(TRACK) ?: Track()
+        //if in intent somehow has no track, I set default empty track
+        return track
     }
 
     private fun viewInit() {
@@ -90,7 +111,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         countryTextView = findViewById(R.id.countryTextView)
     }
 
-    private fun contentInit() {
+    private fun viewsContentInit() {
         urlForMusicPreview = track.previewUrl
 
         Glide.with(this).load(track.getCoverArtwork()).placeholder(R.drawable.album).centerInside()
@@ -111,7 +132,8 @@ class AudioPlayerActivity : AppCompatActivity() {
             finish()
         }
         playImageView.setOnClickListener {
-            playbackControl()
+            mediaPlayerPlaybackControlUseCase.execute(playerState)
+            playerStatusUIUpdate(playerState)
         }
 
         likeImageView.setOnClickListener {
@@ -125,102 +147,58 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
     }
 
-    private fun preparePlayer() {
-        try {
-            mediaPlayer.setDataSource(urlForMusicPreview)
-            mediaPlayer.prepareAsync() // source is url so Async then
-            mediaPlayer.setOnPreparedListener {
-                playerState = PlayerStatus.STATE_PREPARED
+    private fun playerStatusUIUpdate(playerStatus: PlayerStatus) {
+        when (playerStatus) {
+            STATE_DEFAULT, STATE_PREPARED, STATE_ERROR -> {
                 playImageView.setImageResource(R.drawable.play_button)
                 updateTimeTextView()
             }
-        } catch (e: Exception) {
-            showError()
-        }
-        // just in case if there is a problem with mediaPlayer set up exception may occur
-
-        mediaPlayer.setOnCompletionListener {
-            playerState = PlayerStatus.STATE_PREPARED
-            playImageView.setImageResource(R.drawable.play_button)
-            updateTimeTextView()
-        }
-    }
-
-    private fun startPlayer() {
-        mediaPlayer.start()
-        playerState = PlayerStatus.STATE_PLAYING
-        playImageView.setImageResource(R.drawable.pause_button)
-        updateTimeTextView()
-    }
-
-    private fun pausePlayer() {
-        mediaPlayer.pause()
-        playerState = PlayerStatus.STATE_PAUSED
-        playImageView.setImageResource(R.drawable.play_button)
-        updateTimeTextView()
-    }
-
-    private fun playbackControl() {
-        when (playerState) {
-            PlayerStatus.STATE_PLAYING -> {
-                pausePlayer()
+            STATE_PLAYING -> {
+                playImageView.setImageResource(R.drawable.pause_button)
+                updateTimeTextView()
             }
-            PlayerStatus.STATE_PREPARED, PlayerStatus.STATE_PAUSED -> {
-                startPlayer()
-            }
-            PlayerStatus.STATE_DEFAULT -> {
-                showError()
+            STATE_PAUSED -> {
+                playImageView.setImageResource(R.drawable.play_button)
+                updateTimeTextView()
             }
         }
     }
 
     private fun updateTimeTextView() {
-        val startTime: Long = System.currentTimeMillis()
-        var isRunnableExecute = false
         val newRunnable = object : Runnable {
             override fun run() {
                 when (playerState) {
-                    PlayerStatus.STATE_DEFAULT, PlayerStatus.STATE_PREPARED -> {
+                    STATE_DEFAULT, STATE_PREPARED, STATE_ERROR -> {
                         mainTreadHandler.removeCallbacks(this)
-                        currentPlayingTimeMillis = 0L
-                        elapsedTime = 0L
-                        timeTextView.text = millisToTimeFormat(currentPlayingTimeMillis)
+                        currentPlayingPosition = 0L
+                        timeTextView.text = millisToTimeFormat(currentPlayingPosition)
                     }
-                    PlayerStatus.STATE_PLAYING -> {
-                        elapsedTime =
-                            System.currentTimeMillis() - startTime
-                        timeTextView.text =
-                            millisToTimeFormat(elapsedTime + currentPlayingTimeMillis)
+                    STATE_PLAYING -> {
+                        currentPlayingPosition = mediaPlayer.getCurrentPosition()
+                        timeTextView.text = millisToTimeFormat(currentPlayingPosition)
                         mainTreadHandler.postDelayed(this, DELAY)
-                        isRunnableExecute = true
                     }
-                    PlayerStatus.STATE_PAUSED -> {
+                    STATE_PAUSED -> {
                         mainTreadHandler.removeCallbacks(this)
-                        if (!isRunnableExecute) {
-                            currentPlayingTimeMillis += elapsedTime
-                            timeTextView.text = millisToTimeFormat(currentPlayingTimeMillis)
-                        }
+                        currentPlayingPosition = mediaPlayer.getCurrentPosition()
+                        timeTextView.text = millisToTimeFormat(currentPlayingPosition)
                     }
                 }
             }
         }
-        if (isRunnablePosted) { //checking if already Runnable posted so it's just one Runnable in a time
-            mainTreadHandler.removeCallbacks(newRunnable)
-        }
         mainTreadHandler.post(newRunnable)
-        isRunnablePosted = true
     }
 
     private fun millisToTimeFormat(millis: Long): String {
         return SimpleDateFormat("mm:ss", Locale.getDefault()).format(millis)
     }
 
+
     private fun showError() {
         Toast.makeText(this, R.string.cant_play_song, Toast.LENGTH_LONG).show()
     }
 
     companion object {
-        private const val DELAY =
-            10L // if delay set higher, when play button pressed quickly, the time may fails
+        private const val DELAY = 300L
     }
 }
