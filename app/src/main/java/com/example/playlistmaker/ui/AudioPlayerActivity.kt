@@ -5,7 +5,6 @@ import android.os.Build.VERSION
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -59,7 +58,7 @@ class AudioPlayerActivity : AppCompatActivity(), AudioPlayerView {
         val audioPlayerPresenterCreator = AudioPlayerPresenterCreator(track)
         presenter = audioPlayerPresenterCreator.createPresenter(this)
         viewInit()
-        viewsContentInit()
+        viewContentInit()
         onClicks()
     }
 
@@ -98,7 +97,7 @@ class AudioPlayerActivity : AppCompatActivity(), AudioPlayerView {
         countryTextView = findViewById(R.id.countryTextView)
     }
 
-    private fun viewsContentInit() {
+    private fun viewContentInit() {
         Glide.with(this).load(track.getCoverArtwork()).placeholder(R.drawable.album).centerInside()
             .transform(RoundedCorners(resources.getDimensionPixelSize(R.dimen.album_cover_player_corner_radius)))
             .into(albumCoverPlayerImageView)
@@ -133,7 +132,6 @@ class AudioPlayerActivity : AppCompatActivity(), AudioPlayerView {
 
     override fun uiUpdate(playerStatus: PlayerStatus) {
         updateTimeTextView(playerStatus)
-        Log.d("STATUS", "$playerStatus")
         when (playerStatus) {
             STATE_DEFAULT, STATE_PREPARED, STATE_ERROR -> {
                 playImageView.setImageResource(R.drawable.play_button)

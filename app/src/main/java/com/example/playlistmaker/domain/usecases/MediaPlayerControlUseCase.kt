@@ -4,10 +4,8 @@ import com.example.playlistmaker.domain.MediaPlayerContract
 import com.example.playlistmaker.domain.model.PlayerStatus
 
 class MediaPlayerControlUseCase(
-    private val mediaPlayer: MediaPlayerContract,
-    private val callback: (PlayerStatus) -> (Unit)
+    private val mediaPlayer: MediaPlayerContract, private val callback: (PlayerStatus) -> (Unit)
 ) {
-
     fun playPlayer() {
         mediaPlayer.play()
         callback.invoke(PlayerStatus.STATE_PLAYING)
@@ -22,7 +20,4 @@ class MediaPlayerControlUseCase(
         mediaPlayer.release()
     }
 
-    fun stopPlayer() {
-        mediaPlayer.stop()
-    }
 }
