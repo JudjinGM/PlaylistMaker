@@ -1,14 +1,14 @@
 package com.example.playlistmaker.data.repositoryImpl
 
-import com.example.playlistmaker.data.dataSourceImpl.SearchTracksLocalDataSourceImpl
-import com.example.playlistmaker.data.dataSourceImpl.SearchTracksRemoteDataSourceImpl
+import com.example.playlistmaker.data.dataSources.TracksLocalDataSource
+import com.example.playlistmaker.data.dataSources.TracksRemoteDataSource
 import com.example.playlistmaker.data.models.RemoteDatasourceErrorStatus
 import com.example.playlistmaker.domain.model.Track
 import com.example.playlistmaker.domain.repository.SearchRepository
 
 class SearchRepositoryImpl(
-    private val remoteDataSource: SearchTracksRemoteDataSourceImpl,
-    private val localDataSource: SearchTracksLocalDataSourceImpl,
+    private val remoteDataSource: TracksRemoteDataSource,
+    private val localDataSource: TracksLocalDataSource,
 ) : SearchRepository {
     override fun searchTracks(
         inputSearchText: String,

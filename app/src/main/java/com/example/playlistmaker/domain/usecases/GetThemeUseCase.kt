@@ -1,8 +1,8 @@
 package com.example.playlistmaker.domain.usecases
 
 import android.content.Context
-import com.example.playlistmaker.data.storage.SettingsLocalDatabase.Companion.APP_THEME_STATUS
 import com.example.playlistmaker.domain.repository.SettingsRepository
+import com.example.playlistmaker.domain.usecases.SaveThemeUseCase.Companion.APP_THEME_STATUS
 
 class GetThemeUseCase(private val settingsRepository: SettingsRepository, context: Context) {
     private val checkPhoneThemeUseCase = CheckPhoneThemeUseCase()

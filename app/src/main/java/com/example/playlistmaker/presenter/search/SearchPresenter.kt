@@ -19,7 +19,6 @@ class SearchPresenter(val view: SearchView) {
     private val itunesService = retrofit.getService()
 
     private val tracksSearchCache = TracksSearchCache
-
     private val searchTracksRemoteDataSource = SearchTracksRemoteDataSourceImpl(itunesService)
     private val tracksSearchLocalDataSource = SearchTracksLocalDataSourceImpl(tracksSearchCache)
     private val trackListenHistoryLocalDataSource =
@@ -39,7 +38,7 @@ class SearchPresenter(val view: SearchView) {
         AddTracksToListenHistoryUseCase(listenHistoryRepository)
     private val clearListenHistoryUseCase = ClearListenHistoryUseCase(listenHistoryRepository)
     private val clearSearchListUseCase = ClearSearchListUseCase(searchRepositoryImpl)
-    private val getAlreadySearchTracksUseCase = GetAlreadySearchTracksUseCase(searchRepositoryImpl)
+    private val getSearchResultTrackListUseCase = GetSearchResultTrackListUseCase(searchRepositoryImpl)
     private val getIsListenTrackListIsNotEmpty =
         GetIsListenTrackListIsNotEmpty(listenHistoryRepository)
 
@@ -95,7 +94,7 @@ class SearchPresenter(val view: SearchView) {
     }
 
     fun provideSearchTracks(): List<Track> {
-        return getAlreadySearchTracksUseCase.execute()
+        return getSearchResultTrackListUseCase.execute()
     }
 
 }

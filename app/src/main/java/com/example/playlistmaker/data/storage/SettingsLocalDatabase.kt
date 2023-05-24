@@ -24,6 +24,5 @@ class SettingsLocalDatabase private constructor(context: Context) {
         }
 
         const val SETTINGS_PREFS = "settings_prefs"
-        const val APP_THEME_STATUS = "app_theme_status"
     }
 }

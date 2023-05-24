@@ -1,5 +1,4 @@
 package com.example.playlistmaker.domain.model
-
 enum class PlaceholderStatus {
     NO_PLACEHOLDER,
     PLACEHOLDER_NOTHING_FOUND,

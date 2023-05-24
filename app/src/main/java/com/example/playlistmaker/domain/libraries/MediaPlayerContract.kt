@@ -1,4 +1,4 @@
-package com.example.playlistmaker.domain.libs
+package com.example.playlistmaker.domain.libraries
 
 interface MediaPlayerContract {
     fun initMediaPlayer(url:String)

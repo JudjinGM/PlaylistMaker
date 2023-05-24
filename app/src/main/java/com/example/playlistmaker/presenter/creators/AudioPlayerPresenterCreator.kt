@@ -1,6 +1,6 @@
 package com.example.playlistmaker.presenter.creators
 
-import com.example.playlistmaker.data.libs.MediaPlayerImplementation
+import com.example.playlistmaker.data.libraries.MediaPlayerImplementation
 import com.example.playlistmaker.domain.model.Track
 import com.example.playlistmaker.presenter.audio_player.AudioPlayerPresenter
 import com.example.playlistmaker.presenter.audio_player.AudioPlayerView

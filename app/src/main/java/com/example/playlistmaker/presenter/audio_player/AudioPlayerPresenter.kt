@@ -1,10 +1,10 @@
 package com.example.playlistmaker.presenter.audio_player
 
-import com.example.playlistmaker.domain.libs.MediaPlayerContract
+import com.example.playlistmaker.domain.libraries.MediaPlayerContract
 import com.example.playlistmaker.domain.model.PlayerStatus
 import com.example.playlistmaker.domain.model.Track
 import com.example.playlistmaker.domain.usecases.MediaPlayerControlUseCase
-import com.example.playlistmaker.domain.usecases.MediaPlayerInitUseCaseImpl
+import com.example.playlistmaker.domain.usecases.MediaPlayerInitUseCase
 import com.example.playlistmaker.domain.usecases.MediaPlayerPlaybackControlUseCase
 
 class AudioPlayerPresenter(
@@ -14,7 +14,7 @@ class AudioPlayerPresenter(
 ) {
 
     private var playerState = PlayerStatus.STATE_DEFAULT
-    private val mediaPlayerInitUseCase = MediaPlayerInitUseCaseImpl(mediaPlayer) { playerStatus ->
+    private val mediaPlayerInitUseCase = MediaPlayerInitUseCase(mediaPlayer) { playerStatus ->
         playerState = playerStatus
     }
     private val mediaPlayerControlUseCase = MediaPlayerControlUseCase(mediaPlayer) { playerStatus ->
