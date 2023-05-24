@@ -1,4 +1,4 @@
-package com.example.playlistmaker.presenter
+package com.example.playlistmaker.presenter.search
 
 import com.example.playlistmaker.App
 import com.example.playlistmaker.data.dataSourceImpl.ListenHistoryTracksLocalDataSourceImpl
@@ -11,6 +11,7 @@ import com.example.playlistmaker.data.repositoryImpl.SearchRepositoryImpl
 import com.example.playlistmaker.data.storage.TracksSearchCache
 import com.example.playlistmaker.domain.model.PlaceholderStatus
 import com.example.playlistmaker.domain.model.Track
+import com.example.playlistmaker.domain.usecases.*
 
 class SearchPresenter(val view: SearchView) {
 
@@ -33,28 +34,38 @@ class SearchPresenter(val view: SearchView) {
         trackListenHistoryLocalDataSource
     )
 
+    private val searchSongsUseCase = SearchSongsUseCase(searchRepositoryImpl)
+    private val addTracksToListenHistoryUseCase =
+        AddTracksToListenHistoryUseCase(listenHistoryRepository)
+    private val clearListenHistoryUseCase = ClearListenHistoryUseCase(listenHistoryRepository)
+    private val clearSearchListUseCase = ClearSearchListUseCase(searchRepositoryImpl)
+    private val getAlreadySearchTracksUseCase = GetAlreadySearchTracksUseCase(searchRepositoryImpl)
+    private val getIsListenTrackListIsNotEmpty =
+        GetIsListenTrackListIsNotEmpty(listenHistoryRepository)
+
     fun searchRequest(inputSearchText: String) {
-        searchRepositoryImpl.searchTracks(inputSearchText, { newTracks ->
-            view.updateAdapter(newTracks)
+        searchSongsUseCase.execute(inputSearchText, onSuccess = { tracks ->
+            view.updateAdapter(tracks)
             view.showPlaceholder(PlaceholderStatus.NO_PLACEHOLDER)
-        }, { errorStatus ->
+        }, onError = { errorStatus ->
             when (errorStatus) {
                 RemoteDatasourceErrorStatus.NOTHING_FOUND -> {
-                    searchRepositoryImpl.clearSearchTracks()
+                    clearSearchListUseCase.execute()
                     view.updateAdapter(searchRepositoryImpl.getSearchTracks())
                     view.showPlaceholder(PlaceholderStatus.PLACEHOLDER_NOTHING_FOUND)
                 }
                 RemoteDatasourceErrorStatus.NO_CONNECTION -> {
-                    searchRepositoryImpl.clearSearchTracks()
+                    clearSearchListUseCase.execute()
                     view.updateAdapter(searchRepositoryImpl.getSearchTracks())
-                    view.showPlaceholder(PlaceholderStatus.PLACEHOLDER_NO_CONNECTION)}
+                    view.showPlaceholder(PlaceholderStatus.PLACEHOLDER_NO_CONNECTION)
+                }
             }
         })
         view.showPlaceholder(PlaceholderStatus.PLACEHOLDER_PROGRESS_BAR)
     }
 
     fun provideIsListenHistoryNotEmpty(): Boolean {
-        return listenHistoryRepository.isListenHistoryIsNotEmpty()
+        return getIsListenTrackListIsNotEmpty.execute()
     }
 
     fun showListenHistory() {
@@ -62,18 +73,18 @@ class SearchPresenter(val view: SearchView) {
         view.showPlaceholder(PlaceholderStatus.PLACEHOLDER_HISTORY)
     }
 
-    fun showEmptyListenHistory(){
-        listenHistoryRepository.clearListenHistory()
+    fun showEmptyListenHistory() {
+        clearListenHistoryUseCase.execute()
         view.updateAdapter(listenHistoryRepository.getListOfListenHistoryTracks())
         view.showPlaceholder(PlaceholderStatus.NO_PLACEHOLDER)
     }
 
-    fun addTrackToListenHistory(track: Track){
-        listenHistoryRepository.addTrackToListenHistory(track)
+    fun addTrackToListenHistory(track: Track) {
+        addTracksToListenHistoryUseCase.execute(track)
     }
 
     fun showEmptySearch() {
-        searchRepositoryImpl.clearSearchTracks()
+        clearSearchListUseCase.execute()
         view.updateAdapter(searchRepositoryImpl.getSearchTracks())
         view.showPlaceholder(PlaceholderStatus.NO_PLACEHOLDER)
     }
@@ -84,8 +95,7 @@ class SearchPresenter(val view: SearchView) {
     }
 
     fun provideSearchTracks(): List<Track> {
-        return searchRepositoryImpl.getSearchTracks()
+        return getAlreadySearchTracksUseCase.execute()
     }
-
 
 }

@@ -3,7 +3,7 @@ package com.example.playlistmaker.domain.usecases
 import android.content.Context
 import android.content.res.Configuration
 
-class CheckPhoneTheme {
+class CheckPhoneThemeUseCase {
     fun execute(context: Context):Boolean{
         val result =
             when (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {

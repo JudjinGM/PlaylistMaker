@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui
+package com.example.playlistmaker.ui.search
 
 import android.content.Context
 import android.content.Intent
@@ -18,9 +18,9 @@ import com.example.playlistmaker.domain.model.PlaceholderStatus.*
 import com.example.playlistmaker.domain.model.TextWatcherJustOnTextChanged
 import com.example.playlistmaker.domain.model.Track
 import com.example.playlistmaker.presenter.creators.SearchPresenterCreator
-import com.example.playlistmaker.presenter.SearchPresenter
-import com.example.playlistmaker.presenter.SearchView
-import com.example.playlistmaker.presenter.adapter.TracksAdapter
+import com.example.playlistmaker.presenter.search.SearchPresenter
+import com.example.playlistmaker.presenter.search.SearchView
+import com.example.playlistmaker.ui.audio_player.AudioPlayerActivity
 
 class SearchActivity : AppCompatActivity(), SearchView {
 

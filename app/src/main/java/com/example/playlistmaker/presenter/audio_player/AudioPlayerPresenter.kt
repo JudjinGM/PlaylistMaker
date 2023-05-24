@@ -1,6 +1,6 @@
-package com.example.playlistmaker.presenter
+package com.example.playlistmaker.presenter.audio_player
 
-import com.example.playlistmaker.domain.MediaPlayerContract
+import com.example.playlistmaker.domain.libs.MediaPlayerContract
 import com.example.playlistmaker.domain.model.PlayerStatus
 import com.example.playlistmaker.domain.model.Track
 import com.example.playlistmaker.domain.usecases.MediaPlayerControlUseCase

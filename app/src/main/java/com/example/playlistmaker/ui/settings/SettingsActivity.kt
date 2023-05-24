@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui
+package com.example.playlistmaker.ui.settings
 
 import android.content.Intent
 import android.net.Uri
@@ -10,8 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import com.example.playlistmaker.R
 import com.example.playlistmaker.presenter.creators.SettingsPresenterCreator
-import com.example.playlistmaker.presenter.SettingsPresenter
-import com.example.playlistmaker.presenter.SettingsView
+import com.example.playlistmaker.presenter.settings.SettingsPresenter
+import com.example.playlistmaker.presenter.settings.SettingsView
 
 class SettingsActivity : AppCompatActivity(), SettingsView {
     private lateinit var backImageView: ImageView

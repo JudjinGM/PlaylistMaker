@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui
+package com.example.playlistmaker.ui.audio_player
 
 import android.os.Build
 import android.os.Build.VERSION
@@ -15,10 +15,10 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.model.PlayerStatus
 import com.example.playlistmaker.domain.model.PlayerStatus.*
 import com.example.playlistmaker.domain.model.Track
-import com.example.playlistmaker.presenter.AudioPlayerPresenter
-import com.example.playlistmaker.presenter.AudioPlayerView
+import com.example.playlistmaker.presenter.audio_player.AudioPlayerPresenter
+import com.example.playlistmaker.presenter.audio_player.AudioPlayerView
 import com.example.playlistmaker.presenter.creators.AudioPlayerPresenterCreator
-import com.example.playlistmaker.ui.SearchActivity.Companion.TRACK
+import com.example.playlistmaker.ui.search.SearchActivity.Companion.TRACK
 import java.text.SimpleDateFormat
 import java.util.*
 

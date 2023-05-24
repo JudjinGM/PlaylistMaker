@@ -1,6 +1,6 @@
 package com.example.playlistmaker.domain.usecases
 
-import com.example.playlistmaker.domain.MediaPlayerContract
+import com.example.playlistmaker.domain.libs.MediaPlayerContract
 import com.example.playlistmaker.domain.model.PlayerStatus
 
 class MediaPlayerInitUseCaseImpl(

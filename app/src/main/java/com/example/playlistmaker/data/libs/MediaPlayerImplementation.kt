@@ -1,7 +1,7 @@
-package com.example.playlistmaker.data
+package com.example.playlistmaker.data.libs
 
 import android.media.MediaPlayer
-import com.example.playlistmaker.domain.MediaPlayerContract
+import com.example.playlistmaker.domain.libs.MediaPlayerContract
 
 class MediaPlayerImplementation(
 
