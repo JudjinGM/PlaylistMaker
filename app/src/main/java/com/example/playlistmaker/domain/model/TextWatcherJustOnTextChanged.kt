@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui
+package com.example.playlistmaker.domain.model
 
 import android.text.Editable
 import android.text.TextWatcher

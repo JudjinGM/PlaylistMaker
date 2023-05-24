@@ -21,7 +21,9 @@ class AudioPlayerPresenter(
         playerState = playerStatus
     }
     private val mediaPlayerPlaybackControlUseCase =
-        MediaPlayerPlaybackControlUseCase(mediaPlayerControlUseCase) { view.showError() }
+        MediaPlayerPlaybackControlUseCase(mediaPlayerControlUseCase) { playerStatus ->
+            playerState = playerStatus
+        }
 
     init {
         mediaPlayerInitUseCase.initPlayer(track.previewUrl)

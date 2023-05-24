@@ -8,13 +8,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
-import com.example.playlistmaker.App
 import com.example.playlistmaker.R
-import com.example.playlistmaker.data.storage.SettingsLocalDatabase.Companion.APP_THEME_STATUS
-import com.example.playlistmaker.domain.usecases.GetThemeUseCase
-import com.example.playlistmaker.domain.usecases.SetThemeUseCase
+import com.example.playlistmaker.presenter.creators.SettingsPresenterCreator
+import com.example.playlistmaker.presenter.SettingsPresenter
+import com.example.playlistmaker.presenter.SettingsView
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsActivity : AppCompatActivity(), SettingsView {
     private lateinit var backImageView: ImageView
     private lateinit var shareImageView: ImageView
     private lateinit var shareTextView: TextView
@@ -24,20 +23,17 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var agreementTextView: TextView
     private lateinit var themeSwitcher: SwitchCompat
 
-    private lateinit var getThemeUseCase: GetThemeUseCase
-    private lateinit var setThemeUseCase: SetThemeUseCase
-
+    private lateinit var presenter: SettingsPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        getThemeUseCase = GetThemeUseCase(settingsRepository = App.settingsRepository, this)
-        setThemeUseCase = SetThemeUseCase()
+        val creator = SettingsPresenterCreator(this)
+        presenter = creator.createPresenter(this)
 
         contentInit()
         setOnClicks()
-
     }
 
     private fun contentInit() {
@@ -49,8 +45,7 @@ class SettingsActivity : AppCompatActivity() {
         agreementImageView = findViewById(R.id.image_term)
         agreementTextView = findViewById(R.id.text_term)
         themeSwitcher = findViewById(R.id.switch_to_dark_theme)
-
-        themeSwitcher.isChecked = getThemeUseCase.execute()
+        presenter.setSwitchCompatTheme()
     }
 
     private fun setOnClicks() {
@@ -59,11 +54,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         val shareClickListener = View.OnClickListener {
-            val shareText = getString(R.string.share_link)
-            val shareIntent = Intent(Intent.ACTION_SEND)
-            shareIntent.type = INTENT_EMAIL_TYPE
-            shareIntent.putExtra(Intent.EXTRA_TEXT, shareText)
-            startActivity(Intent.createChooser(shareIntent, CHOOSER_TITLE))
+            presenter.shareApp()
         }
 
         shareImageView.setOnClickListener(shareClickListener)
@@ -71,39 +62,53 @@ class SettingsActivity : AppCompatActivity() {
 
 
         val supportClickListener = View.OnClickListener {
-            val subject = getString(R.string.mail_to_support_subject)
-            val message = getString(R.string.mail_to_support_message)
-            val writeToSupportIntent = Intent(Intent.ACTION_SENDTO)
-            val mailAddress = getString(R.string.developer_email_address)
-            writeToSupportIntent.data = Uri.parse("mailto:")
-            writeToSupportIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(mailAddress))
-            writeToSupportIntent.putExtra(Intent.EXTRA_SUBJECT, subject)
-            writeToSupportIntent.putExtra(Intent.EXTRA_TEXT, message)
-            startActivity(writeToSupportIntent)
+            presenter.writeToSupport()
         }
 
         supportImageView.setOnClickListener(supportClickListener)
         supportTextView.setOnClickListener(supportClickListener)
 
-
         val agreementClickListener = View.OnClickListener {
-            val link = getString(R.string.link_to_agreement)
-            val agreementIntent = Intent(Intent.ACTION_VIEW)
-            agreementIntent.data = Uri.parse(link)
-            startActivity(agreementIntent)
+            presenter.showTermOfUse()
         }
 
         agreementImageView.setOnClickListener(agreementClickListener)
         agreementTextView.setOnClickListener(agreementClickListener)
 
         themeSwitcher.setOnCheckedChangeListener { _, isChecked ->
-            setThemeUseCase.execute(isChecked)
-            if (isChecked) {
-                App.settingsRepository.setSettingBoolean(APP_THEME_STATUS, true)
-            } else {
-                App.settingsRepository.setSettingBoolean(APP_THEME_STATUS, false)
-            }
+            presenter.changeTheme(isChecked)
         }
+    }
+
+    override fun shareApp() {
+        val shareText = getString(R.string.share_link)
+        val shareIntent = Intent(Intent.ACTION_SEND)
+        shareIntent.type = INTENT_EMAIL_TYPE
+        shareIntent.putExtra(Intent.EXTRA_TEXT, shareText)
+        startActivity(Intent.createChooser(shareIntent, CHOOSER_TITLE))
+    }
+
+    override fun writeToSupport() {
+        val subject = getString(R.string.mail_to_support_subject)
+        val message = getString(R.string.mail_to_support_message)
+        val writeToSupportIntent = Intent(Intent.ACTION_SENDTO)
+        val mailAddress = getString(R.string.developer_email_address)
+        writeToSupportIntent.data = Uri.parse("mailto:")
+        writeToSupportIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(mailAddress))
+        writeToSupportIntent.putExtra(Intent.EXTRA_SUBJECT, subject)
+        writeToSupportIntent.putExtra(Intent.EXTRA_TEXT, message)
+        startActivity(writeToSupportIntent)
+    }
+
+    override fun showTermOfUse() {
+        val link = getString(R.string.link_to_agreement)
+        val agreementIntent = Intent(Intent.ACTION_VIEW)
+        agreementIntent.data = Uri.parse(link)
+        startActivity(agreementIntent)
+    }
+
+    override fun setSwitchCompatTheme(isChecked: Boolean) {
+        themeSwitcher.isChecked = isChecked
     }
 
     private companion object {

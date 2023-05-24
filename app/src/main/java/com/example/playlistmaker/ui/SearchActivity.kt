@@ -12,22 +12,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.playlistmaker.App
 import com.example.playlistmaker.R
-import com.example.playlistmaker.data.dataSourceImpl.ListenHistoryTracksLocalDataSourceImpl
-import com.example.playlistmaker.data.dataSourceImpl.SearchTracksLocalDataSourceImpl
-import com.example.playlistmaker.data.dataSourceImpl.SearchTracksRemoteDataSourceImpl
-import com.example.playlistmaker.data.models.RemoteDatasourceErrorStatus.NOTHING_FOUND
-import com.example.playlistmaker.data.models.RemoteDatasourceErrorStatus.NO_CONNECTION
-import com.example.playlistmaker.data.network.RetrofitFactory
-import com.example.playlistmaker.data.repositoryImpl.ListenHistoryRepositoryImpl
-import com.example.playlistmaker.data.repositoryImpl.SearchRepositoryImpl
-import com.example.playlistmaker.data.storage.TracksSearchCache
 import com.example.playlistmaker.domain.model.PlaceholderStatus
 import com.example.playlistmaker.domain.model.PlaceholderStatus.*
+import com.example.playlistmaker.domain.model.TextWatcherJustOnTextChanged
+import com.example.playlistmaker.domain.model.Track
+import com.example.playlistmaker.presenter.creators.SearchPresenterCreator
+import com.example.playlistmaker.presenter.SearchPresenter
+import com.example.playlistmaker.presenter.SearchView
 import com.example.playlistmaker.presenter.adapter.TracksAdapter
 
-class SearchActivity : AppCompatActivity() {
+class SearchActivity : AppCompatActivity(), SearchView {
 
     private lateinit var inputSearchField: EditText
     private lateinit var placeholderImage: ImageView
@@ -40,76 +35,25 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var backImageView: ImageView
     private lateinit var progressBar: ProgressBar
 
-    private var isClickAllowed = true
-
     private val handler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { searchRequest() }
+    private lateinit var tracksAdapter: TracksAdapter
+    private lateinit var presenter: SearchPresenter
 
     private var inputSearchText: String = DEFAULT_TEXT
-
-    private var retrofit = RetrofitFactory()
-    private val itunesService = retrofit.getService()
-
-    private val tracksSearchCache = TracksSearchCache
-
-    private val searchTracksRemoteDataSource = SearchTracksRemoteDataSourceImpl(itunesService)
-    private val tracksSearchLocalDataSource = SearchTracksLocalDataSourceImpl(tracksSearchCache)
-    private val trackListenHistoryLocalDataSource =
-        ListenHistoryTracksLocalDataSourceImpl(App.tracksListenHistoryLocalDatabase)
-
-    private val searchRepositoryImpl = SearchRepositoryImpl(
-        searchTracksRemoteDataSource,
-        tracksSearchLocalDataSource,
-    )
-
-    private val listenHistoryRepository = ListenHistoryRepositoryImpl(
-        trackListenHistoryLocalDataSource
-    )
-
-    private val tracksAdapter = TracksAdapter(searchRepositoryImpl.getSearchTracks())
+    private var isClickAllowed = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
+        val creator = SearchPresenterCreator()
+        presenter = creator.createPresenter(this)
+
         viewsInit()
-        setOnClicksAndAction()
-
-        tracksRecyclerView.layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        tracksRecyclerView.adapter = tracksAdapter
-
-        val textWatcher = object : TextWatcherJustOnTextChanged {
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                clearImageView.isVisible = checkImageViewVisibility(s)
-                inputSearchText = inputSearchField.text.toString()
-
-                if (inputSearchField.hasFocus() && (s?.isEmpty() == true || s?.isBlank() == true) && listenHistoryRepository.isListenHistoryIsNotEmpty()) {
-                    tracksAdapter.updateAdapter(listenHistoryRepository.getListOfListenHistoryTracks())
-                    showPlaceholder(PLACEHOLDER_HISTORY)
-                } else if (inputSearchField.hasFocus() && (s?.isEmpty() == true || s?.isBlank() == true)) {
-                    clearTrackList()
-                    showPlaceholder(NO_PLACEHOLDER)
-                } else {
-                    searchDebounced()
-                    tracksAdapter.updateAdapter(searchRepositoryImpl.getSearchTracks())
-                    showPlaceholder(NO_PLACEHOLDER)
-                }
-            }
-        }
-        inputSearchField.addTextChangedListener(textWatcher)
-
-        inputSearchField.setOnFocusChangeListener { v, hasFocus ->
-            if (hasFocus && inputSearchField.text.isEmpty() && listenHistoryRepository.isListenHistoryIsNotEmpty()) {
-                tracksAdapter.updateAdapter(listenHistoryRepository.getListOfListenHistoryTracks())
-                showPlaceholder(PLACEHOLDER_HISTORY)
-            } else {
-                tracksAdapter.updateAdapter(searchRepositoryImpl.getSearchTracks())
-                showPlaceholder(NO_PLACEHOLDER)
-            }
-        }
-        inputSearchField.requestFocus()
+        recycleViewInit()
+        setOnClicksAndActions()
+        setOnTextWatchersTextChangeListeners()
     }
 
     private fun viewsInit() {
@@ -123,60 +67,6 @@ class SearchActivity : AppCompatActivity() {
         headerSearchHistoryTextView = findViewById(R.id.headerSearchHistoryTextView)
         buttonClearHistory = findViewById(R.id.buttonClearHistory)
         progressBar = findViewById(R.id.progressBar)
-
-    }
-
-    private fun setOnClicksAndAction() {
-
-        backImageView.setOnClickListener {
-            finish()
-        }
-
-        clearImageView.setOnClickListener {
-            clearTrackList()
-            val inputMethodManager =
-                getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-            inputMethodManager?.hideSoftInputFromWindow(inputSearchField.windowToken, 0)
-            inputSearchField.setText(DEFAULT_TEXT)
-        }
-
-        buttonClearHistory.setOnClickListener {
-            showPlaceholder(NO_PLACEHOLDER)
-            clearTrackSearchHistory()
-        }
-
-        tracksAdapter.onTrackClicked = { track ->
-            if (clickDebounce()) {
-                listenHistoryRepository.addTrackToListenHistory(track)
-                val intent = Intent(this, AudioPlayerActivity::class.java)
-                intent.putExtra(TRACK, track)
-                startActivity(intent)
-            }
-        }
-
-
-        refreshButton.setOnClickListener {
-            searchRepositoryImpl.searchTracks(inputSearchText, { newTracks ->
-                tracksAdapter.updateAdapter(newTracks)
-                showPlaceholder(NO_PLACEHOLDER)
-            }, { errorStatus ->
-                when (errorStatus) {
-                    NOTHING_FOUND -> showPlaceholder(PLACEHOLDER_NOTHING_FOUND)
-                    NO_CONNECTION -> showPlaceholder(PLACEHOLDER_NO_CONNECTION)
-                }
-            })
-            showPlaceholder(PLACEHOLDER_PROGRESS_BAR)
-        }
-    }
-
-    private fun clearTrackList() {
-        searchRepositoryImpl.clearSearchTracks()
-        tracksAdapter.updateAdapter(searchRepositoryImpl.getSearchTracks())
-    }
-
-    private fun clearTrackSearchHistory() {
-        listenHistoryRepository.clearListenHistory()
-        tracksAdapter.updateAdapter(listenHistoryRepository.getListOfListenHistoryTracks())
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -190,11 +80,7 @@ class SearchActivity : AppCompatActivity() {
         inputSearchField.setText(inputSearchText)
     }
 
-    private fun checkImageViewVisibility(s: CharSequence?): Boolean {
-        return !s.isNullOrEmpty()
-    }
-
-    private fun showPlaceholder(status: PlaceholderStatus) {
+    override fun showPlaceholder(status: PlaceholderStatus) {
         when (status) {
             NO_PLACEHOLDER -> {
                 placeholderImage.visibility = View.GONE
@@ -205,7 +91,6 @@ class SearchActivity : AppCompatActivity() {
                 progressBar.visibility = View.GONE
             }
             PLACEHOLDER_NOTHING_FOUND -> {
-                clearTrackList()
                 refreshButton.visibility = View.GONE
                 placeholderImage.visibility = View.VISIBLE
                 placeholderImage.setImageResource(R.drawable.error_search)
@@ -216,7 +101,6 @@ class SearchActivity : AppCompatActivity() {
                 progressBar.visibility = View.GONE
             }
             PLACEHOLDER_NO_CONNECTION -> {
-                clearTrackList()
                 placeholderImage.visibility = View.VISIBLE
                 placeholderImage.setImageResource(R.drawable.error_internet)
                 errorTextTextView.visibility = View.VISIBLE
@@ -247,6 +131,80 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
+    override fun updateAdapter(trackList: List<Track>) {
+        tracksAdapter.updateAdapter(trackList)
+    }
+
+    private fun setOnClicksAndActions() {
+
+        backImageView.setOnClickListener {
+            finish()
+        }
+
+        clearImageView.setOnClickListener {
+            presenter.showEmptySearch()
+
+            val inputMethodManager =
+                getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            inputMethodManager?.hideSoftInputFromWindow(inputSearchField.windowToken, 0)
+            inputSearchField.setText(DEFAULT_TEXT)
+        }
+
+        buttonClearHistory.setOnClickListener {
+            presenter.showEmptyListenHistory()
+        }
+
+        tracksAdapter.onTrackClicked = { track ->
+            if (clickDebounce()) {
+                presenter.addTrackToListenHistory(track)
+                val intent = Intent(this, AudioPlayerActivity::class.java)
+                intent.putExtra(TRACK, track)
+                startActivity(intent)
+            }
+        }
+
+        refreshButton.setOnClickListener {
+            presenter.searchRequest(inputSearchText)
+        }
+    }
+
+    private fun setOnTextWatchersTextChangeListeners() {
+        val textWatcher = object : TextWatcherJustOnTextChanged {
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                clearImageView.isVisible = checkImageViewVisibility(s)
+                inputSearchText = inputSearchField.text.toString()
+
+                if (inputSearchField.hasFocus() && (s?.isEmpty() == true || s?.isBlank() == true) && presenter.provideIsListenHistoryNotEmpty()) {
+                    presenter.showListenHistory()
+                } else if (inputSearchField.hasFocus() && (s?.isEmpty() == true || s?.isBlank() == true)) {
+                    presenter.showEmptySearch()
+                } else {
+                    searchDebounced()
+                    presenter.showSearchedTracks()
+                }
+            }
+        }
+        inputSearchField.addTextChangedListener(textWatcher)
+
+        inputSearchField.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus && inputSearchField.text.isEmpty() && presenter.provideIsListenHistoryNotEmpty()) {
+                presenter.showListenHistory()
+            } else {
+                presenter.showSearchedTracks()
+            }
+        }
+        inputSearchField.requestFocus()
+    }
+    private fun recycleViewInit() {
+        tracksAdapter = TracksAdapter(presenter.provideSearchTracks())
+        tracksRecyclerView.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        tracksRecyclerView.adapter = tracksAdapter
+    }
+    private fun checkImageViewVisibility(s: CharSequence?): Boolean {
+        return !s.isNullOrEmpty()
+    }
     private fun clickDebounce(): Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
@@ -258,16 +216,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun searchRequest() {
         if (inputSearchText.isNotEmpty() || inputSearchText.isNotBlank()) {
-            searchRepositoryImpl.searchTracks(inputSearchText, { newTracks ->
-                tracksAdapter.updateAdapter(newTracks)
-                showPlaceholder(NO_PLACEHOLDER)
-            }, { errorStatus ->
-                when (errorStatus) {
-                    NOTHING_FOUND -> showPlaceholder(PLACEHOLDER_NOTHING_FOUND)
-                    NO_CONNECTION -> showPlaceholder(PLACEHOLDER_NO_CONNECTION)
-                }
-            })
-            showPlaceholder(PLACEHOLDER_PROGRESS_BAR)
+            presenter.searchRequest(inputSearchText)
         }
     }
 
@@ -276,13 +225,11 @@ class SearchActivity : AppCompatActivity() {
         handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
     }
 
-
     companion object {
         const val SAVED_TEXT = "SAVED_TEXT"
         const val DEFAULT_TEXT = ""
         const val TRACK = "track"
         private const val CLICK_DEBOUNCE_DELAY = 1000L
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
-
     }
 }

@@ -4,7 +4,7 @@ import com.example.playlistmaker.domain.model.PlayerStatus
 
 class MediaPlayerPlaybackControlUseCase(
     private val mediaPlayerControlUseCase: MediaPlayerControlUseCase,
-    private val playbackErrorEvent: PlaybackErrorHandler
+    private val callback: (PlayerStatus) -> (Unit)
 ) {
     fun execute(playerStatus: PlayerStatus) {
         when (playerStatus) {
@@ -15,9 +15,11 @@ class MediaPlayerPlaybackControlUseCase(
                 mediaPlayerControlUseCase.playPlayer()
             }
             PlayerStatus.STATE_ERROR -> {
-                playbackErrorEvent.handle()
+                callback.invoke(PlayerStatus.STATE_ERROR)
             }
-            else -> {}
+            PlayerStatus.STATE_DEFAULT -> {
+                callback.invoke(PlayerStatus.STATE_DEFAULT)
+            }
         }
     }
 }

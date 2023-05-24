@@ -19,5 +19,4 @@ class MediaPlayerControlUseCase(
     fun releasePlayer() {
         mediaPlayer.release()
     }
-
 }

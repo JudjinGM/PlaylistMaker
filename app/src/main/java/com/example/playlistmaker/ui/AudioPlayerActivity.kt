@@ -16,8 +16,8 @@ import com.example.playlistmaker.domain.model.PlayerStatus
 import com.example.playlistmaker.domain.model.PlayerStatus.*
 import com.example.playlistmaker.domain.model.Track
 import com.example.playlistmaker.presenter.AudioPlayerPresenter
-import com.example.playlistmaker.presenter.AudioPlayerPresenterCreator
 import com.example.playlistmaker.presenter.AudioPlayerView
+import com.example.playlistmaker.presenter.creators.AudioPlayerPresenterCreator
 import com.example.playlistmaker.ui.SearchActivity.Companion.TRACK
 import java.text.SimpleDateFormat
 import java.util.*
@@ -133,7 +133,7 @@ class AudioPlayerActivity : AppCompatActivity(), AudioPlayerView {
     override fun uiUpdate(playerStatus: PlayerStatus) {
         updateTimeTextView(playerStatus)
         when (playerStatus) {
-            STATE_DEFAULT, STATE_PREPARED, STATE_ERROR -> {
+            STATE_PREPARED -> {
                 playImageView.setImageResource(R.drawable.play_button)
             }
             STATE_PLAYING -> {
@@ -141,6 +141,12 @@ class AudioPlayerActivity : AppCompatActivity(), AudioPlayerView {
             }
             STATE_PAUSED -> {
                 playImageView.setImageResource(R.drawable.play_button)
+            }
+            STATE_DEFAULT -> {
+                showError(STATE_DEFAULT)
+            }
+            STATE_ERROR -> {
+                showError(STATE_ERROR)
             }
         }
     }
@@ -179,11 +185,17 @@ class AudioPlayerActivity : AppCompatActivity(), AudioPlayerView {
         return SimpleDateFormat("mm:ss", Locale.getDefault()).format(millis)
     }
 
-    override fun showError() {
-        Toast.makeText(this, R.string.cant_play_song, Toast.LENGTH_LONG).show()
+    override fun showError(playerStatus: PlayerStatus) {
+        if (playerStatus == STATE_ERROR) {
+            Toast.makeText(this, R.string.cant_play_song, Toast.LENGTH_LONG).show()
+        }
+        if (playerStatus == STATE_DEFAULT) {
+            Toast.makeText(this, R.string.player_not_ready, Toast.LENGTH_LONG).show()
+
+        }
     }
 
     companion object {
-        private const val DELAY = 100L
+        private const val DELAY = 200L
     }
 }
