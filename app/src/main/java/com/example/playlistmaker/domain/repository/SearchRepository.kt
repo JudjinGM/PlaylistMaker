@@ -1,6 +1,6 @@
 package com.example.playlistmaker.domain.repository
 
-import com.example.playlistmaker.data.models.RemoteDatasourceErrorStatus
+import com.example.playlistmaker.domain.model.RepositoryErrorStatus
 import com.example.playlistmaker.domain.model.Track
 
 interface SearchRepository {
@@ -8,7 +8,7 @@ interface SearchRepository {
     fun searchTracks(
         inputSearchText: String,
         onSuccess: (List<Track>) -> Unit,
-        onError: (RemoteDatasourceErrorStatus) -> Unit
+        onError: (RepositoryErrorStatus) -> Unit
     )
 
     fun getSearchTracks(): List<Track>

@@ -4,12 +4,12 @@ import com.example.playlistmaker.App
 import com.example.playlistmaker.data.dataSourceImpl.ListenHistoryTracksLocalDataSourceImpl
 import com.example.playlistmaker.data.dataSourceImpl.SearchTracksLocalDataSourceImpl
 import com.example.playlistmaker.data.dataSourceImpl.SearchTracksRemoteDataSourceImpl
-import com.example.playlistmaker.data.models.RemoteDatasourceErrorStatus
 import com.example.playlistmaker.data.network.RetrofitFactory
 import com.example.playlistmaker.data.repositoryImpl.ListenHistoryRepositoryImpl
 import com.example.playlistmaker.data.repositoryImpl.SearchRepositoryImpl
 import com.example.playlistmaker.data.storage.TracksSearchCache
 import com.example.playlistmaker.domain.model.PlaceholderStatus
+import com.example.playlistmaker.domain.model.RepositoryErrorStatus
 import com.example.playlistmaker.domain.model.Track
 import com.example.playlistmaker.domain.usecases.*
 
@@ -48,12 +48,12 @@ class SearchPresenter(val view: SearchView) {
             view.showPlaceholder(PlaceholderStatus.NO_PLACEHOLDER)
         }, onError = { errorStatus ->
             when (errorStatus) {
-                RemoteDatasourceErrorStatus.NOTHING_FOUND -> {
+                RepositoryErrorStatus.NOTHING_FOUND -> {
                     clearSearchListUseCase.execute()
                     view.updateAdapter(searchRepositoryImpl.getSearchTracks())
                     view.showPlaceholder(PlaceholderStatus.PLACEHOLDER_NOTHING_FOUND)
                 }
-                RemoteDatasourceErrorStatus.NO_CONNECTION -> {
+                RepositoryErrorStatus.NO_CONNECTION -> {
                     clearSearchListUseCase.execute()
                     view.updateAdapter(searchRepositoryImpl.getSearchTracks())
                     view.showPlaceholder(PlaceholderStatus.PLACEHOLDER_NO_CONNECTION)
