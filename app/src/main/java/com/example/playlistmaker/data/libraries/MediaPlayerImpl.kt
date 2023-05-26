@@ -3,9 +3,7 @@ package com.example.playlistmaker.data.libraries
 import android.media.MediaPlayer
 import com.example.playlistmaker.domain.libraries.MediaPlayerContract
 
-class MediaPlayerImplementation(
-
-) : MediaPlayerContract {
+class MediaPlayerImpl : MediaPlayerContract {
 
     private val mediaPlayer = MediaPlayer()
     private var onPreparedListener: (() -> Unit)? = null

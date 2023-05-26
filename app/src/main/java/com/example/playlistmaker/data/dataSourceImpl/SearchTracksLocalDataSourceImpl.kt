@@ -1,7 +1,7 @@
 package com.example.playlistmaker.data.dataSourceImpl
 
-import com.example.playlistmaker.data.storage.TracksSearchCache
 import com.example.playlistmaker.data.dataSources.TracksLocalDataSource
+import com.example.playlistmaker.data.storage.TracksSearchCache
 import com.example.playlistmaker.domain.model.Track
 
 class SearchTracksLocalDataSourceImpl(
@@ -9,7 +9,7 @@ class SearchTracksLocalDataSourceImpl(
 ) : TracksLocalDataSource {
 
     override fun getAllTracks(): List<Track> {
-        return database.trackList
+        return database.getTrackList()
     }
 
     override fun addAllTracks(listOfTracks: List<Track>) {
@@ -18,7 +18,7 @@ class SearchTracksLocalDataSourceImpl(
 
     override fun getTrack(id: Long): Track? {
         var result: Track? = null
-        for (track in database.trackList) {
+        for (track in database.getTrackList()) {
             if (track.trackId == id) {
                 result = track
             }
@@ -27,7 +27,7 @@ class SearchTracksLocalDataSourceImpl(
     }
 
     override fun deleteTrack(id: Long) {
-        for (track in database.trackList) {
+        for (track in database.getTrackList()) {
             if (track.trackId == id) {
                 database.removeTrack(track)
             }
@@ -43,6 +43,6 @@ class SearchTracksLocalDataSourceImpl(
     }
 
     override fun getTracksCount(): Int {
-        return database.trackList.size
+        return database.getTrackList().size
     }
 }

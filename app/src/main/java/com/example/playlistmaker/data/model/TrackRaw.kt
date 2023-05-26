@@ -1,4 +1,4 @@
-package com.example.playlistmaker.data.models
+package com.example.playlistmaker.data.model
 
 data class TrackRaw(
     val trackId: Long ,

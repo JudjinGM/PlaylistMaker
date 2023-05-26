@@ -12,16 +12,17 @@ class AudioPlayerPresenter(
     private val mediaPlayer: MediaPlayerContract,
     track: Track,
 ) {
-
     private var playerState = PlayerStatus.STATE_DEFAULT
-    private val mediaPlayerInitUseCase = MediaPlayerInitUseCase(mediaPlayer) { playerStatus ->
-        playerState = playerStatus
-    }
-    private val mediaPlayerControlUseCase = MediaPlayerControlUseCase(mediaPlayer) { playerStatus ->
-        playerState = playerStatus
-    }
-    private val mediaPlayerPlaybackControlUseCase =
-        MediaPlayerPlaybackControlUseCase(mediaPlayerControlUseCase) { playerStatus ->
+    private val mediaPlayerInitUseCase: MediaPlayerInitUseCase =
+        MediaPlayerInitUseCase.Base(mediaPlayer) { playerStatus ->
+            playerState = playerStatus
+        }
+    private val mediaPlayerControlUseCase: MediaPlayerControlUseCase =
+        MediaPlayerControlUseCase.Base(mediaPlayer) { playerStatus ->
+            playerState = playerStatus
+        }
+    private val mediaPlayerPlaybackControlUseCase: MediaPlayerPlaybackControlUseCase =
+        MediaPlayerPlaybackControlUseCase.Base(mediaPlayerControlUseCase) { playerStatus ->
             playerState = playerStatus
         }
 

@@ -1,6 +1,6 @@
 package com.example.playlistmaker.data.dataSources
 
-import com.example.playlistmaker.data.models.RemoteDatasourceErrorStatus
+import com.example.playlistmaker.data.model.RemoteDatasourceErrorStatus
 import com.example.playlistmaker.domain.model.Track
 
 interface TracksRemoteDataSource {

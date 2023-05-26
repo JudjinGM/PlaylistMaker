@@ -2,8 +2,11 @@ package com.example.playlistmaker.domain.usecases
 
 import com.example.playlistmaker.domain.repository.SearchRepository
 
-class ClearSearchListUseCase(private val searchRepository: SearchRepository) {
-    fun execute(){
-        searchRepository.clearSearchTracks()
+interface ClearSearchListUseCase {
+    fun execute()
+    class Base(private val searchRepository: SearchRepository) : ClearSearchListUseCase {
+        override fun execute() {
+            searchRepository.clearSearchTracks()
+        }
     }
 }

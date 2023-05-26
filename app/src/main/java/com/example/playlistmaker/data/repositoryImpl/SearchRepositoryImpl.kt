@@ -1,7 +1,7 @@
 package com.example.playlistmaker.data.repositoryImpl
 import com.example.playlistmaker.data.dataSources.TracksLocalDataSource
 import com.example.playlistmaker.data.dataSources.TracksRemoteDataSource
-import com.example.playlistmaker.data.models.RemoteDatasourceErrorStatus
+import com.example.playlistmaker.data.model.RemoteDatasourceErrorStatus
 import com.example.playlistmaker.domain.model.RepositoryErrorStatus
 import com.example.playlistmaker.domain.model.Track
 import com.example.playlistmaker.domain.repository.SearchRepository

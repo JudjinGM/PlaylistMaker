@@ -1,7 +1,7 @@
 package com.example.playlistmaker.data.mapper
 
 import com.example.playlistmaker.domain.model.Track
-import com.example.playlistmaker.data.models.TrackRaw
+import com.example.playlistmaker.data.model.TrackRaw
 import java.text.SimpleDateFormat
 import java.util.*
 

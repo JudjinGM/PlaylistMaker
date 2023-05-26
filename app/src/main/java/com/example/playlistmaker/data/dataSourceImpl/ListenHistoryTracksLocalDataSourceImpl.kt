@@ -1,14 +1,14 @@
 package com.example.playlistmaker.data.dataSourceImpl
 
-import com.example.playlistmaker.data.storage.TracksListenHistoryLocalDatabase
 import com.example.playlistmaker.data.dataSources.TracksLocalDataSource
+import com.example.playlistmaker.data.storage.TracksListenHistoryLocalDatabase
 import com.example.playlistmaker.domain.model.Track
 
 class ListenHistoryTracksLocalDataSourceImpl(
     private val database: TracksListenHistoryLocalDatabase
 ) : TracksLocalDataSource {
     override fun getAllTracks(): List<Track> {
-        val result = database.getListenHistoryTracks().toMutableList()
+        val result = database.getListenHistoryMutableTrackList()
         result.reverse()
         return result
     }
@@ -18,13 +18,13 @@ class ListenHistoryTracksLocalDataSourceImpl(
     }
 
     override fun clearAllTracks() {
-        val tracks = database.getListenHistoryTracks().toMutableList()
+        val tracks = database.getListenHistoryMutableTrackList()
         tracks.clear()
         database.addListenHistoryTracks(tracks.toTypedArray())
     }
 
     override fun deleteTrack(id: Long) {
-        val tracks = database.getListenHistoryTracks().toMutableList()
+        val tracks = database.getListenHistoryMutableTrackList()
         for (track in tracks) {
             if (track.trackId == id) tracks.remove(track)
         }
@@ -32,7 +32,7 @@ class ListenHistoryTracksLocalDataSourceImpl(
     }
 
     override fun getTrack(id: Long): Track? {
-        val tracks = database.getListenHistoryTracks().toMutableList()
+        val tracks = database.getListenHistoryMutableTrackList()
         var result: Track? = null
         for (track in tracks) {
             if (track.trackId == id) result = track
@@ -42,7 +42,7 @@ class ListenHistoryTracksLocalDataSourceImpl(
 
     override fun addTrack(track: Track) {
         val tracks: MutableList<Track> =
-            database.getListenHistoryTracks().toMutableList()
+            database.getListenHistoryMutableTrackList()
         var result = mutableListOf<Track>()
         if (tracks.isEmpty()) {
             result.add(track)
@@ -60,7 +60,7 @@ class ListenHistoryTracksLocalDataSourceImpl(
     }
 
     override fun getTracksCount(): Int {
-        return database.getListenHistoryTracks().toMutableList().size
+        return database.getListenHistoryMutableTrackList().size
     }
 
 

@@ -4,13 +4,17 @@ import com.example.playlistmaker.App
 import com.example.playlistmaker.data.dataSourceImpl.ListenHistoryTracksLocalDataSourceImpl
 import com.example.playlistmaker.data.dataSourceImpl.SearchTracksLocalDataSourceImpl
 import com.example.playlistmaker.data.dataSourceImpl.SearchTracksRemoteDataSourceImpl
+import com.example.playlistmaker.data.dataSources.TracksLocalDataSource
+import com.example.playlistmaker.data.dataSources.TracksRemoteDataSource
 import com.example.playlistmaker.data.network.RetrofitFactory
 import com.example.playlistmaker.data.repositoryImpl.ListenHistoryRepositoryImpl
 import com.example.playlistmaker.data.repositoryImpl.SearchRepositoryImpl
-import com.example.playlistmaker.data.storage.TracksSearchCache
+import com.example.playlistmaker.data.storage.TracksSearchCacheImpl
 import com.example.playlistmaker.domain.model.PlaceholderStatus
 import com.example.playlistmaker.domain.model.RepositoryErrorStatus
 import com.example.playlistmaker.domain.model.Track
+import com.example.playlistmaker.domain.repository.ListenHistoryRepository
+import com.example.playlistmaker.domain.repository.SearchRepository
 import com.example.playlistmaker.domain.usecases.*
 
 class SearchPresenter(val view: SearchView) {
@@ -18,29 +22,41 @@ class SearchPresenter(val view: SearchView) {
     private var retrofit = RetrofitFactory()
     private val itunesService = retrofit.getService()
 
-    private val tracksSearchCache = TracksSearchCache
-    private val searchTracksRemoteDataSource = SearchTracksRemoteDataSourceImpl(itunesService)
-    private val tracksSearchLocalDataSource = SearchTracksLocalDataSourceImpl(tracksSearchCache)
-    private val trackListenHistoryLocalDataSource =
+    private val searchTracksRemoteDataSource: TracksRemoteDataSource =
+        SearchTracksRemoteDataSourceImpl(itunesService)
+
+    private val tracksSearchLocalDataSource: TracksLocalDataSource =
+        SearchTracksLocalDataSourceImpl(TracksSearchCacheImpl)
+
+    private val trackListenHistoryLocalDataSource: TracksLocalDataSource =
         ListenHistoryTracksLocalDataSourceImpl(App.tracksListenHistoryLocalDatabase)
 
-    private val searchRepositoryImpl = SearchRepositoryImpl(
+    private val searchRepositoryImpl: SearchRepository = SearchRepositoryImpl(
         searchTracksRemoteDataSource,
         tracksSearchLocalDataSource,
     )
 
-    private val listenHistoryRepository = ListenHistoryRepositoryImpl(
+    private val listenHistoryRepository: ListenHistoryRepository = ListenHistoryRepositoryImpl(
         trackListenHistoryLocalDataSource
     )
 
-    private val searchSongsUseCase = SearchSongsUseCase(searchRepositoryImpl)
-    private val addTracksToListenHistoryUseCase =
-        AddTracksToListenHistoryUseCase(listenHistoryRepository)
-    private val clearListenHistoryUseCase = ClearListenHistoryUseCase(listenHistoryRepository)
-    private val clearSearchListUseCase = ClearSearchListUseCase(searchRepositoryImpl)
-    private val getSearchResultTrackListUseCase = GetSearchResultTrackListUseCase(searchRepositoryImpl)
-    private val getIsListenTrackListIsNotEmpty =
-        GetIsListenTrackListIsNotEmpty(listenHistoryRepository)
+    private val searchSongsUseCase: SearchSongsUseCase =
+        SearchSongsUseCase.Base(searchRepositoryImpl)
+
+    private val addTracksToListenHistoryUseCase: AddTracksToListenHistoryUseCase =
+        AddTracksToListenHistoryUseCase.Base(listenHistoryRepository)
+
+    private val clearListenHistoryUseCase: ClearListenHistoryUseCase =
+        ClearListenHistoryUseCase.Base(listenHistoryRepository)
+
+    private val clearSearchListUseCase: ClearSearchListUseCase =
+        ClearSearchListUseCase.Base(searchRepositoryImpl)
+
+    private val getSearchResultTrackListUseCase: GetSearchResultTrackListUseCase =
+        GetSearchResultTrackListUseCase.Base(searchRepositoryImpl)
+
+    private val getIsListenTrackListIsNotEmptyUseCase: GetIsListenTrackListIsNotEmptyUseCase =
+        GetIsListenTrackListIsNotEmptyUseCase.Base(listenHistoryRepository)
 
     fun searchRequest(inputSearchText: String) {
         searchSongsUseCase.execute(inputSearchText, onSuccess = { tracks ->
@@ -64,7 +80,7 @@ class SearchPresenter(val view: SearchView) {
     }
 
     fun provideIsListenHistoryNotEmpty(): Boolean {
-        return getIsListenTrackListIsNotEmpty.execute()
+        return getIsListenTrackListIsNotEmptyUseCase.execute()
     }
 
     fun showListenHistory() {

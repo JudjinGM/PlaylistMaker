@@ -1,3 +1,3 @@
-package com.example.playlistmaker.data.models
+package com.example.playlistmaker.data.model
 
 data class TrackItunesResponse(val results: MutableList<TrackRaw>)

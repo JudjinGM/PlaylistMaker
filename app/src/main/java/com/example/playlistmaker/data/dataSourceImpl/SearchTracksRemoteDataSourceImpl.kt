@@ -2,10 +2,10 @@ package com.example.playlistmaker.data.dataSourceImpl
 
 import com.example.playlistmaker.data.dataSources.TracksRemoteDataSource
 import com.example.playlistmaker.data.mapper.RemoteDatasourceToTrackMapper
-import com.example.playlistmaker.data.models.RemoteDatasourceErrorStatus
+import com.example.playlistmaker.data.model.RemoteDatasourceErrorStatus
 import com.example.playlistmaker.data.network.ItunesApi
 import com.example.playlistmaker.domain.model.Track
-import com.example.playlistmaker.data.models.TrackItunesResponse
+import com.example.playlistmaker.data.model.TrackItunesResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

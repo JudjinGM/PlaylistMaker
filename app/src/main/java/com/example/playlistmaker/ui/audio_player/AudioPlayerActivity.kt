@@ -41,8 +41,7 @@ class AudioPlayerActivity : AppCompatActivity(), AudioPlayerView {
     private lateinit var countryTextView: TextView
 
     private lateinit var mainTreadHandler: Handler
-    private lateinit var trackTimeUpdateRunnable: Runnable
-    private var isRunnablePosted = false
+    private var trackTimeUpdateRunnable: Runnable? = null
 
     private var isTrackLiked = false
 
@@ -69,8 +68,9 @@ class AudioPlayerActivity : AppCompatActivity(), AudioPlayerView {
 
     override fun onDestroy() {
         super.onDestroy()
-        mainTreadHandler.removeCallbacks(trackTimeUpdateRunnable)
+        trackTimeUpdateRunnable?.let { mainTreadHandler.removeCallbacks(it) }
         presenter.releaseMediaPlayer()
+        trackTimeUpdateRunnable = null
     }
 
     private fun getTrack(): Track {
@@ -152,12 +152,13 @@ class AudioPlayerActivity : AppCompatActivity(), AudioPlayerView {
     }
 
     private fun updateTimeTextView(playerStatus: PlayerStatus) {
-        if (isRunnablePosted) {
-            mainTreadHandler.removeCallbacks(trackTimeUpdateRunnable)
+        var runnable = trackTimeUpdateRunnable
+        if (runnable?.let { mainTreadHandler.hasCallbacks(it) } == true) {
+            mainTreadHandler.removeCallbacks(runnable)
         }
-        trackTimeUpdateRunnable = getTrackTimeUpdateRunnable(playerStatus)
-        mainTreadHandler.post(trackTimeUpdateRunnable)
-        isRunnablePosted = true
+        runnable = getTrackTimeUpdateRunnable(playerStatus)
+        mainTreadHandler.post(runnable)
+        trackTimeUpdateRunnable = runnable
     }
 
     private fun getTrackTimeUpdateRunnable(playerStatus: PlayerStatus): Runnable {
