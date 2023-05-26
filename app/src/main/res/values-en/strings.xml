@@ -33,4 +33,5 @@
     <string name="Point">Point</string>
     <string name="pause_button_image">Pause song button</string>
     <string name="cant_play_song">Can\'t play song</string>
+    <string name="player_not_ready">Player is loading, please wait</string>
 </resources>
