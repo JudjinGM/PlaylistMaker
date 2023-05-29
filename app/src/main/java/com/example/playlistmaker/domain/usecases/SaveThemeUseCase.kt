@@ -3,10 +3,10 @@ package com.example.playlistmaker.domain.usecases
 import com.example.playlistmaker.domain.repository.SettingsRepository
 
 interface SaveThemeUseCase {
-    fun execute(isDarkTheme: Boolean)
+    fun execute(isNightTheme: Boolean)
     class Base(private val settingsRepository: SettingsRepository) : SaveThemeUseCase {
-        override fun execute(isDarkTheme: Boolean) {
-            if (isDarkTheme) {
+        override fun execute(isNightTheme: Boolean) {
+            if (isNightTheme) {
                 settingsRepository.setSettingBoolean(APP_THEME_STATUS, true)
             } else {
                 settingsRepository.setSettingBoolean(APP_THEME_STATUS, false)

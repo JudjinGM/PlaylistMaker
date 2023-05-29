@@ -1,18 +1,12 @@
 package com.example.playlistmaker.domain.usecases
 
-import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlistmaker.domain.libraries.ThemeSetter
 
 interface SetThemeUseCase {
-    fun execute(darkThemeEnabled: Boolean)
-    class Base : SetThemeUseCase {
-        override fun execute(darkThemeEnabled: Boolean) {
-            AppCompatDelegate.setDefaultNightMode(
-                if (darkThemeEnabled) {
-                    AppCompatDelegate.MODE_NIGHT_YES
-                } else {
-                    AppCompatDelegate.MODE_NIGHT_NO
-                }
-            )
+    fun execute(isNightThemeEnabled: Boolean)
+    class Base(private val themeSetter: ThemeSetter) : SetThemeUseCase {
+        override fun execute(isNightThemeEnabled: Boolean) {
+            themeSetter.setTheme(isNightThemeEnabled)
         }
     }
 }

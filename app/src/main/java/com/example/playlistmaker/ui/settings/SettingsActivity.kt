@@ -29,7 +29,7 @@ class SettingsActivity : AppCompatActivity(), SettingsView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        val creator = SettingsPresenterCreator(this)
+        val creator = SettingsPresenterCreator()
         presenter = creator.createPresenter(this)
 
         contentInit()

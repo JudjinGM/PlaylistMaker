@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.model.PlaceholderStatus
 import com.example.playlistmaker.domain.model.PlaceholderStatus.*
-import com.example.playlistmaker.domain.model.TextWatcherJustOnTextChanged
 import com.example.playlistmaker.domain.model.Track
 import com.example.playlistmaker.presenter.creators.SearchPresenterCreator
 import com.example.playlistmaker.presenter.search.SearchPresenter
