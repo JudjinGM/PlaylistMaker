@@ -2,6 +2,7 @@ package com.example.playlistmaker.search.ui.activity
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -20,6 +21,7 @@ import com.example.playlistmaker.search.domain.model.PlaceholderStatus
 import com.example.playlistmaker.search.domain.model.PlaceholderStatus.*
 import com.example.playlistmaker.search.domain.model.SearchState
 import com.example.playlistmaker.search.domain.model.Track
+import com.example.playlistmaker.search.ui.model.SavedTracks
 import com.example.playlistmaker.search.ui.view_model.SearchViewModel
 
 class SearchActivity : AppCompatActivity() {
@@ -28,6 +30,10 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var viewModel: SearchViewModel
 
     private lateinit var tracksAdapter: TracksAdapter
+
+    //for restoring tracks from bundle if android kills app
+    //so there no need to search them again on web
+    private lateinit var savedSearchedTracks: SavedTracks
 
     private var inputSearchText: String = DEFAULT_TEXT
     private var textWatcher: TextWatcher? = null
@@ -41,6 +47,8 @@ class SearchActivity : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        savedSearchedTracks = SavedTracks(null)
+
         isActivityJustCreated = true
 
         viewModel = ViewModelProvider(
@@ -49,21 +57,32 @@ class SearchActivity : AppCompatActivity() {
 
         recycleViewInit()
         setOnClicksAndActions()
-        setOnTextWatchersTextChangeListeners()
+        setOnFocusChangeListener()
 
         viewModel.observeState().observe(this) {
             render(it)
+        }
+
+        if (savedInstanceState == null) {
+            viewModel.init()
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                savedInstanceState.getParcelable(SAVED_SEARCH_TRACKS, SavedTracks::class.java)
+                    ?.let { viewModel.init(it) }
+            } else savedInstanceState.getParcelable<SavedTracks>(SAVED_SEARCH_TRACKS)
+                ?.let { viewModel.init(it) }
         }
     }
 
     override fun onResume() {
         super.onResume()
-
-        if (!isActivityJustCreated) {
-            viewModel.updateState()
+        if (isActivityJustCreated) {
+            setClearInputTextImageViewVisibility(inputSearchText)
+            setOnTextWatchersTextChangeListeners()  //to avoid searchDebounce
+        } else {
+            viewModel.updateState() //to update listened tracks
         }
         isActivityJustCreated = false
-
     }
 
     override fun onDestroy() {
@@ -74,12 +93,19 @@ class SearchActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(SAVED_TEXT, inputSearchText)
+        outState.putParcelable(SAVED_SEARCH_TRACKS, savedSearchedTracks)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         inputSearchText = savedInstanceState.getString(SAVED_TEXT, DEFAULT_TEXT)
         binding.inputSearchFieldEditText.setText(inputSearchText)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            savedInstanceState.getParcelable(SAVED_SEARCH_TRACKS, SavedTracks::class.java)
+                ?.let { savedSearchedTracks = it }
+        } else savedInstanceState.getParcelable<SavedTracks>(SAVED_SEARCH_TRACKS)
+            ?.let { savedSearchedTracks = it }
     }
 
     private fun render(state: SearchState) {
@@ -98,6 +124,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showSearchContent(tracks: List<Track>) {
+        savedSearchedTracks.setTracks(tracks)
         tracksAdapter.updateAdapter(tracks)
         showPlaceholder(NO_PLACEHOLDER)
     }
@@ -172,7 +199,6 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setOnClicksAndActions() {
-
         binding.backImageView.setOnClickListener {
             finish()
         }
@@ -180,6 +206,7 @@ class SearchActivity : AppCompatActivity() {
         binding.clearImageView.setOnClickListener {
             viewModel.clearSearchInput()
             viewModel.updateState()
+            savedSearchedTracks = SavedTracks(null)
 
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
@@ -212,21 +239,23 @@ class SearchActivity : AppCompatActivity() {
         textWatcher = object : TextWatcherJustOnTextChanged {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                binding.clearImageView.isVisible = checkImageViewVisibility(s)
+                setClearInputTextImageViewVisibility(s)
                 inputSearchText = binding.inputSearchFieldEditText.text.toString()
 
                 if (binding.inputSearchFieldEditText.hasFocus() && (s?.isEmpty() == true || s?.isBlank() == true)) {
                     viewModel.clearSearchInput()
                     viewModel.updateState()
+                    savedSearchedTracks = SavedTracks(null)
                 }
                 viewModel.searchDebounced(
                     changedText = s?.toString() ?: ""
                 )
             }
         }
-
         textWatcher?.let { binding.inputSearchFieldEditText.addTextChangedListener(it) }
+    }
 
+    private fun setOnFocusChangeListener() {
         binding.inputSearchFieldEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && binding.inputSearchFieldEditText.text.isEmpty()) {
                 viewModel.clearSearchInput()
@@ -247,6 +276,10 @@ class SearchActivity : AppCompatActivity() {
         return !s.isNullOrEmpty()
     }
 
+    private fun setClearInputTextImageViewVisibility(charSequence: CharSequence?) {
+        binding.clearImageView.isVisible = checkImageViewVisibility(charSequence)
+    }
+
     private fun clickDebounce(): Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
@@ -258,6 +291,7 @@ class SearchActivity : AppCompatActivity() {
 
     companion object {
         const val SAVED_TEXT = "SAVED_TEXT"
+        const val SAVED_SEARCH_TRACKS = "SAVED_SEARCH_TRACKS"
         const val DEFAULT_TEXT = ""
         const val TRACK = "track"
         private const val CLICK_DEBOUNCE_DELAY_MILLIS = 1000L

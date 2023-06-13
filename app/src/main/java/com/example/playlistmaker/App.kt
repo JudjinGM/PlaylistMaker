@@ -27,7 +27,6 @@ import com.example.playlistmaker.sharing.data.ShareDataSource
 import com.example.playlistmaker.sharing.data.ShareResourceRepositoryImpl
 import com.example.playlistmaker.sharing.domain.repository.ShareResourceRepository
 
-
 class App : Application() {
 
     override fun onCreate() {

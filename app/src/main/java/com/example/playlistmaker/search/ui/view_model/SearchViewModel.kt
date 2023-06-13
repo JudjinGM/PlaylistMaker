@@ -14,6 +14,7 @@ import com.example.playlistmaker.search.domain.model.ErrorStatus
 import com.example.playlistmaker.search.domain.model.SearchState
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.domain.use_case.*
+import com.example.playlistmaker.search.ui.model.SavedTracks
 
 class SearchViewModel(
     private val addTracksToListenHistoryUseCase: AddTracksToListenHistoryUseCase,
@@ -32,10 +33,20 @@ class SearchViewModel(
     private val stateLiveData = MutableLiveData<SearchState>()
     fun observeState(): LiveData<SearchState> = stateLiveData
 
-    init {
+    fun init() {
         if (getIsListenHistoryTracksNotEmptyUseCase.execute()) {
             renderState(SearchState.ListenHistoryContent(getListenHistoryTracksUseCase.execute()))
         } else renderState(SearchState.Empty)
+    }
+
+    fun init(savedTracks: SavedTracks) {
+        val tracks = savedTracks.tracks?.toList() ?: listOf()
+
+        if (tracks.isEmpty()) {
+            init()
+        } else {
+            renderState(SearchState.SearchContent(tracks))
+        }
     }
 
     private fun renderState(state: SearchState) {
