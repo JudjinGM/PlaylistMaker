@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/backSearchImageView"
+        android:id="@+id/backImageView"
         style="@style/ArrowBackImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -23,7 +23,7 @@
         android:layout_marginTop="@dimen/title_text_margin_top"
         android:text="@string/search"
         android:textAppearance="@style/TitleText"
-        app:layout_constraintStart_toEndOf="@+id/backSearchImageView"
+        app:layout_constraintStart_toEndOf="@+id/backImageView"
         app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
@@ -38,7 +38,7 @@
         app:layout_constraintTop_toBottomOf="@id/toolbarSearch">
 
         <EditText
-            android:id="@+id/searchEditText"
+            android:id="@+id/inputSearchFieldEditText"
             style="@style/SearchBarStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -53,7 +53,7 @@
             android:singleLine="true" />
 
         <ImageView
-            android:id="@+id/searchClearIcon"
+            android:id="@+id/clearImageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
@@ -113,7 +113,7 @@
         app:layout_constraintVertical_bias="0" />
 
     <ImageView
-        android:id="@+id/placeholderSearch"
+        android:id="@+id/placeholderImage"
         android:layout_width="@dimen/placeholder_image_dimens"
         android:layout_height="@dimen/placeholder_image_dimens"
         android:layout_marginTop="@dimen/placeholder_image_margin_top"
@@ -134,7 +134,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/placeholderSearch"
+        app:layout_constraintTop_toBottomOf="@+id/placeholderImage"
         tools:text="@string/error_search" />
 
     <Button
