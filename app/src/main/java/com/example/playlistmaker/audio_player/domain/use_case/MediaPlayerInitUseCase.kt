@@ -11,8 +11,9 @@ interface MediaPlayerInitUseCase {
         private val callback: (PlayerStatus) -> (Unit)
     ) : MediaPlayerInitUseCase {
         override fun initPlayer(urlForMusicPreview: String) {
-            setListeners({ callback.invoke(PlayerStatus.STATE_PREPARED) },
-                { callback.invoke(PlayerStatus.STATE_ERROR) })
+            setListeners(
+                onPreparedListener = { callback.invoke(PlayerStatus.STATE_PREPARED) },
+                onOnErrorListener = { callback.invoke(PlayerStatus.STATE_ERROR) })
             mediaPlayer.initMediaPlayer(urlForMusicPreview)
         }
 

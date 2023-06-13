@@ -12,11 +12,12 @@ class MediaPlayerImpl : MediaPlayerContract {
 
     override fun initMediaPlayer(url: String) {
         try {
+            mediaPlayer.reset()
             mediaPlayer.setDataSource(url)
-            mediaPlayer.prepareAsync()
+            mediaPlayer.prepareAsync()  // source is url so Async then
             mediaPlayer.setOnPreparedListener {
                 onPreparedListener?.invoke()
-            }// source is url so Async then
+            }
         } catch (e: java.lang.Exception) {
             onErrorListener?.invoke()
         }
