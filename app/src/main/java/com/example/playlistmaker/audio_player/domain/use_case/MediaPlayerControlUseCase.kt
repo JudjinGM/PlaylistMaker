@@ -1,7 +1,7 @@
 package com.example.playlistmaker.audio_player.domain.use_case
 
-import com.example.playlistmaker.audio_player.domain.repository.MediaPlayerContract
 import com.example.playlistmaker.audio_player.domain.model.PlayerStatus
+import com.example.playlistmaker.audio_player.domain.repository.MediaPlayerContract
 
 interface MediaPlayerControlUseCase {
     fun playPlayer()
@@ -15,10 +15,12 @@ interface MediaPlayerControlUseCase {
             mediaPlayer.play()
             callback.invoke(PlayerStatus.STATE_PLAYING)
         }
+
         override fun pausePlayer() {
             mediaPlayer.pause()
             callback.invoke(PlayerStatus.STATE_PAUSED)
         }
+
         override fun releasePlayer() {
             mediaPlayer.release()
         }

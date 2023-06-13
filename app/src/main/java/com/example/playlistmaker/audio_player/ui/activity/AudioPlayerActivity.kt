@@ -102,7 +102,7 @@ class AudioPlayerActivity : AppCompatActivity() {
                 binding.playImageView.setImageResource(R.drawable.play_button)
                 showError(playerState.error)
             }
-            is PlayerState.Pause -> binding.playImageView.setImageResource(R.drawable.play_button)
+            is PlayerState.Pause, PlayerState.Ready -> binding.playImageView.setImageResource(R.drawable.play_button)
             is PlayerState.Play -> binding.playImageView.setImageResource(R.drawable.pause_button)
         }
     }

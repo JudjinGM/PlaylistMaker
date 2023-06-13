@@ -1,7 +1,7 @@
 package com.example.playlistmaker.settings.domain.use_case
 
-import com.example.playlistmaker.settings.domain.repository.ThemeProvider
 import com.example.playlistmaker.settings.domain.repository.SettingsRepository
+import com.example.playlistmaker.settings.domain.repository.ThemeProvider
 import com.example.playlistmaker.settings.domain.use_case.SaveThemeUseCase.Companion.APP_THEME_STATUS
 
 interface GetThemeUseCase {

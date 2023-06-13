@@ -5,9 +5,9 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.example.playlistmaker.R
-import com.example.playlistmaker.settings.ui.activity.SettingsActivity
 import com.example.playlistmaker.library.ui.activity.LibraryActivity
 import com.example.playlistmaker.search.ui.activity.SearchActivity
+import com.example.playlistmaker.settings.ui.activity.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
             navigateTo(SettingsActivity::class.java)
         }
     }
+
     private fun navigateTo(clazz: Class<out AppCompatActivity>) {
         val intent = Intent(this, clazz)
         startActivity(intent)

@@ -6,7 +6,7 @@ import com.example.playlistmaker.search.domain.repository.ListenHistoryRepositor
 interface GetListenHistoryTracksUseCase {
     fun execute(): List<Track>
 
-    class Base(private val listenHistoryRepository: ListenHistoryRepository):
+    class Base(private val listenHistoryRepository: ListenHistoryRepository) :
         GetListenHistoryTracksUseCase {
         override fun execute(): List<Track> {
             return listenHistoryRepository.getListenHistoryTracks()

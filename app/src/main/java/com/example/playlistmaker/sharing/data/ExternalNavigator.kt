@@ -1,6 +1,6 @@
 package com.example.playlistmaker.sharing.data
 
-interface ExternalNavigator{
+interface ExternalNavigator {
 
     fun openTerms()
     fun shareLink()

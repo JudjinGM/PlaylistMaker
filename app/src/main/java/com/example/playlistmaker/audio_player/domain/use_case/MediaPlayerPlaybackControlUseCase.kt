@@ -12,7 +12,7 @@ interface MediaPlayerPlaybackControlUseCase {
             when (playerStatus) {
                 PlayerStatus.STATE_PLAYING -> {
                     mediaPlayerControlUseCase.pausePlayer()
-                    callback.invoke(PlayerStatus.STATE_PLAYING)
+                    callback.invoke(PlayerStatus.STATE_PAUSED)
                 }
                 PlayerStatus.STATE_PREPARED, PlayerStatus.STATE_PAUSED -> {
                     mediaPlayerControlUseCase.playPlayer()

@@ -8,24 +8,23 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.playlistmaker.audio_player.data.impl.MediaPlayerImpl
+import com.example.playlistmaker.App
 import com.example.playlistmaker.audio_player.domain.model.PlayerError
 import com.example.playlistmaker.audio_player.domain.model.PlayerState
 import com.example.playlistmaker.audio_player.domain.model.PlayerStatus
+import com.example.playlistmaker.audio_player.domain.repository.MediaPlayerContract
 import com.example.playlistmaker.audio_player.domain.use_case.GetMediaPlayerCurrentPositionUseCase
 import com.example.playlistmaker.audio_player.domain.use_case.MediaPlayerControlUseCase
 import com.example.playlistmaker.audio_player.domain.use_case.MediaPlayerInitUseCase
 import com.example.playlistmaker.audio_player.domain.use_case.MediaPlayerPlaybackControlUseCase
 import com.example.playlistmaker.search.domain.model.Track
 
-class AudioPlayerViewModel(track: Track) : ViewModel() {
+class AudioPlayerViewModel(mediaPlayer: MediaPlayerContract, track: Track) : ViewModel() {
 
     private var mainTreadHandler: Handler = Handler(Looper.getMainLooper())
     private var trackTimeUpdateRunnable: Runnable? = null
 
-    var playerStatus = PlayerStatus.STATE_DEFAULT
-
-    private val mediaPlayer = MediaPlayerImpl()
+    private var playerStatus = PlayerStatus.STATE_DEFAULT
 
     private val mediaPlayerInitUseCase = MediaPlayerInitUseCase.Base(
         mediaPlayer
@@ -39,15 +38,20 @@ class AudioPlayerViewModel(track: Track) : ViewModel() {
     private val mediaPlayerPlaybackControlUseCase =
         MediaPlayerPlaybackControlUseCase.Base(mediaPlayerControlUseCase) { playerStatus ->
             this.playerStatus = playerStatus
+            playerStateToPlayerStatusUpdate()
         }
 
     private val getMediaPlayerCurrentPositionUseCase =
         GetMediaPlayerCurrentPositionUseCase.Base(mediaPlayer)
 
     init {
+        mediaPlayer.setOnCompletionListener {
+            playerStatus = PlayerStatus.STATE_PREPARED
+            playerStateToPlayerStatusUpdate()
+            timeStateUpdate(playerStatus)
+        }
         mediaPlayerInitUseCase.initPlayer(track.previewUrl)
     }
-
 
     private val stateLiveData = MutableLiveData<PlayerState>()
 
@@ -59,6 +63,8 @@ class AudioPlayerViewModel(track: Track) : ViewModel() {
 
     fun pausePlayer() {
         mediaPlayerControlUseCase.pausePlayer()
+        playerStatus = PlayerStatus.STATE_PREPARED
+        playerStateToPlayerStatusUpdate()
     }
 
     private fun renderPlayerState(state: PlayerState) {
@@ -71,37 +77,11 @@ class AudioPlayerViewModel(track: Track) : ViewModel() {
 
     fun togglePlay() {
         mediaPlayerPlaybackControlUseCase.execute(playerStatus)
-
-        updateTime(playerStatus)
-
-        when (playerStatus) {
-            PlayerStatus.STATE_DEFAULT -> {
-                renderPlayerState(PlayerState.Error(PlayerError.NOT_READY))
-            }
-
-            PlayerStatus.STATE_PREPARED -> {
-                renderPlayerState(
-                    PlayerState.Pause
-                )
-            }
-
-            PlayerStatus.STATE_PLAYING -> {
-                renderPlayerState(
-                    PlayerState.Play
-                )
-            }
-
-            PlayerStatus.STATE_PAUSED -> {
-                renderPlayerState(PlayerState.Pause)
-            }
-
-            PlayerStatus.STATE_ERROR -> {
-                renderPlayerState(PlayerState.Error(PlayerError.ERROR_OCCURRED))
-            }
-        }
+        playerStateToPlayerStatusUpdate()
+        timeStateUpdate(playerStatus)
     }
 
-    private fun updateTime(playerStatus: PlayerStatus) {
+    private fun timeStateUpdate(playerStatus: PlayerStatus) {
         var runnable = trackTimeUpdateRunnable
         if (runnable?.let { mainTreadHandler.hasCallbacks(it) } == true) {
             mainTreadHandler.removeCallbacks(runnable)
@@ -132,6 +112,14 @@ class AudioPlayerViewModel(track: Track) : ViewModel() {
         return result
     }
 
+    private fun playerStateToPlayerStatusUpdate() = when (playerStatus) {
+        PlayerStatus.STATE_PREPARED -> renderPlayerState(PlayerState.Pause)
+        PlayerStatus.STATE_PLAYING -> renderPlayerState(PlayerState.Play)
+        PlayerStatus.STATE_PAUSED -> renderPlayerState(PlayerState.Pause)
+        PlayerStatus.STATE_DEFAULT -> renderPlayerState(PlayerState.Error(PlayerError.NOT_READY))
+        PlayerStatus.STATE_ERROR -> renderPlayerState(PlayerState.Error(PlayerError.ERROR_OCCURRED))
+    }
+
     override fun onCleared() {
         super.onCleared()
         mediaPlayerControlUseCase.releasePlayer()
@@ -139,14 +127,15 @@ class AudioPlayerViewModel(track: Track) : ViewModel() {
         trackTimeUpdateRunnable = null
     }
 
-
     companion object {
-        private const val DELAY_MILLIS = 200L
+        private const val DELAY_MILLIS = 500L
         private const val DEFAULT_TIME = 0L
 
         fun getViewModelFactory(track: Track): ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                AudioPlayerViewModel(track)
+                AudioPlayerViewModel(
+                    App.mediaPlayer, track
+                )
             }
         }
     }

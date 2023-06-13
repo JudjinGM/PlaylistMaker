@@ -1,7 +1,7 @@
 package com.example.playlistmaker.search.data.mapper
 
-import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.data.model.TrackRaw
+import com.example.playlistmaker.search.domain.model.Track
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -14,7 +14,10 @@ class RemoteDatasourceToTrackMapper {
                     trackId = track.trackId,
                     trackName = track.trackName,
                     artistName = track.artistName,
-                    trackTimeMillis = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis),
+                    trackTimeMillis = SimpleDateFormat(
+                        "mm:ss",
+                        Locale.getDefault()
+                    ).format(track.trackTimeMillis),
                     artworkUrl100 = track.artworkUrl100.orEmpty(),
                     collectionName = track.collectionName.orEmpty(),
                     releaseDate = track.releaseDate.orEmpty(),

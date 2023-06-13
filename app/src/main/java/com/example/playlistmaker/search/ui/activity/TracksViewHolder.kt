@@ -7,7 +7,10 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.TracksViewBinding
 import com.example.playlistmaker.search.domain.model.Track
 
-class TracksViewHolder(private val binding: TracksViewBinding, private val onTrackClicked: ((Track) -> Unit)) :
+class TracksViewHolder(
+    private val binding: TracksViewBinding,
+    private val onTrackClicked: ((Track) -> Unit)
+) :
     RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: Track) {

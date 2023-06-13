@@ -5,7 +5,7 @@ import com.example.playlistmaker.sharing.data.ExternalNavigator
 interface OpenSupportUseCase {
     fun execute()
 
-    class Base(private val externalNavigator: ExternalNavigator):OpenSupportUseCase{
+    class Base(private val externalNavigator: ExternalNavigator) : OpenSupportUseCase {
         override fun execute() {
             externalNavigator.openEmail()
         }

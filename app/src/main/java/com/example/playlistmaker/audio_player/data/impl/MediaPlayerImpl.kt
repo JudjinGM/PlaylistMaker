@@ -22,6 +22,7 @@ class MediaPlayerImpl : MediaPlayerContract {
         }
         mediaPlayer.setOnCompletionListener {
             onCompletionListener?.invoke()
+            mediaPlayer.seekTo(0) // to reset currentPosition = 0
         }
     }
 

@@ -13,6 +13,7 @@ interface SaveThemeUseCase {
             }
         }
     }
+
     companion object {
         const val APP_THEME_STATUS = "app_theme_status"
     }

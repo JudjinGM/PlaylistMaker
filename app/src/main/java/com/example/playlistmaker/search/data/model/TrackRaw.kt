@@ -1,7 +1,7 @@
 package com.example.playlistmaker.search.data.model
 
 data class TrackRaw(
-    val trackId: Long ,
+    val trackId: Long,
     val trackName: String,
     val artistName: String,
     val trackTimeMillis: Long,

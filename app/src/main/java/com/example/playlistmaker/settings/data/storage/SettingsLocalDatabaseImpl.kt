@@ -2,7 +2,7 @@ package com.example.playlistmaker.settings.data.storage
 
 import android.content.Context
 
-class SettingsLocalDatabaseImpl private constructor(context: Context): SettingsLocalDatabase {
+class SettingsLocalDatabaseImpl private constructor(context: Context) : SettingsLocalDatabase {
 
     private val settingsSharedPreferencesSettings = context.getSharedPreferences(
         SETTINGS_PREFS, Context.MODE_PRIVATE

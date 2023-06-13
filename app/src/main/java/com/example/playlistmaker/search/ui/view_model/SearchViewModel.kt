@@ -46,14 +46,14 @@ class SearchViewModel(
         if (changedText == latestSearchText) {
             return
         }
-
         latestSearchText = changedText
-
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
         val searchRunnable = Runnable { searchRequest(changedText) }
         val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY_MILLIS
         handler.postAtTime(
-            searchRunnable, SEARCH_REQUEST_TOKEN, postTime
+            searchRunnable,
+            SEARCH_REQUEST_TOKEN,
+            postTime
         )
     }
 

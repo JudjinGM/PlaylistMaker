@@ -1,6 +1,8 @@
 package com.example.playlistmaker
 
 import android.app.Application
+import com.example.playlistmaker.audio_player.data.impl.MediaPlayerImpl
+import com.example.playlistmaker.audio_player.domain.repository.MediaPlayerContract
 import com.example.playlistmaker.search.data.data_source.TracksLocalDataSource
 import com.example.playlistmaker.search.data.data_source.TracksRemoteDataSource
 import com.example.playlistmaker.search.data.data_source_impl.ListenHistoryTracksLocalDataSourceImpl
@@ -67,6 +69,7 @@ class App : Application() {
         val themeProvider = ThemeProviderImpl(this)
         val themeSetter = ThemeSetterImpl()
 
+
         getThemeUseCase = GetThemeUseCase.Base(settingsRepository, themeProvider)
         setThemeUseCase = SetThemeUseCase.Base(themeSetter)
         saveThemeUseCase = SaveThemeUseCase.Base(settingsRepository)
@@ -94,6 +97,8 @@ class App : Application() {
         getIsSearchResultIsEmptyUseCase =
             GetIsSearchResultIsEmptyUseCase.Base(searchRepositoryImpl)
 
+        mediaPlayer = MediaPlayerImpl()
+
         val isNightTheme = getThemeUseCase.execute()
         setThemeUseCase.execute(isNightTheme)
     }
@@ -103,6 +108,7 @@ class App : Application() {
         lateinit var getThemeUseCase: GetThemeUseCase
         lateinit var setThemeUseCase: SetThemeUseCase
         lateinit var saveThemeUseCase: SaveThemeUseCase
+        lateinit var mediaPlayer: MediaPlayerContract
 
         lateinit var searchSongsUseCase: SearchSongsUseCase
         lateinit var addTracksToListenHistoryUseCase: AddTracksToListenHistoryUseCase

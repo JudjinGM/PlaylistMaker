@@ -10,7 +10,10 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class SearchTracksRemoteDataSourceImpl(private val itunesService: ItunesApi, private val remoteDatasourceToTrackMapper: RemoteDatasourceToTrackMapper) :
+class SearchTracksRemoteDataSourceImpl(
+    private val itunesService: ItunesApi,
+    private val remoteDatasourceToTrackMapper: RemoteDatasourceToTrackMapper
+) :
     TracksRemoteDataSource {
 
     override fun getTracks(
