@@ -38,5 +38,6 @@
     <string name="Point">Точка</string>
     <string name="cant_play_song">Не удается воспроизвести песню</string>
     <string name="player_not_ready">Плеер загружается, пожалуйста подождите</string>
+    <string name="error_network">Проблемы со связью. Прроверьте подключение к сети</string>
 
 </resources>

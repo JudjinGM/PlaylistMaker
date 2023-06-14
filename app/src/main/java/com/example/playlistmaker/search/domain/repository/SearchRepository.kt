@@ -11,8 +11,8 @@ interface SearchRepository {
         onError: (ErrorStatus) -> Unit
     )
 
+    fun addAllTracks(tracks: List<Track>)
     fun getSearchTracks(): List<Track>
     fun clearSearchTracks()
-
     fun isSearchRepositoryEmpty(): Boolean
 }

@@ -4,8 +4,11 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.example.playlistmaker.App
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
 import com.example.playlistmaker.settings.ui.view_model.SettingsViewModel
+import com.example.playlistmaker.sharing.data.ExternalNavigator
+import com.example.playlistmaker.sharing.data.ExternalNavigatorImpl
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -13,13 +16,16 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsBinding
     private lateinit var viewModel: SettingsViewModel
 
+    private val externalNavigator: ExternalNavigator =
+        ExternalNavigatorImpl(this, App.shareResourceRepository)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         viewModel = ViewModelProvider(
-            this, SettingsViewModel.getViewModelFactory()
+            this, SettingsViewModel.getViewModelFactory(externalNavigator)
         )[SettingsViewModel::class.java]
 
         viewModel.observeSwitchCompatState().observe(this) {

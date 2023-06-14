@@ -8,12 +8,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.playlistmaker.App
 import com.example.playlistmaker.audio_player.data.impl.MediaPlayerImpl
 import com.example.playlistmaker.audio_player.domain.model.PlayerError
 import com.example.playlistmaker.audio_player.domain.model.PlayerState
 import com.example.playlistmaker.audio_player.domain.model.PlayerStatus
 import com.example.playlistmaker.audio_player.domain.repository.MediaPlayerContract
-import com.example.playlistmaker.audio_player.domain.use_case.*
+import com.example.playlistmaker.audio_player.domain.use_case.GetMediaPlayerCurrentPositionUseCase
+import com.example.playlistmaker.audio_player.domain.use_case.MediaPlayerControlUseCase
+import com.example.playlistmaker.audio_player.domain.use_case.MediaPlayerInitUseCase
+import com.example.playlistmaker.audio_player.domain.use_case.MediaPlayerPlaybackControlUseCase
 import com.example.playlistmaker.search.domain.model.Track
 
 class AudioPlayerViewModel(track: Track) : ViewModel() {
@@ -43,18 +47,25 @@ class AudioPlayerViewModel(track: Track) : ViewModel() {
     private val getMediaPlayerCurrentPositionUseCase =
         GetMediaPlayerCurrentPositionUseCase.Base(mediaPlayer)
 
+    private val isConnectedToNetworkUseCase = App.isConnectedToNetworkUseCase
+
+    private val playerStateLiveData = MutableLiveData<PlayerState>()
+
+    private val toastSateLiveData = SingleLiveEvent<PlayerError>()
+    fun observeToastState(): LiveData<PlayerError> = toastSateLiveData
+
     init {
         mediaPlayer.setOnCompletionListener {
             playerStatus = PlayerStatus.STATE_PREPARED
             playerStateToPlayerStatusUpdate()
             timeStateUpdate()
         }
-        mediaPlayerInitUseCase.initPlayer(track.previewUrl)
+        if (isConnectedToNetworkUseCase.execute()) {
+            mediaPlayerInitUseCase.initPlayer(track.previewUrl)
+        } else playerStatus = PlayerStatus.STATE_NETWORK_ERROR
     }
 
-    private val stateLiveData = MutableLiveData<PlayerState>()
-
-    fun observeState(): LiveData<PlayerState> = stateLiveData
+    fun observePlayerState(): LiveData<PlayerState> = playerStateLiveData
 
     private val timeLiveData = MutableLiveData<Long>()
 
@@ -69,11 +80,15 @@ class AudioPlayerViewModel(track: Track) : ViewModel() {
     }
 
     private fun renderPlayerState(state: PlayerState) {
-        stateLiveData.postValue(state)
+        playerStateLiveData.postValue(state)
     }
 
     private fun renderTimeState(time: Long) {
         timeLiveData.postValue(time)
+    }
+
+    private fun renderToastState(playerError: PlayerError){
+        toastSateLiveData.postValue(playerError)
     }
 
     fun togglePlay() {
@@ -96,7 +111,7 @@ class AudioPlayerViewModel(track: Track) : ViewModel() {
         val result = object : Runnable {
             override fun run() {
                 when (playerStatus) {
-                    PlayerStatus.STATE_DEFAULT, PlayerStatus.STATE_PREPARED, PlayerStatus.STATE_ERROR -> {
+                    PlayerStatus.STATE_DEFAULT, PlayerStatus.STATE_PREPARED, PlayerStatus.STATE_ERROR, PlayerStatus.STATE_NETWORK_ERROR -> {
                         mainTreadHandler.removeCallbacks(this)
                         renderTimeState(DEFAULT_TIME)
                     }
@@ -117,8 +132,9 @@ class AudioPlayerViewModel(track: Track) : ViewModel() {
         PlayerStatus.STATE_PREPARED -> renderPlayerState(PlayerState.Pause)
         PlayerStatus.STATE_PLAYING -> renderPlayerState(PlayerState.Play)
         PlayerStatus.STATE_PAUSED -> renderPlayerState(PlayerState.Pause)
-        PlayerStatus.STATE_DEFAULT -> renderPlayerState(PlayerState.Error(PlayerError.NOT_READY))
-        PlayerStatus.STATE_ERROR -> renderPlayerState(PlayerState.Error(PlayerError.ERROR_OCCURRED))
+        PlayerStatus.STATE_DEFAULT -> renderToastState(PlayerError.NOT_READY)
+        PlayerStatus.STATE_ERROR -> renderToastState(PlayerError.ERROR_OCCURRED)
+        PlayerStatus.STATE_NETWORK_ERROR -> renderToastState(PlayerError.NO_CONNECTION)
     }
 
     override fun onCleared() {
@@ -132,11 +148,10 @@ class AudioPlayerViewModel(track: Track) : ViewModel() {
         private const val DELAY_MILLIS = 500L
         private const val DEFAULT_TIME = 0L
 
-        fun getViewModelFactory(track: Track): ViewModelProvider.Factory =
-            viewModelFactory {
-                initializer {
-                    AudioPlayerViewModel(track)
-                }
+        fun getViewModelFactory(track: Track): ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                AudioPlayerViewModel(track)
             }
+        }
     }
 }

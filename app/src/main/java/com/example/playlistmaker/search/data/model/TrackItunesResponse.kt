@@ -1,3 +1,3 @@
 package com.example.playlistmaker.search.data.model
 
-data class TrackItunesResponse(val results: MutableList<TrackRaw>)
+data class TrackItunesResponse(val results: MutableList<TrackDto>)

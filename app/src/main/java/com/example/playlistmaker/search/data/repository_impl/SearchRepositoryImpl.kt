@@ -28,6 +28,10 @@ class SearchRepositoryImpl(
         })
     }
 
+    override fun addAllTracks(tracks: List<Track>) {
+        localDataSource.addAllTracks(tracks)
+    }
+
     override fun getSearchTracks(): List<Track> {
         return localDataSource.getAllTracks()
     }

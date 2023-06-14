@@ -6,5 +6,5 @@ enum class PlayerStatus {
     STATE_PLAYING,
     STATE_PAUSED,
     STATE_ERROR,
-
+    STATE_NETWORK_ERROR
 }

@@ -17,14 +17,15 @@ import com.example.playlistmaker.search.domain.use_case.*
 import com.example.playlistmaker.search.ui.model.SavedTracks
 
 class SearchViewModel(
-    private val addTracksToListenHistoryUseCase: AddTracksToListenHistoryUseCase,
+    private val addTrackToListenHistoryUseCase: AddTrackToListenHistoryUseCase,
     private val clearListenHistoryTracksUseCase: ClearListenHistoryTracksUseCase,
-    private val clearSearchTracksUseCase: ClearSearchTracksUseCase,
+    private val clearSearchResultTracksUseCase: ClearSearchResultTracksUseCase,
     private val getIsListenHistoryTracksNotEmptyUseCase: GetIsListenHistoryTracksNotEmptyUseCase,
     private val getListenHistoryTracksUseCase: GetListenHistoryTracksUseCase,
     private val getSearchResultTracksUseCase: GetSearchResultTracksUseCase,
     private val getIsSearchResultIsEmptyUseCase: GetIsSearchResultIsEmptyUseCase,
-    private val searchSongsUseCase: SearchSongsUseCase
+    private val searchSongsUseCase: SearchSongsUseCase,
+    private val addTracksToSearchResultUseCase: AddTracksToSearchResultUseCase
 ) : ViewModel() {
 
     private val handler = Handler(Looper.getMainLooper())
@@ -33,20 +34,24 @@ class SearchViewModel(
     private val stateLiveData = MutableLiveData<SearchState>()
     fun observeState(): LiveData<SearchState> = stateLiveData
 
-    fun init() {
-        if (getIsListenHistoryTracksNotEmptyUseCase.execute()) {
-            renderState(SearchState.ListenHistoryContent(getListenHistoryTracksUseCase.execute()))
-        } else renderState(SearchState.Empty)
+    private val savedTracksLiveData = MutableLiveData<List<Track>>()
+    fun observeSavedTracks(): LiveData<List<Track>> = savedTracksLiveData
+
+    fun init(savedTracks: SavedTracks?) {
+        val tracks = savedTracks?.tracks?.toList() ?: listOf()
+        if (tracks.isNotEmpty()) {
+            renderSavedTracks(tracks)
+            addTracksToSearchResultUseCase.execute(tracks)
+            renderState(SearchState.SearchContent(getSearchResultTracksUseCase.execute()))
+        } else {
+            if (getIsListenHistoryTracksNotEmptyUseCase.execute()) {
+                renderState(SearchState.ListenHistoryContent(getListenHistoryTracksUseCase.execute()))
+            } else renderState(SearchState.Empty)
+        }
     }
 
-    fun init(savedTracks: SavedTracks) {
-        val tracks = savedTracks.tracks?.toList() ?: listOf()
-
-        if (tracks.isEmpty()) {
-            init()
-        } else {
-            renderState(SearchState.SearchContent(tracks))
-        }
+    private fun renderSavedTracks(tracks: List<Track>) {
+        savedTracksLiveData.postValue(tracks)
     }
 
     private fun renderState(state: SearchState) {
@@ -62,9 +67,7 @@ class SearchViewModel(
         val searchRunnable = Runnable { searchRequest(changedText) }
         val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY_MILLIS
         handler.postAtTime(
-            searchRunnable,
-            SEARCH_REQUEST_TOKEN,
-            postTime
+            searchRunnable, SEARCH_REQUEST_TOKEN, postTime
         )
     }
 
@@ -74,15 +77,15 @@ class SearchViewModel(
 
             searchSongsUseCase.execute(inputSearchText, onSuccess = { tracks ->
                 renderState(SearchState.SearchContent(tracks))
+                renderSavedTracks(tracks)
             }, onError = { errorStatus ->
                 when (errorStatus) {
                     ErrorStatus.NOTHING_FOUND -> {
-                        clearSearchTracksUseCase.execute()
                         renderState(SearchState.Error(errorStatus))
                     }
                     ErrorStatus.NO_CONNECTION -> {
-                        clearSearchTracksUseCase.execute()
                         renderState(SearchState.Error(errorStatus))
+                        latestSearchText = DEFAULT_TEXT
                     }
                 }
             })
@@ -90,7 +93,7 @@ class SearchViewModel(
     }
 
     fun addToListenHistory(track: Track) {
-        addTracksToListenHistoryUseCase.execute(track)
+        addTrackToListenHistoryUseCase.execute(track)
     }
 
     fun clearListenHistory() {
@@ -99,37 +102,47 @@ class SearchViewModel(
     }
 
     fun clearSearchInput() {
-        clearSearchTracksUseCase.execute()
+        clearSearchResultTracksUseCase.execute()
+        savedTracksLiveData.postValue(listOf())
+        if (getIsListenHistoryTracksNotEmptyUseCase.execute()) {
+            renderState(SearchState.ListenHistoryContent(getListenHistoryTracksUseCase.execute()))
+        } else {
+            renderState(SearchState.Empty)
+        }
     }
 
     fun updateState() {
         if (getIsListenHistoryTracksNotEmptyUseCase.execute() && getIsSearchResultIsEmptyUseCase.execute()) {
             renderState(SearchState.ListenHistoryContent(getListenHistoryTracksUseCase.execute()))
-        } else renderState(SearchState.SearchContent(getSearchResultTracksUseCase.execute()))
+        } else {
+            renderState(SearchState.SearchContent(getSearchResultTracksUseCase.execute()))
+        }
     }
 
     override fun onCleared() {
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-        clearSearchTracksUseCase.execute()
+        clearSearchResultTracksUseCase.execute()
         super.onCleared()
     }
 
     companion object {
 
         private const val SEARCH_DEBOUNCE_DELAY_MILLIS = 2000L
+        private const val DEFAULT_TEXT = ""
         private val SEARCH_REQUEST_TOKEN = Any()
 
         fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 SearchViewModel(
-                    addTracksToListenHistoryUseCase = App.addTracksToListenHistoryUseCase,
+                    addTrackToListenHistoryUseCase = App.addTrackToListenHistoryUseCase,
                     clearListenHistoryTracksUseCase = App.clearListenHistoryTracksUseCase,
-                    clearSearchTracksUseCase = App.clearSearchTracksUseCase,
+                    clearSearchResultTracksUseCase = App.clearSearchResultTracksUseCase,
                     getIsListenHistoryTracksNotEmptyUseCase = App.getIsListenHistoryTracksNotEmptyUseCase,
                     getListenHistoryTracksUseCase = App.getListenHistoryTracksUseCase,
                     getSearchResultTracksUseCase = App.getSearchResultTracksUseCase,
                     getIsSearchResultIsEmptyUseCase = App.getIsSearchResultIsEmptyUseCase,
-                    searchSongsUseCase = App.searchSongsUseCase
+                    searchSongsUseCase = App.searchSongsUseCase,
+                    addTracksToSearchResultUseCase = App.addTracksToSearchResultUseCase
                 )
             }
         }

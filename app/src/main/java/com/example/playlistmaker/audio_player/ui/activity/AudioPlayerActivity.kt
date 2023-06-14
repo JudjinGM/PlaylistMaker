@@ -41,12 +41,16 @@ class AudioPlayerActivity : AppCompatActivity() {
         viewContentInit()
         onClicks()
 
-        viewModel.observeState().observe(this) {
+        viewModel.observePlayerState().observe(this) {
             renderPlayerState(it)
         }
 
         viewModel.observeTime().observe(this) {
             renderTimeState(it)
+        }
+
+        viewModel.observeToastState().observe(this) {
+            renderToastErrorState(it)
         }
     }
 
@@ -100,7 +104,6 @@ class AudioPlayerActivity : AppCompatActivity() {
         when (playerState) {
             is PlayerState.Error -> {
                 binding.playImageView.setImageResource(R.drawable.play_button)
-                showError(playerState.error)
             }
             is PlayerState.Pause, PlayerState.Ready -> binding.playImageView.setImageResource(R.drawable.play_button)
             is PlayerState.Play -> binding.playImageView.setImageResource(R.drawable.pause_button)
@@ -115,14 +118,15 @@ class AudioPlayerActivity : AppCompatActivity() {
         return SimpleDateFormat("mm:ss", Locale.getDefault()).format(millis)
     }
 
-    private fun showError(playerError: PlayerError) {
-        if (playerError == PlayerError.ERROR_OCCURRED) {
-            Toast.makeText(this, R.string.cant_play_song, Toast.LENGTH_LONG).show()
-        }
-        if (playerError == PlayerError.NOT_READY) {
-            Toast.makeText(this, R.string.player_not_ready, Toast.LENGTH_LONG).show()
-
+    private fun renderToastErrorState(playerError: PlayerError) {
+        when (playerError) {
+            PlayerError.NOT_READY -> showToast(getString(R.string.player_not_ready))
+            PlayerError.ERROR_OCCURRED -> showToast(getString(R.string.cant_play_song))
+            PlayerError.NO_CONNECTION -> showToast(getString(R.string.error_network))
         }
     }
 
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
 }

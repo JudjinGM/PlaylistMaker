@@ -28,12 +28,11 @@ class SearchActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySearchBinding
     private lateinit var viewModel: SearchViewModel
-
     private lateinit var tracksAdapter: TracksAdapter
 
     //for restoring tracks from bundle if android kills app
-    //so there no need to search them again on web
-    private lateinit var savedSearchedTracks: SavedTracks
+    //if it's wrong, I'll just delete it
+    private var savedSearchedTracks = SavedTracks(tracks = null)
 
     private var inputSearchText: String = DEFAULT_TEXT
     private var textWatcher: TextWatcher? = null
@@ -43,44 +42,41 @@ class SearchActivity : AppCompatActivity() {
     private var isActivityJustCreated = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        isActivityJustCreated = true
+
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        savedSearchedTracks = SavedTracks(null)
-
-        isActivityJustCreated = true
 
         viewModel = ViewModelProvider(
             this, SearchViewModel.getViewModelFactory()
         )[SearchViewModel::class.java]
 
-        recycleViewInit()
-        setOnClicksAndActions()
-        setOnFocusChangeListener()
-
         viewModel.observeState().observe(this) {
             render(it)
         }
 
-        if (savedInstanceState == null) {
-            viewModel.init()
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                savedInstanceState.getParcelable(SAVED_SEARCH_TRACKS, SavedTracks::class.java)
-                    ?.let { viewModel.init(it) }
-            } else savedInstanceState.getParcelable<SavedTracks>(SAVED_SEARCH_TRACKS)
-                ?.let { viewModel.init(it) }
+        viewModel.observeSavedTracks().observe(this) {
+            savedSearchedTracks = SavedTracks(ArrayList(it))
         }
+
+        val savedTracksFromBundle: SavedTracks? =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                savedInstanceState?.getParcelable(SAVED_SEARCH_TRACKS, SavedTracks::class.java)
+            } else savedInstanceState?.getParcelable(SAVED_SEARCH_TRACKS)
+        viewModel.init(savedTracksFromBundle)
+
+        recycleViewInit()
+        setOnClicksAndActions()
     }
 
     override fun onResume() {
         super.onResume()
         if (isActivityJustCreated) {
             setClearInputTextImageViewVisibility(inputSearchText)
-            setOnTextWatchersTextChangeListeners()  //to avoid searchDebounce
+            setOnTextWatchersTextChangeListeners()  // moved here to avoid searchDebounce after restore
         } else {
-            viewModel.updateState() //to update listened tracks
+            viewModel.updateState() //to update screen when returning from AudioPlayer Activity
         }
         isActivityJustCreated = false
     }
@@ -100,12 +96,6 @@ class SearchActivity : AppCompatActivity() {
         super.onRestoreInstanceState(savedInstanceState)
         inputSearchText = savedInstanceState.getString(SAVED_TEXT, DEFAULT_TEXT)
         binding.inputSearchFieldEditText.setText(inputSearchText)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            savedInstanceState.getParcelable(SAVED_SEARCH_TRACKS, SavedTracks::class.java)
-                ?.let { savedSearchedTracks = it }
-        } else savedInstanceState.getParcelable<SavedTracks>(SAVED_SEARCH_TRACKS)
-            ?.let { savedSearchedTracks = it }
     }
 
     private fun render(state: SearchState) {
@@ -124,13 +114,12 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showSearchContent(tracks: List<Track>) {
-        savedSearchedTracks.setTracks(tracks)
         tracksAdapter.updateAdapter(tracks)
         showPlaceholder(NO_PLACEHOLDER)
     }
 
-    private fun showListenHistory(tracks: List<Track>) {
-        tracksAdapter.updateAdapter(tracks)
+    private fun showListenHistory(listenHistoryTracks: List<Track>) {
+        tracksAdapter.updateAdapter(listenHistoryTracks)
         showPlaceholder(LISTEN_HISTORY)
     }
 
@@ -205,8 +194,6 @@ class SearchActivity : AppCompatActivity() {
 
         binding.clearImageView.setOnClickListener {
             viewModel.clearSearchInput()
-            viewModel.updateState()
-            savedSearchedTracks = SavedTracks(null)
 
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
@@ -230,8 +217,19 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.refreshButton.setOnClickListener {
-            viewModel.searchDebounced(inputSearchText)
+            if (clickDebounce()) {
+                viewModel.searchDebounced(inputSearchText)
+            }
         }
+    }
+
+    private fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY_MILLIS)
+        }
+        return current
     }
 
     private fun setOnTextWatchersTextChangeListeners() {
@@ -244,8 +242,6 @@ class SearchActivity : AppCompatActivity() {
 
                 if (binding.inputSearchFieldEditText.hasFocus() && (s?.isEmpty() == true || s?.isBlank() == true)) {
                     viewModel.clearSearchInput()
-                    viewModel.updateState()
-                    savedSearchedTracks = SavedTracks(null)
                 }
                 viewModel.searchDebounced(
                     changedText = s?.toString() ?: ""
@@ -253,16 +249,6 @@ class SearchActivity : AppCompatActivity() {
             }
         }
         textWatcher?.let { binding.inputSearchFieldEditText.addTextChangedListener(it) }
-    }
-
-    private fun setOnFocusChangeListener() {
-        binding.inputSearchFieldEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && binding.inputSearchFieldEditText.text.isEmpty()) {
-                viewModel.clearSearchInput()
-                viewModel.updateState()
-            }
-        }
-        binding.inputSearchFieldEditText.requestFocus()
     }
 
     private fun recycleViewInit() {
@@ -278,15 +264,6 @@ class SearchActivity : AppCompatActivity() {
 
     private fun setClearInputTextImageViewVisibility(charSequence: CharSequence?) {
         binding.clearImageView.isVisible = checkImageViewVisibility(charSequence)
-    }
-
-    private fun clickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY_MILLIS)
-        }
-        return current
     }
 
     companion object {

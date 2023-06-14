@@ -1,11 +1,9 @@
 package com.example.playlistmaker.settings.ui.view_model
 
-import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlistmaker.App
@@ -13,7 +11,6 @@ import com.example.playlistmaker.settings.domain.use_case.GetThemeUseCase
 import com.example.playlistmaker.settings.domain.use_case.SaveThemeUseCase
 import com.example.playlistmaker.settings.domain.use_case.SetThemeUseCase
 import com.example.playlistmaker.sharing.data.ExternalNavigator
-import com.example.playlistmaker.sharing.data.ExternalNavigatorImpl
 import com.example.playlistmaker.sharing.domain.use_case.OpenSupportUseCase
 import com.example.playlistmaker.sharing.domain.use_case.OpenTermsUseCase
 import com.example.playlistmaker.sharing.domain.use_case.ShareAppUseCase
@@ -22,11 +19,11 @@ class SettingsViewModel(
     getThemeUseCase: GetThemeUseCase,
     private val setThemeUseCase: SetThemeUseCase,
     private val saveThemeUseCase: SaveThemeUseCase,
-    application: Application
+    private val externalNavigator: ExternalNavigator,
 ) : ViewModel() {
 
-    private val externalNavigator: ExternalNavigator =
-        ExternalNavigatorImpl(application, App.shareResourceRepository)
+
+
     private val shareAppUseCase: ShareAppUseCase = ShareAppUseCase.Base(externalNavigator)
     private val openTermsUseCase: OpenTermsUseCase = OpenTermsUseCase.Base(externalNavigator)
     private val openSupportUseCase: OpenSupportUseCase = OpenSupportUseCase.Base(externalNavigator)
@@ -62,13 +59,13 @@ class SettingsViewModel(
     }
 
     companion object {
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
+        fun getViewModelFactory(externalNavigator: ExternalNavigator): ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 SettingsViewModel(
                     getThemeUseCase = App.getThemeUseCase,
                     setThemeUseCase = App.setThemeUseCase,
                     saveThemeUseCase = App.saveThemeUseCase,
-                    application = (this[APPLICATION_KEY] as Application)
+                    externalNavigator = externalNavigator
                 )
             }
         }

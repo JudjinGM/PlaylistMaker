@@ -12,7 +12,6 @@ class MediaPlayerImpl : MediaPlayerContract {
 
     override fun initMediaPlayer(url: String) {
         try {
-            mediaPlayer.reset()
             mediaPlayer.setDataSource(url)
             mediaPlayer.prepareAsync()  // source is url so Async then
             mediaPlayer.setOnPreparedListener {

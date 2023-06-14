@@ -1,12 +1,12 @@
 package com.example.playlistmaker.search.data.mapper
 
-import com.example.playlistmaker.search.data.model.TrackRaw
+import com.example.playlistmaker.search.data.model.TrackDto
 import com.example.playlistmaker.search.domain.model.Track
 import java.text.SimpleDateFormat
 import java.util.*
 
 class RemoteDatasourceToTrackMapper {
-    fun mapTracks(tracksRaw: MutableList<TrackRaw>): List<Track> {
+    fun mapTracks(tracksRaw: MutableList<TrackDto>): List<Track> {
         val tracks = mutableListOf<Track>()
         for (track in tracksRaw) {
             tracks.add(
