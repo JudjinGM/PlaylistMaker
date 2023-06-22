@@ -5,8 +5,10 @@ import com.example.playlistmaker.search.domain.repository.ListenHistoryRepositor
 
 interface AddTrackToListenHistoryUseCase {
     fun execute(track: Track)
-    class Base(private val listenHistoryRepository: ListenHistoryRepository) :
-        AddTrackToListenHistoryUseCase {
+
+    class Base(
+        private val listenHistoryRepository: ListenHistoryRepository
+    ) : AddTrackToListenHistoryUseCase {
         override fun execute(track: Track) {
             listenHistoryRepository.addTrackToListenHistory(track)
         }

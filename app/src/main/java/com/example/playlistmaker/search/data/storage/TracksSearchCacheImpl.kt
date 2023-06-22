@@ -2,7 +2,7 @@ package com.example.playlistmaker.search.data.storage
 
 import com.example.playlistmaker.search.domain.model.Track
 
-object TracksSearchCacheImpl : TracksSearchCache {
+class TracksSearchCacheImpl() : TracksSearchCache {
     private val mutableTracks = mutableListOf<Track>()
 
     override fun addAllTracks(newTracks: List<Track>) {

@@ -4,8 +4,10 @@ import com.example.playlistmaker.search.domain.repository.ListenHistoryRepositor
 
 interface ClearListenHistoryTracksUseCase {
     fun execute()
-    class Base(private val listenHistoryRepository: ListenHistoryRepository) :
-        ClearListenHistoryTracksUseCase {
+
+    class Base(
+        private val listenHistoryRepository: ListenHistoryRepository
+    ) : ClearListenHistoryTracksUseCase {
         override fun execute() {
             listenHistoryRepository.clearListenHistory()
         }

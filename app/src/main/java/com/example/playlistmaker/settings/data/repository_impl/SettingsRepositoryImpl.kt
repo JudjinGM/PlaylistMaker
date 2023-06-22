@@ -4,7 +4,9 @@ import com.example.playlistmaker.settings.data.data_source.SettingsLocalDataSour
 import com.example.playlistmaker.settings.domain.repository.SettingsRepository
 
 
-class SettingsRepositoryImpl(private val dataSource: SettingsLocalDataSource) : SettingsRepository {
+class SettingsRepositoryImpl(
+    private val dataSource: SettingsLocalDataSource
+) : SettingsRepository {
     override fun setSettingBoolean(key: String, value: Boolean) {
         dataSource.setSetting(key, value)
     }

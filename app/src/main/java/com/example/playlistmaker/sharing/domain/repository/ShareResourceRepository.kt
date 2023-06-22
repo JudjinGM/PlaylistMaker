@@ -1,6 +1,6 @@
 package com.example.playlistmaker.sharing.domain.repository
 
-import com.example.playlistmaker.sharing.data.model.EmailData
+import com.example.playlistmaker.sharing.di.data.model.EmailData
 
 interface ShareResourceRepository {
     fun getShareAppLink(): String
