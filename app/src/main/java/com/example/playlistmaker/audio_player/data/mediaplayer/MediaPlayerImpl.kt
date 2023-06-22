@@ -80,5 +80,4 @@ class MediaPlayerImpl(
     override fun getCurrentPosition(): Long {
         return mediaPlayer.currentPosition.toLong()
     }
-
 }

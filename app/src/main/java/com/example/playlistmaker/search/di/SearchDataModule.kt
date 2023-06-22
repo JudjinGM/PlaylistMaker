@@ -39,7 +39,7 @@ val searchDataModule = module {
             .create(ItunesApi::class.java)
     }
 
-    single<TracksDtoToListTracksMapper> {
+    single {
         TracksDtoToListTracksMapper()
     }
 
