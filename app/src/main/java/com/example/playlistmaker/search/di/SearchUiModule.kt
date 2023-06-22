@@ -4,8 +4,8 @@ import com.example.playlistmaker.search.ui.view_model.SearchViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
-val searchAppModule = module {
-    viewModel<SearchViewModel> {
+val searchUiModule = module {
+    viewModel {
         SearchViewModel(
             addTrackToListenHistoryUseCase = get(),
             clearListenHistoryTracksUseCase = get(),

@@ -1,7 +1,7 @@
-package com.example.playlistmaker.sharing.di.data
+package com.example.playlistmaker.share.data
 
-import com.example.playlistmaker.sharing.di.data.model.EmailData
-import com.example.playlistmaker.sharing.domain.repository.ShareResourceRepository
+import com.example.playlistmaker.share.data.model.EmailData
+import com.example.playlistmaker.share.domain.repository.ShareResourceRepository
 
 class ShareResourceRepositoryImpl(
     private val shareDataSource: ShareDataSource

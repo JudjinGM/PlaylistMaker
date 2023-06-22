@@ -5,8 +5,7 @@ import android.os.Parcelable
 import com.example.playlistmaker.search.domain.model.Track
 
 data class SavedTracks(var tracks: ArrayList<Track>?) : Parcelable {
-    constructor(parcel: Parcel) : this(parcel.createTypedArrayList(Track)) {
-    }
+    constructor(parcel: Parcel) : this(parcel.createTypedArrayList(Track))
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeTypedList(tracks)

@@ -1,11 +1,11 @@
-package com.example.playlistmaker.sharing.di
+package com.example.playlistmaker.share.di
 
-import com.example.playlistmaker.sharing.domain.use_case.OpenMailUseCase
-import com.example.playlistmaker.sharing.domain.use_case.OpenLinkUseCase
-import com.example.playlistmaker.sharing.domain.use_case.ShareLinkUseCase
+import com.example.playlistmaker.share.domain.use_case.OpenMailUseCase
+import com.example.playlistmaker.share.domain.use_case.OpenLinkUseCase
+import com.example.playlistmaker.share.domain.use_case.ShareLinkUseCase
 import org.koin.dsl.module
 
-val sharingDomainModule = module {
+val shareDomainModule = module {
 
     factory<OpenMailUseCase> {
         OpenMailUseCase.Base(externalNavigator = get())

@@ -2,6 +2,7 @@ package com.example.playlistmaker.audio_player.di
 
 import com.example.playlistmaker.audio_player.domain.use_case.IsConnectedToNetworkUseCase
 import com.example.playlistmaker.audio_player.domain.use_case.MediaPlayerControlInteractor
+import com.example.playlistmaker.audio_player.domain.use_case.MediaPlayerControlInteractorImpl
 import org.koin.dsl.module
 
 val audioPlayerDomainModule = module {
@@ -11,7 +12,7 @@ val audioPlayerDomainModule = module {
     }
 
     factory<MediaPlayerControlInteractor> {
-        MediaPlayerControlInteractor.Base(mediaPlayer = get())
+        MediaPlayerControlInteractorImpl(mediaPlayer = get(), isConnectedToNetworkUseCase = get())
     }
 
 }

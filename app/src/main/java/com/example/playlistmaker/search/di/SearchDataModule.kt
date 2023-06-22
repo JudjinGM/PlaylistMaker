@@ -1,14 +1,15 @@
 package com.example.playlistmaker.search.di
 
+import android.content.Context
+import android.content.SharedPreferences
 import com.example.playlistmaker.search.data.data_source.TracksListenHistoryLocalDataSource
-import com.example.playlistmaker.search.data.data_source.TracksSearchRemoteDataSource
 import com.example.playlistmaker.search.data.data_source.TracksSearchLocalDataSource
+import com.example.playlistmaker.search.data.data_source.TracksSearchRemoteDataSource
 import com.example.playlistmaker.search.data.data_source_impl.TracksListenHistoryLocalDataSourceImpl
 import com.example.playlistmaker.search.data.data_source_impl.TracksSearchLocalDataSourceImpl
 import com.example.playlistmaker.search.data.data_source_impl.TracksSearchRemoteDataSourceImpl
 import com.example.playlistmaker.search.data.mapper.TracksDtoToListTracksMapper
 import com.example.playlistmaker.search.data.network.ItunesApi
-import com.example.playlistmaker.search.data.network.RetrofitFactory
 import com.example.playlistmaker.search.data.repository_impl.ListenHistoryRepositoryImpl
 import com.example.playlistmaker.search.data.repository_impl.SearchRepositoryImpl
 import com.example.playlistmaker.search.data.storage.TracksListenHistoryLocalDatabase
@@ -17,28 +18,39 @@ import com.example.playlistmaker.search.data.storage.TracksSearchCache
 import com.example.playlistmaker.search.data.storage.TracksSearchCacheImpl
 import com.example.playlistmaker.search.domain.repository.ListenHistoryRepository
 import com.example.playlistmaker.search.domain.repository.SearchRepository
+import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 val searchDataModule = module {
 
-    single<ItunesApi> {
-        val retrofitFactory = RetrofitFactory()
-        retrofitFactory.getService()
+    single<SharedPreferences> {
+        androidContext().getSharedPreferences(
+            TracksListenHistoryLocalDatabaseImpl.PLAYLIST_PREFS, Context.MODE_PRIVATE
+        )
     }
 
-    single<TracksDtoToListTracksMapper>{
+    single<ItunesApi> {
+        Retrofit.Builder()
+            .baseUrl("https://itunes.apple.com")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(ItunesApi::class.java)
+    }
+
+    single<TracksDtoToListTracksMapper> {
         TracksDtoToListTracksMapper()
     }
 
     single<TracksSearchRemoteDataSource> {
         TracksSearchRemoteDataSourceImpl(
-            itunesService = get(),
-            tracksDtoToTracksMapper = get()
+            itunesService = get(), tracksDtoToTracksMapper = get()
         )
     }
 
     single<TracksListenHistoryLocalDatabase> {
-        TracksListenHistoryLocalDatabaseImpl(context = get())
+        TracksListenHistoryLocalDatabaseImpl(playlistSharedPreferences = get())
     }
 
     single<TracksSearchCache> {

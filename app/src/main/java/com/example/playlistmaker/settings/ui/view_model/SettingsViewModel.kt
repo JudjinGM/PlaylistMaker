@@ -6,9 +6,9 @@ import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.settings.domain.use_case.GetThemeUseCase
 import com.example.playlistmaker.settings.domain.use_case.SaveThemeUseCase
 import com.example.playlistmaker.settings.domain.use_case.SetThemeUseCase
-import com.example.playlistmaker.sharing.domain.use_case.OpenMailUseCase
-import com.example.playlistmaker.sharing.domain.use_case.OpenLinkUseCase
-import com.example.playlistmaker.sharing.domain.use_case.ShareLinkUseCase
+import com.example.playlistmaker.share.domain.use_case.OpenMailUseCase
+import com.example.playlistmaker.share.domain.use_case.OpenLinkUseCase
+import com.example.playlistmaker.share.domain.use_case.ShareLinkUseCase
 
 class SettingsViewModel(
     getThemeUseCase: GetThemeUseCase,

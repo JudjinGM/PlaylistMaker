@@ -33,7 +33,7 @@ class SearchActivity : AppCompatActivity() {
     private var savedSearchedTracks = SavedTracks(tracks = null)
     private var inputSearchText: String = DEFAULT_TEXT
 
-    private val viewModel: SearchViewModel by viewModel<SearchViewModel>()
+    private val viewModel: SearchViewModel by viewModel()
     private var textWatcher: TextWatcher? = null
 
     private var isClickAllowed = true

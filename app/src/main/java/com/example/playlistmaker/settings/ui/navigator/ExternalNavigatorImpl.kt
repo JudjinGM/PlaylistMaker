@@ -3,8 +3,8 @@ package com.example.playlistmaker.settings.ui.navigator
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import com.example.playlistmaker.sharing.domain.navigator.ExternalNavigator
-import com.example.playlistmaker.sharing.domain.repository.ShareResourceRepository
+import com.example.playlistmaker.share.domain.navigator.ExternalNavigator
+import com.example.playlistmaker.share.domain.repository.ShareResourceRepository
 
 class ExternalNavigatorImpl(
     private val context: Context,

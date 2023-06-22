@@ -5,7 +5,7 @@ import org.koin.dsl.module
 
 val searchDomainModule = module {
 
-    factory<AddTracksToSearchResultUseCase>{
+    factory<AddTracksToSearchResultUseCase> {
         AddTracksToSearchResultUseCase.Base(searchRepository = get())
     }
 

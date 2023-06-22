@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="SmallButtonText">
         <item name="fontFamily">@font/ys_display_medium</item>
         <item name="android:textSize">@dimen/button_text_size</item>
         <item name="android:textAllCaps">false</item>
     </style>
 
-     <style name="SwitchWithKnob">
-         <item name="thumbTint">@color/royal_blue</item>
-         <item name="trackTint">@color/royal_blue_opacity49</item>
-     </style>
+    <style name="SwitchWithKnob">
+        <item name="thumbTint">@color/royal_blue</item>
+        <item name="trackTint">@color/royal_blue_opacity49</item>
+    </style>
 
     <style name="SmallButton">
         <item name="backgroundTint">@color/white</item>

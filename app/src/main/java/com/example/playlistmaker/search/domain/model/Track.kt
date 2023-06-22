@@ -27,8 +27,7 @@ data class Track(
         parcel.readString() ?: "",
         parcel.readString() ?: "",
         parcel.readString() ?: "",
-    ) {
-    }
+    )
 
     fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
     fun getShortReleaseDate() = releaseDate.take(4)

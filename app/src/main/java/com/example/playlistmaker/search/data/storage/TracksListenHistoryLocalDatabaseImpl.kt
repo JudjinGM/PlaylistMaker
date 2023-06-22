@@ -1,15 +1,11 @@
 package com.example.playlistmaker.search.data.storage
 
-import android.content.Context
-import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
 import com.example.playlistmaker.search.domain.model.Track
 import com.google.gson.Gson
 
-class TracksListenHistoryLocalDatabaseImpl(context: Context) :
+class TracksListenHistoryLocalDatabaseImpl(private val playlistSharedPreferences: SharedPreferences) :
     TracksListenHistoryLocalDatabase {
-
-    private val playlistSharedPreferences =
-        context.getSharedPreferences(PLAYLIST_PREFS, MODE_PRIVATE)
 
     override fun getListenHistoryTrackList(): List<Track> {
         val json =

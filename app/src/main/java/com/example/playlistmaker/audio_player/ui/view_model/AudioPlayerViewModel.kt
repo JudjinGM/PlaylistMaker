@@ -18,44 +18,25 @@ class AudioPlayerViewModel(
     isConnectedToNetworkUseCase: IsConnectedToNetworkUseCase
 ) : ViewModel() {
 
-    private var playerStatus = PlayerStatus.STATE_DEFAULT
-
     private val playerStateLiveData = MutableLiveData<PlayerState>()
-    private val toastSateLiveData = SingleLiveEvent<PlayerError>()
+    private val toastStateLiveData = SingleLiveEvent<PlayerError>()
     private val timeLiveData = MutableLiveData<Long>()
 
     private var mainTreadHandler: Handler = Handler(Looper.getMainLooper())
     private var trackTimeUpdateRunnable: Runnable? = null
 
+    private val playerStatus
+        get() = mediaPlayerControlInteractor.getMediaPlayerStatus()
+
     init {
-        mediaPlayerControlInteractor.setOnPreparedListener {
-            playerStatus = PlayerStatus.STATE_PREPARED
-        }
-        mediaPlayerControlInteractor.setOnPlayListener {
-            playerStatus = PlayerStatus.STATE_PLAYING
-        }
-
-        mediaPlayerControlInteractor.setOnPauseListener {
-            playerStatus = PlayerStatus.STATE_PAUSED
-        }
-
-        mediaPlayerControlInteractor.setOnStopListener {
-            playerStatus = PlayerStatus.STATE_PREPARED
-        }
-
         mediaPlayerControlInteractor.setOnCompletionListener {
-            playerStatus = PlayerStatus.STATE_PREPARED
             playerStateToPlayerStatusUpdate()
             timeStateUpdate()
         }
 
-        mediaPlayerControlInteractor.setOnErrorListener {
-            playerStatus = PlayerStatus.STATE_ERROR
-        }
-
         if (isConnectedToNetworkUseCase.execute()) {
             mediaPlayerControlInteractor.initPlayer(track.previewUrl)
-        } else playerStatus = PlayerStatus.STATE_NETWORK_ERROR
+        }
     }
 
     override fun onCleared() {
@@ -65,7 +46,7 @@ class AudioPlayerViewModel(
         trackTimeUpdateRunnable = null
     }
 
-    fun observeToastState(): LiveData<PlayerError> = toastSateLiveData
+    fun observeToastState(): LiveData<PlayerError> = toastStateLiveData
     fun observePlayerState(): LiveData<PlayerState> = playerStateLiveData
     fun observeTime(): LiveData<Long> = timeLiveData
 
@@ -78,16 +59,24 @@ class AudioPlayerViewModel(
     }
 
     private fun postToastState(playerError: PlayerError) {
-        toastSateLiveData.postValue(playerError)
+        toastStateLiveData.postValue(playerError)
     }
 
     fun togglePlay() {
-        playbackControl(playerStatus)
+        playbackControl()
         playerStateToPlayerStatusUpdate()
         timeStateUpdate()
     }
 
-    private fun playbackControl(playerStatus: PlayerStatus) {
+    fun pausePlayer() {
+        if (playerStatus == PlayerStatus.STATE_PLAYING || playerStatus == PlayerStatus.STATE_PAUSED) {
+            mediaPlayerControlInteractor.pausePlayer()
+            playerStateToPlayerStatusUpdate()
+            timeStateUpdate()
+        }
+    }
+
+    private fun playbackControl() {
         when (playerStatus) {
             PlayerStatus.STATE_PLAYING -> {
                 mediaPlayerControlInteractor.pausePlayer()
@@ -140,16 +129,8 @@ class AudioPlayerViewModel(
         return result
     }
 
-    fun pausePlayer() {
-        if (playerStatus == PlayerStatus.STATE_PLAYING || playerStatus == PlayerStatus.STATE_PAUSED) {
-            mediaPlayerControlInteractor.pausePlayer()
-            playerStateToPlayerStatusUpdate()
-            timeStateUpdate()
-        }
-    }
-
     companion object {
-        private const val DELAY_MILLIS = 500L
+        private const val DELAY_MILLIS = 300L
         private const val DEFAULT_TIME = 0L
     }
 }

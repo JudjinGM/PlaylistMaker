@@ -1,4 +1,4 @@
-package com.example.playlistmaker.sharing.domain.navigator
+package com.example.playlistmaker.share.domain.navigator
 
 interface ExternalNavigator {
     fun shareLink()

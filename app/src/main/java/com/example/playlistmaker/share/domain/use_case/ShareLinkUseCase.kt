@@ -1,6 +1,6 @@
-package com.example.playlistmaker.sharing.domain.use_case
+package com.example.playlistmaker.share.domain.use_case
 
-import com.example.playlistmaker.sharing.domain.navigator.ExternalNavigator
+import com.example.playlistmaker.share.domain.navigator.ExternalNavigator
 
 interface ShareLinkUseCase {
     fun execute()

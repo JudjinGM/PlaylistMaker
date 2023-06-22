@@ -1,4 +1,4 @@
-package com.example.playlistmaker.audio_player.ui.mediaplayer
+package com.example.playlistmaker.audio_player.data.mediaplayer
 
 import android.media.MediaPlayer
 import com.example.playlistmaker.audio_player.domain.repository.MediaPlayerContract
@@ -14,6 +14,7 @@ class MediaPlayerImpl(
     private var onPauseListener: (() -> Unit)? = null
     private var onStopListener: (() -> Unit)? = null
 
+    private var isPlayerPrepared = false
     override fun initMediaPlayer(url: String) {
         if (url.isEmpty()) {
             onErrorListener?.invoke()
@@ -22,6 +23,7 @@ class MediaPlayerImpl(
                 mediaPlayer.setDataSource(url)
                 mediaPlayer.prepareAsync()  // source is url so Async then
                 mediaPlayer.setOnPreparedListener {
+                    isPlayerPrepared = true
                     onPreparedListener?.invoke()
                 }
             } catch (e: java.lang.Exception) {
@@ -35,8 +37,10 @@ class MediaPlayerImpl(
     }
 
     override fun play() {
-        mediaPlayer.start()
-        onPlayListener?.invoke()
+        if (isPlayerPrepared) {
+            mediaPlayer.start()
+            onPlayListener?.invoke()
+        }
     }
 
     override fun pause() {

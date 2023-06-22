@@ -1,8 +1,8 @@
-package com.example.playlistmaker.sharing.di.data
+package com.example.playlistmaker.share.data
 
 import android.content.Context
 import com.example.playlistmaker.R
-import com.example.playlistmaker.sharing.di.data.model.EmailData
+import com.example.playlistmaker.share.data.model.EmailData
 
 interface ShareDataSource {
     fun getShareAppLink(): String
