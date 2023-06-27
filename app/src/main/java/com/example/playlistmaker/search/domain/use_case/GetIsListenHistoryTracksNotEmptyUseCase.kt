@@ -4,8 +4,10 @@ import com.example.playlistmaker.search.domain.repository.ListenHistoryRepositor
 
 interface GetIsListenHistoryTracksNotEmptyUseCase {
     fun execute(): Boolean
-    class Base(private val listenHistoryRepository: ListenHistoryRepository) :
-        GetIsListenHistoryTracksNotEmptyUseCase {
+
+    class Base(
+        private val listenHistoryRepository: ListenHistoryRepository
+    ) : GetIsListenHistoryTracksNotEmptyUseCase {
         override fun execute(): Boolean {
             return listenHistoryRepository.isListenHistoryIsNotEmpty()
         }

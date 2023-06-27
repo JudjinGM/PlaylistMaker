@@ -15,8 +15,7 @@ class TracksAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TracksViewHolder {
         val layoutInspector = LayoutInflater.from(parent.context)
         return TracksViewHolder(
-            TracksViewBinding.inflate(layoutInspector, parent, false),
-            onTrackClicked
+            TracksViewBinding.inflate(layoutInspector, parent, false), onTrackClicked
         )
     }
 

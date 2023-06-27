@@ -1,25 +1,23 @@
 package com.example.playlistmaker.search.data.repository_impl
 
-import com.example.playlistmaker.search.data.data_source.TracksLocalDataSource
-import com.example.playlistmaker.search.data.data_source.TracksRemoteDataSource
+import com.example.playlistmaker.search.data.data_source.TracksSearchLocalDataSource
+import com.example.playlistmaker.search.data.data_source.TracksSearchRemoteDataSource
 import com.example.playlistmaker.search.data.model.RemoteDatasourceErrorStatus
 import com.example.playlistmaker.search.domain.model.ErrorStatus
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.domain.repository.SearchRepository
 
 class SearchRepositoryImpl(
-    private val remoteDataSource: TracksRemoteDataSource,
-    private val localDataSource: TracksLocalDataSource,
+    private val remoteDataSource: TracksSearchRemoteDataSource,
+    private val searchLocalDataSource: TracksSearchLocalDataSource,
 ) : SearchRepository {
     override fun searchTracks(
-        inputSearchText: String,
-        onSuccess: (List<Track>) -> Unit,
-        onError: (ErrorStatus) -> Unit
+        inputSearchText: String, onSuccess: (List<Track>) -> Unit, onError: (ErrorStatus) -> Unit
     ) {
         remoteDataSource.getTracks(inputSearchText, onSuccess = { newTracks ->
-            localDataSource.clearAllTracks()
-            localDataSource.addAllTracks(newTracks)
-            onSuccess.invoke(localDataSource.getAllTracks())
+            searchLocalDataSource.clearAllTracks()
+            searchLocalDataSource.addAllTracks(newTracks)
+            onSuccess.invoke(searchLocalDataSource.getAllTracks())
         }, onError = { errorStatus ->
             when (errorStatus) {
                 RemoteDatasourceErrorStatus.NOTHING_FOUND -> onError.invoke(ErrorStatus.NOTHING_FOUND)
@@ -29,18 +27,18 @@ class SearchRepositoryImpl(
     }
 
     override fun addAllTracks(tracks: List<Track>) {
-        localDataSource.addAllTracks(tracks)
+        searchLocalDataSource.addAllTracks(tracks)
     }
 
     override fun getSearchTracks(): List<Track> {
-        return localDataSource.getAllTracks()
+        return searchLocalDataSource.getAllTracks()
     }
 
     override fun clearSearchTracks() {
-        localDataSource.clearAllTracks()
+        searchLocalDataSource.clearAllTracks()
     }
 
     override fun isSearchRepositoryEmpty(): Boolean {
-        return localDataSource.getAllTracks().isEmpty()
+        return searchLocalDataSource.getAllTracks().isEmpty()
     }
 }

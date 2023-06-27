@@ -5,28 +5,29 @@ import android.os.Build.VERSION
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.audio_player.domain.model.PlayerError
-import com.example.playlistmaker.audio_player.domain.model.PlayerState
+import com.example.playlistmaker.audio_player.ui.model.PlayerError
+import com.example.playlistmaker.audio_player.ui.model.PlayerState
 import com.example.playlistmaker.audio_player.ui.view_model.AudioPlayerViewModel
 import com.example.playlistmaker.databinding.ActivityAudioplayerBinding
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.ui.activity.SearchActivity.Companion.TRACK
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
 import java.util.*
 
 class AudioPlayerActivity : AppCompatActivity() {
 
     private lateinit var track: Track
-
     private lateinit var binding: ActivityAudioplayerBinding
-
     private var isTrackLiked = false
 
-    private lateinit var viewModel: AudioPlayerViewModel
+    private val viewModel: AudioPlayerViewModel by viewModel {
+        parametersOf(track)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,9 +35,6 @@ class AudioPlayerActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         track = getTrack()
-        viewModel = ViewModelProvider(
-            this, AudioPlayerViewModel.getViewModelFactory(track)
-        )[AudioPlayerViewModel::class.java]
 
         viewContentInit()
         onClicks()
@@ -44,11 +42,9 @@ class AudioPlayerActivity : AppCompatActivity() {
         viewModel.observePlayerState().observe(this) {
             renderPlayerState(it)
         }
-
         viewModel.observeTime().observe(this) {
             renderTimeState(it)
         }
-
         viewModel.observeToastState().observe(this) {
             renderToastErrorState(it)
         }
@@ -114,10 +110,6 @@ class AudioPlayerActivity : AppCompatActivity() {
         binding.timeTextView.text = millisToTimeFormat(time)
     }
 
-    private fun millisToTimeFormat(millis: Long): String {
-        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(millis)
-    }
-
     private fun renderToastErrorState(playerError: PlayerError) {
         when (playerError) {
             PlayerError.NOT_READY -> showToast(getString(R.string.player_not_ready))
@@ -128,5 +120,9 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+
+    private fun millisToTimeFormat(millis: Long): String {
+        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(millis)
     }
 }

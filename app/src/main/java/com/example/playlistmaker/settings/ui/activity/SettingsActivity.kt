@@ -3,36 +3,31 @@ package com.example.playlistmaker.settings.ui.activity
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
-import com.example.playlistmaker.App
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
 import com.example.playlistmaker.settings.ui.view_model.SettingsViewModel
-import com.example.playlistmaker.sharing.data.ExternalNavigator
-import com.example.playlistmaker.sharing.data.ExternalNavigatorImpl
+import org.koin.androidx.viewmodel.ext.android.viewModel
+
 
 class SettingsActivity : AppCompatActivity() {
 
 
     private lateinit var binding: ActivitySettingsBinding
-    private lateinit var viewModel: SettingsViewModel
-
-    private val externalNavigator: ExternalNavigator =
-        ExternalNavigatorImpl(this, App.shareResourceRepository)
+    private val viewModel: SettingsViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel = ViewModelProvider(
-            this, SettingsViewModel.getViewModelFactory(externalNavigator)
-        )[SettingsViewModel::class.java]
-
         viewModel.observeSwitchCompatState().observe(this) {
             render(it)
         }
 
         setOnClicks()
+    }
+
+    private fun render(switchCompatState: Boolean) {
+        binding.switchToDarkTheme.isChecked = switchCompatState
     }
 
     private fun setOnClicks() {
@@ -49,7 +44,7 @@ class SettingsActivity : AppCompatActivity() {
 
 
         val supportClickListener = View.OnClickListener {
-            viewModel.openSupport()
+            viewModel.writeToSupport()
         }
 
         binding.imageSupport.setOnClickListener(supportClickListener)
@@ -66,9 +61,4 @@ class SettingsActivity : AppCompatActivity() {
             viewModel.toggleDarkThemeSwitch(isChecked)
         }
     }
-
-    private fun render(switchCompatState: Boolean) {
-        binding.switchToDarkTheme.isChecked = switchCompatState
-    }
-
 }
