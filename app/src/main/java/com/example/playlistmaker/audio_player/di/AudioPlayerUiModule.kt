@@ -21,7 +21,7 @@ val audioPlayerUiModule = module {
     }
 
     factory<MediaPlayerContract> {
-        MediaPlayerImpl(mediaPlayer = MediaPlayer())
+        MediaPlayerImpl(mediaPlayer = get())
     }
 
     viewModel { (track: Track) ->
