@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/placeholderLibraryFavoritesImage"
+        android:layout_width="@dimen/placeholder_image_dimens"
+        android:layout_height="@dimen/placeholder_image_dimens"
+        android:layout_marginTop="@dimen/placeholder_image_library_margin_top"
+        android:contentDescription="@string/error"
+        android:src="@drawable/error_search"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/errorFavoritesTextTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/error_text_margin_top"
+        android:gravity="center"
+        android:textAppearance="@style/PlaceholderText"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/placeholderLibraryFavoritesImage" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

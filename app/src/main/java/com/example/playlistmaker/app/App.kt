@@ -3,6 +3,7 @@ package com.example.playlistmaker.app
 import android.app.Application
 import com.example.playlistmaker.audio_player.di.audioPlayerUiModule
 import com.example.playlistmaker.audio_player.di.audioPlayerDomainModule
+import com.example.playlistmaker.library.di.libraryUiModule
 import com.example.playlistmaker.search.di.searchUiModule
 import com.example.playlistmaker.search.di.searchDataModule
 import com.example.playlistmaker.search.di.searchDomainModule
@@ -35,7 +36,8 @@ class App : Application() {
                     settingsDataModule,
                     settingsDomainModule,
                     shareDataModule,
-                    shareDomainModule
+                    shareDomainModule,
+                    libraryUiModule
                 )
             )
         }

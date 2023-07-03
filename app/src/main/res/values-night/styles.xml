@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="SmallButtonText">
+    <style name="MediumVariantText">
         <item name="fontFamily">@font/ys_display_medium</item>
         <item name="android:textSize">@dimen/button_text_size</item>
         <item name="android:textAllCaps">false</item>
@@ -15,6 +15,13 @@
     <style name="SmallButton">
         <item name="backgroundTint">@color/white</item>
         <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="TabLayoutLibrary">
+        <item name="tabTextColor">@color/white</item>
+        <item name="tabIndicatorColor">@color/white</item>
+        <item name="fontFamily">@font/ys_display_medium</item>
+        <item name="android:textSize">@dimen/button_text_size</item>
     </style>
 
 </resources>
