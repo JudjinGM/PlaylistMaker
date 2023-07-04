@@ -34,14 +34,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbarLibrary"
-        app:tabTextAppearance="@style/MediumVariantText"
         app:tabIndicator="@drawable/tab_layout_indicator"
-         />
+        app:tabTextAppearance="@style/MediumVariantText" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/libraryViewPager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/weight_0_dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/libraryTableLayout" />
