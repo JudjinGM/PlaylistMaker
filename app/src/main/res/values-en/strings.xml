@@ -35,4 +35,9 @@
     <string name="cant_play_song">Can\'t play song</string>
     <string name="player_not_ready">Player is loading, please wait</string>
     <string name="error_network">Network error. Please, check your connection</string>
+    <string name="new_playlist">New playlist</string>
+    <string name="error_no_playlist">You don\'t have\nany playlist</string>
+    <string name="error_favorites_is_empty">Your library is empty</string>
+    <string name="favorite_tracks">Favorite tracks</string>
+    <string name="playlists">Playlists</string>
 </resources>

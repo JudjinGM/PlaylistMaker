@@ -3,6 +3,11 @@
     <dimen name="dim_bottom_main">28dp</dimen>
     <dimen name="dim_between_content">8dp</dimen>
     <dimen name="button_corner_radius">14dp</dimen>
+    <dimen name="button_playlist_padding_start">14dp</dimen>
+    <dimen name="button_playlist_padding_end">14dp</dimen>
+    <dimen name="button_playlist_padding_top">10dp</dimen>
+    <dimen name="button_playlist_padding_bottom">10dp</dimen>
+
     <dimen name="left_margin_from_content">17dp</dimen>
     <dimen name="right_margin_from_content">15dp</dimen>
     <dimen name="content_margin_top">42dp</dimen>
@@ -27,6 +32,7 @@
     <dimen name="margin_top_progress_bar">144dp</dimen>
     <dimen name="margin_bottom_for_content">0dp</dimen>
     <dimen name="margin_bottom_for_text">28dp</dimen>
+    <dimen name="top_margin_library_tab_layout">16dp</dimen>
     <dimen name="padding_start_for_search_icon_in_search_bar">12dp</dimen>
     <dimen name="padding_end_for_search_icon_in_search_bar">36dp</dimen>
     <dimen name="padding_top_for_text_in_search_bar">9dp</dimen>
@@ -49,11 +55,14 @@
     <dimen name="tracks_text_margin_end">16dp</dimen>
     <dimen name="tracks_text_margin_top">12dp</dimen>
     <dimen name="placeholder_image_margin_top">110dp</dimen>
+    <dimen name="placeholder_image_library_margin_top">106dp</dimen>
+    <dimen name="placeholder_image_library_playlist_margin_top">46dp</dimen>
     <dimen name="error_text_margin_top">16dp</dimen>
     <dimen name="header_search_history_top_margin">50dp</dimen>
     <dimen name="header_search_history_bottom_margin">-4dp</dimen>
     <dimen name="refresh_button_margin_top">24dp</dimen>
-    <dimen name="refresh_button_corner_radius">54dp</dimen>
+    <dimen name="new_playlist_button_margin_top">24dp</dimen>
+    <dimen name="small_button_corner_radius">54dp</dimen>
     <dimen name="album_cover_corner_radius">2dp</dimen>
     <dimen name="album_cover_player_corner_radius">8dp</dimen>
     <dimen name="placeholder_image_dimens">120dp</dimen>
