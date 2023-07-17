@@ -17,31 +17,13 @@
         android:theme="@style/Theme.PlaylistMaker"
         tools:targetApi="31">
         <activity
-            android:name=".audio_player.ui.activity.AudioPlayerActivity"
-            android:exported="false" />
-        <activity
-            android:name=".library.ui.activity.LibraryActivity"
-            android:exported="false" />
-        <activity
-            android:name=".search.ui.activity.SearchActivity"
-            android:exported="false"
-            android:windowSoftInputMode="stateVisible|adjustResize" />
-        <activity
-            android:name=".settings.ui.activity.SettingsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".main.ui.activity.MainActivity"
-            android:exported="true">
+            android:name=".app.RootActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
         </activity>
     </application>
-
 </manifest>

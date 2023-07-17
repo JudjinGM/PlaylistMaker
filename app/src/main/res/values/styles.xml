@@ -97,5 +97,20 @@
     <style name="TabLayoutLibrary">
         <item name="tabTextColor">@color/black</item>
         <item name="tabIndicatorColor">@color/black</item>
+        <item name="fontFamily">@font/ys_display_medium</item>
+        <item name="android:textSize">@dimen/button_text_size</item>
+    </style>
+
+    <style name="BottomNavigationTextAppearance">
+        <item name="fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">@dimen/bottom_nav_text_size</item>
+    </style>
+
+    <style name="MainBottomNavigation" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="backgroundTint">@color/white</item>
+        <item name="itemTextAppearanceActive">@style/BottomNavigationTextAppearance</item>
+        <item name="itemTextAppearanceInactive">@style/BottomNavigationTextAppearance</item>
+        <item name="itemIconTint">@drawable/bottom_navigation_selector</item>
+        <item name="itemTextColor">@drawable/bottom_navigation_selector</item>
     </style>
 </resources>

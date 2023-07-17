@@ -1,15 +1,15 @@
 package com.example.playlistmaker.app
 
 import android.app.Application
-import com.example.playlistmaker.audio_player.di.audioPlayerUiModule
 import com.example.playlistmaker.audio_player.di.audioPlayerDomainModule
+import com.example.playlistmaker.audio_player.di.audioPlayerUiModule
 import com.example.playlistmaker.library.di.libraryUiModule
-import com.example.playlistmaker.search.di.searchUiModule
 import com.example.playlistmaker.search.di.searchDataModule
 import com.example.playlistmaker.search.di.searchDomainModule
-import com.example.playlistmaker.settings.di.settingsUiModule
+import com.example.playlistmaker.search.di.searchUiModule
 import com.example.playlistmaker.settings.di.settingsDataModule
 import com.example.playlistmaker.settings.di.settingsDomainModule
+import com.example.playlistmaker.settings.di.settingsUiModule
 import com.example.playlistmaker.settings.domain.use_case.GetThemeUseCase
 import com.example.playlistmaker.settings.domain.use_case.SetThemeUseCase
 import com.example.playlistmaker.share.di.shareDataModule

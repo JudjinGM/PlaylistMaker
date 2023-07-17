@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".settings.ui.fragments.SettingsFragment">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidLineStart"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/main_margin_for_content" />
+
+    <TextView
+        android:id="@+id/toolbar_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/title_text_margin_start"
+        android:layout_marginTop="@dimen/title_text_margin_top"
+        android:text="@string/settings"
+        android:textAppearance="@style/TitleText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/text_dark_theme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dark_theme_text_margin_top"
+        android:text="@string/dark_theme"
+        android:textAppearance="@style/RegularText"
+        app:layout_constraintStart_toStartOf="@id/guidLineStart"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_settings" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switch_to_dark_theme"
+        style="@style/SwitchWithKnob"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/dark_theme_switch_margin_end"
+        app:layout_constraintBottom_toBottomOf="@id/text_dark_theme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/text_dark_theme" />
+
+    <TextView
+        android:id="@+id/text_share_app"
+        style="@style/RegularText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/content_margin_top"
+        android:text="@string/share"
+        app:layout_constraintStart_toStartOf="@id/guidLineStart"
+        app:layout_constraintTop_toBottomOf="@id/text_dark_theme" />
+
+    <ImageView
+        android:id="@+id/image_share"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/share_image_margin_end"
+        android:contentDescription="@string/share"
+        android:src="@drawable/share"
+        app:layout_constraintBottom_toBottomOf="@id/text_share_app"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/text_share_app"
+        app:tint="?attr/colorSecondary" />
+
+    <TextView
+        android:id="@+id/text_support"
+        style="@style/RegularText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/content_margin_top"
+        android:text="@string/support_image"
+        app:layout_constraintStart_toStartOf="@id/guidLineStart"
+        app:layout_constraintTop_toBottomOf="@id/text_share_app" />
+
+    <ImageView
+        android:id="@+id/image_support"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/support_image_margin_end"
+        android:contentDescription="@string/share_image"
+        android:src="@drawable/support"
+        app:layout_constraintBottom_toBottomOf="@id/text_support"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/text_support"
+        app:tint="?attr/colorSecondary" />
+
+    <TextView
+        android:id="@+id/text_term"
+        style="@style/RegularText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/content_margin_top"
+        android:text="@string/term_of_use"
+        app:layout_constraintStart_toStartOf="@id/guidLineStart"
+        app:layout_constraintTop_toBottomOf="@id/text_support" />
+
+    <ImageView
+        android:id="@+id/image_term"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/arrow_image_margin_end"
+        android:contentDescription="@string/term_of_use"
+        android:src="@drawable/arrow"
+        app:layout_constraintBottom_toBottomOf="@id/text_term"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/text_term"
+        app:tint="?attr/colorSecondary" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

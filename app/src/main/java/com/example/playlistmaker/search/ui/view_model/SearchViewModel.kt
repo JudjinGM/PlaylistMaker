@@ -107,7 +107,7 @@ class SearchViewModel(
 
     fun clearSearchInput() {
         clearSearchResultTracksUseCase.execute()
-        savedTracksLiveData.postValue(listOf())
+        savedTracksLiveData.postValue(emptyList())
         if (getIsListenHistoryTracksNotEmptyUseCase.execute()) {
             postState(SearchState.Success.ListenHistoryContent(getListenHistoryTracksUseCase.execute()))
         } else {
