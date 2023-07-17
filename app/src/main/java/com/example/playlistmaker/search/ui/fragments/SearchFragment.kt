@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,10 +34,9 @@ class SearchFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var tracksAdapter: TracksAdapter
-    private var savedSearchedTracks: SavedTracks? = null
 
     //for restoring tracks from bundle if android kills app
-    //private var savedSearchedTracks = SavedTracks(tracks = null)
+    private var savedSearchedTracks: SavedTracks? = null
 
 
     private var inputSearchText: String = DEFAULT_TEXT
@@ -58,16 +56,11 @@ class SearchFragment : Fragment() {
         savedSearchedTracks = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             savedInstanceState?.getParcelable(SAVED_SEARCH_TRACKS, SavedTracks::class.java)
         } else savedInstanceState?.getParcelable(SAVED_SEARCH_TRACKS)
-
-        Log.d("judjin", "onCreate")
-
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        Log.d("judjin", "onCreateView")
-
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
 
@@ -89,7 +82,6 @@ class SearchFragment : Fragment() {
 
         recycleViewInit()
         setOnClicksAndActions()
-        Log.d("judjin", "onViewCreated")
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
@@ -98,23 +90,8 @@ class SearchFragment : Fragment() {
             inputSearchText = savedInstanceState.getString(SAVED_TEXT, DEFAULT_TEXT)
         }
         binding.inputSearchFieldEditText.setText(inputSearchText)
-        Log.d("judjin", "onViewStateRestored")
     }
 
-    override fun onStart() {
-        super.onStart()
-        Log.d("judjin", "onStart")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Log.d("judjin", "onStop")
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Log.d("judjin", "onPause")
-    }
 
     override fun onResume() {
         super.onResume()
@@ -122,29 +99,20 @@ class SearchFragment : Fragment() {
             viewModel.updateState()
         }
         isFragmentJustCreated = false
+
         setOnTextWatchersTextChangeListeners()
         setClearInputTextImageViewVisibility(inputSearchText)
-
-        Log.d("judjin", "onResume")
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(SAVED_TEXT, inputSearchText)
         outState.putParcelable(SAVED_SEARCH_TRACKS, savedSearchedTracks)
-        Log.d("judjin", "onSaveInstanceState")
     }
 
     override fun onDestroy() {
-        Log.d("judjin", "onDestroy")
         textWatcher?.let { binding.inputSearchFieldEditText.removeTextChangedListener(it) }
         super.onDestroy()
-    }
-
-    override fun onDestroyView() {
-        Log.d("judjin", "onDestroyView")
-
-        super.onDestroyView()
     }
 
     private fun render(state: SearchState) {
