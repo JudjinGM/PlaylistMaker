@@ -35,6 +35,11 @@ class PlaylistsFragment : Fragment() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     private fun render(state: PlaylistsState){
         when(state){
             is PlaylistsState.Error -> showError(state.error)

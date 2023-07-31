@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class AudioPlayerFragment : Fragment() {
+
     private lateinit var track: Track
     private var _binding: FragmentAudioplayerBinding? = null
     private val binding get() = _binding!!
@@ -35,8 +36,8 @@ class AudioPlayerFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            requireArguments().getParcelable(TRACK, Track::class.java) ?: Track()
-        } else requireArguments().getParcelable(TRACK) ?: Track()
+            requireArguments().getParcelable(ARGS_TRACK, Track::class.java) ?: Track()
+        } else requireArguments().getParcelable(ARGS_TRACK) ?: Track()
     }
 
     override fun onCreateView(
@@ -66,6 +67,11 @@ class AudioPlayerFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         viewModel.pausePlayer()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun viewContentInit() {
@@ -135,6 +141,6 @@ class AudioPlayerFragment : Fragment() {
     }
 
     companion object {
-        const val TRACK = "track"
+        const val ARGS_TRACK = "args_track"
     }
 }

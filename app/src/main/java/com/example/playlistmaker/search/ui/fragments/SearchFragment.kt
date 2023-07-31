@@ -16,7 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
-import com.example.playlistmaker.audio_player.ui.fragments.AudioPlayerFragment.Companion.TRACK
+import com.example.playlistmaker.audio_player.ui.fragments.AudioPlayerFragment.Companion.ARGS_TRACK
 import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.search.domain.model.ErrorStatus
 import com.example.playlistmaker.search.domain.model.PlaceholderStatus
@@ -79,7 +79,6 @@ class SearchFragment : Fragment() {
             savedSearchedTracks = SavedTracks(ArrayList(tracks))
         }
 
-
         recycleViewInit()
         setOnClicksAndActions()
     }
@@ -110,10 +109,16 @@ class SearchFragment : Fragment() {
         outState.putParcelable(SAVED_SEARCH_TRACKS, savedSearchedTracks)
     }
 
-    override fun onDestroy() {
+    override fun onPause() {
+        super.onPause()
         textWatcher?.let { binding.inputSearchFieldEditText.removeTextChangedListener(it) }
-        super.onDestroy()
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+       _binding = null
+    }
+
 
     private fun render(state: SearchState) {
         when (state) {
@@ -270,6 +275,7 @@ class SearchFragment : Fragment() {
                 )
             }
         }
+
         textWatcher?.let { binding.inputSearchFieldEditText.addTextChangedListener(it) }
     }
 
@@ -297,6 +303,6 @@ class SearchFragment : Fragment() {
         private const val CLICK_DEBOUNCE_DELAY_MILLIS = 1000L
 
         fun createArgs(track: Track) =
-            bundleOf(TRACK to track)
+            bundleOf(ARGS_TRACK to track)
     }
 }

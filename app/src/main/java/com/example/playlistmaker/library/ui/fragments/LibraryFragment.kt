@@ -32,6 +32,13 @@ class LibraryFragment : Fragment() {
         viewInit()
     }
 
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        tabLayoutMediator.detach()
+        _binding = null
+    }
+
     private fun viewInit() {
         binding.libraryViewPager.adapter =
             LibraryViewPagerAdapter(childFragmentManager, lifecycle)
@@ -39,15 +46,9 @@ class LibraryFragment : Fragment() {
         tabLayoutMediator = TabLayoutMediator(
             binding.libraryTableLayout, binding.libraryViewPager
         ) { tab, position ->
-            tab.text = if (position == 0) getString(R.string.favorite_tracks)
-            else getString(R.string.playlists)
+            tab.text = if (position == 0) getString(R.string.favorite_tracks) else getString(R.string.playlists)
         }
         tabLayoutMediator.attach()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        tabLayoutMediator.detach()
     }
 
 }
