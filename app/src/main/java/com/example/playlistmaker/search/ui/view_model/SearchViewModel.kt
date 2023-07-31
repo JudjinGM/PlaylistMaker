@@ -9,7 +9,15 @@ import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.search.domain.model.ErrorStatus
 import com.example.playlistmaker.search.domain.model.SearchState
 import com.example.playlistmaker.search.domain.model.Track
-import com.example.playlistmaker.search.domain.use_case.*
+import com.example.playlistmaker.search.domain.use_case.AddTrackToListenHistoryUseCase
+import com.example.playlistmaker.search.domain.use_case.AddTracksToSearchResultUseCase
+import com.example.playlistmaker.search.domain.use_case.ClearListenHistoryTracksUseCase
+import com.example.playlistmaker.search.domain.use_case.ClearSearchResultTracksUseCase
+import com.example.playlistmaker.search.domain.use_case.GetIsListenHistoryTracksNotEmptyUseCase
+import com.example.playlistmaker.search.domain.use_case.GetIsSearchResultIsEmptyUseCase
+import com.example.playlistmaker.search.domain.use_case.GetListenHistoryTracksUseCase
+import com.example.playlistmaker.search.domain.use_case.GetSearchResultTracksUseCase
+import com.example.playlistmaker.search.domain.use_case.SearchSongsUseCase
 import com.example.playlistmaker.search.ui.model.SavedTracks
 
 class SearchViewModel(
@@ -30,6 +38,7 @@ class SearchViewModel(
     private val savedTracksLiveData = MutableLiveData<List<Track>>()
 
     private val handler = Handler(Looper.getMainLooper())
+
 
     override fun onCleared() {
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
@@ -87,6 +96,7 @@ class SearchViewModel(
                     ErrorStatus.NOTHING_FOUND -> {
                         postState(SearchState.Error(errorStatus))
                     }
+
                     ErrorStatus.NO_CONNECTION -> {
                         postState(SearchState.Error(errorStatus))
                         latestSearchText = DEFAULT_TEXT
@@ -107,7 +117,7 @@ class SearchViewModel(
 
     fun clearSearchInput() {
         clearSearchResultTracksUseCase.execute()
-        savedTracksLiveData.postValue(listOf())
+        savedTracksLiveData.postValue(emptyList())
         if (getIsListenHistoryTracksNotEmptyUseCase.execute()) {
             postState(SearchState.Success.ListenHistoryContent(getListenHistoryTracksUseCase.execute()))
         } else {

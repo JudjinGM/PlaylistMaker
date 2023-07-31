@@ -3,8 +3,8 @@ package com.example.playlistmaker.library.ui.view_model
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.playlistmaker.library.ui.activity.model.PlaylistsError
-import com.example.playlistmaker.library.ui.activity.model.PlaylistsState
+import com.example.playlistmaker.library.ui.model.PlaylistsError
+import com.example.playlistmaker.library.ui.model.PlaylistsState
 
 class PlaylistViewModel : ViewModel() {
 

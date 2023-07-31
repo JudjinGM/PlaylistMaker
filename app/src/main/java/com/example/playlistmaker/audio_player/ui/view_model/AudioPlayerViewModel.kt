@@ -81,9 +81,11 @@ class AudioPlayerViewModel(
             PlayerStatus.STATE_PLAYING -> {
                 mediaPlayerControlInteractor.pausePlayer()
             }
+
             PlayerStatus.STATE_PREPARED, PlayerStatus.STATE_PAUSED -> {
                 mediaPlayerControlInteractor.playPlayer()
             }
+
             else -> {
             }
         }
@@ -116,10 +118,12 @@ class AudioPlayerViewModel(
                         mainTreadHandler.removeCallbacks(this)
                         postTimeState(DEFAULT_TIME)
                     }
+
                     PlayerStatus.STATE_PLAYING -> {
                         mainTreadHandler.postDelayed(this, DELAY_MILLIS)
                         postTimeState(mediaPlayerControlInteractor.getMediaPlayerCurrentPosition())
                     }
+
                     PlayerStatus.STATE_PAUSED -> {
                         postTimeState(mediaPlayerControlInteractor.getMediaPlayerCurrentPosition())
                     }

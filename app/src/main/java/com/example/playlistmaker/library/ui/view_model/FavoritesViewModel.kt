@@ -3,8 +3,8 @@ package com.example.playlistmaker.library.ui.view_model
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.playlistmaker.library.ui.activity.model.FavoritesError
-import com.example.playlistmaker.library.ui.activity.model.FavoritesState
+import com.example.playlistmaker.library.ui.model.FavoritesError
+import com.example.playlistmaker.library.ui.model.FavoritesState
 
 class FavoritesViewModel : ViewModel() {
 
