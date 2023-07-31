@@ -1,12 +1,10 @@
 package com.example.playlistmaker.search.ui.view_model
 
-import android.os.Handler
-import android.os.Looper
-import android.os.SystemClock
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.playlistmaker.search.domain.model.ErrorStatus
+import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.search.domain.model.ErrorStatusDomain
 import com.example.playlistmaker.search.domain.model.SearchState
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.domain.use_case.AddTrackToListenHistoryUseCase
@@ -18,7 +16,10 @@ import com.example.playlistmaker.search.domain.use_case.GetIsSearchResultIsEmpty
 import com.example.playlistmaker.search.domain.use_case.GetListenHistoryTracksUseCase
 import com.example.playlistmaker.search.domain.use_case.GetSearchResultTracksUseCase
 import com.example.playlistmaker.search.domain.use_case.SearchSongsUseCase
+import com.example.playlistmaker.search.ui.model.ErrorStatusUi
 import com.example.playlistmaker.search.ui.model.SavedTracks
+import com.example.playlistmaker.utils.debounce
+import kotlinx.coroutines.launch
 
 class SearchViewModel(
     private val addTrackToListenHistoryUseCase: AddTrackToListenHistoryUseCase,
@@ -37,11 +38,12 @@ class SearchViewModel(
     private val stateLiveData = MutableLiveData<SearchState>()
     private val savedTracksLiveData = MutableLiveData<List<Track>>()
 
-    private val handler = Handler(Looper.getMainLooper())
-
+    private val tracksSearchDebounce =
+        debounce<String>(SEARCH_DEBOUNCE_DELAY_MILLIS, viewModelScope, true) {
+            searchRequest(it)
+        }
 
     override fun onCleared() {
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
         clearSearchResultTracksUseCase.execute()
         super.onCleared()
     }
@@ -76,33 +78,46 @@ class SearchViewModel(
             return
         }
         latestSearchText = changedText
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-        val searchRunnable = Runnable { searchRequest(changedText) }
-        val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY_MILLIS
-        handler.postAtTime(
-            searchRunnable, SEARCH_REQUEST_TOKEN, postTime
-        )
+
+        tracksSearchDebounce(changedText)
     }
 
     private fun searchRequest(inputSearchText: String) {
         if (inputSearchText.isNotEmpty()) {
             postState(SearchState.Loading)
 
-            searchSongsUseCase.execute(inputSearchText, onSuccess = { tracks ->
-                postState(SearchState.Success.SearchContent(tracks))
-                postSavedTracks(tracks)
-            }, onError = { errorStatus ->
-                when (errorStatus) {
-                    ErrorStatus.NOTHING_FOUND -> {
-                        postState(SearchState.Error(errorStatus))
-                    }
 
-                    ErrorStatus.NO_CONNECTION -> {
-                        postState(SearchState.Error(errorStatus))
+            viewModelScope.launch {
+                searchSongsUseCase.execute(inputSearchText).collect {
+                    processResult(it.first, it.second)
+                }
+            }
+        }
+    }
+
+    private fun processResult(foundTracks: List<Track>?, errorStatus: ErrorStatusDomain?) {
+        val tracks = mutableListOf<Track>()
+        if (foundTracks != null) {
+            tracks.addAll(foundTracks)
+        }
+
+        when {
+            errorStatus != null -> {
+                when (errorStatus) {
+
+                    ErrorStatusDomain.NO_CONNECTION -> {
+                        postState(SearchState.Error(ErrorStatusUi.NO_CONNECTION))
                         latestSearchText = DEFAULT_TEXT
                     }
                 }
-            })
+            }
+
+            tracks.isEmpty() -> postState(SearchState.Error(ErrorStatusUi.NOTHING_FOUND))
+
+            else -> {
+                postState(SearchState.Success.SearchContent(tracks))
+                postSavedTracks(tracks)
+            }
         }
     }
 
@@ -136,6 +151,5 @@ class SearchViewModel(
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY_MILLIS = 2000L
         private const val DEFAULT_TEXT = ""
-        private val SEARCH_REQUEST_TOKEN = Any()
     }
 }

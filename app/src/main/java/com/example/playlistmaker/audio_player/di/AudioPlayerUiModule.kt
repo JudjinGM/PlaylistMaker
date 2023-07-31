@@ -27,7 +27,7 @@ val audioPlayerUiModule = module {
     viewModel { (track: Track) ->
         AudioPlayerViewModel(
             track = track,
-            mediaPlayerControlInteractor = get(),
+            mediaPlayerContract = get(),
             isConnectedToNetworkUseCase = get(),
         )
     }

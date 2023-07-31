@@ -18,8 +18,6 @@ import com.example.playlistmaker.databinding.FragmentAudioplayerBinding
 import com.example.playlistmaker.search.domain.model.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class AudioPlayerFragment : Fragment() {
 
@@ -56,9 +54,7 @@ class AudioPlayerFragment : Fragment() {
         viewModel.observePlayerState().observe(viewLifecycleOwner) {
             renderPlayerState(it)
         }
-        viewModel.observeTime().observe(viewLifecycleOwner) {
-            renderTimeState(it)
-        }
+
         viewModel.observeToastState().observe(viewLifecycleOwner) {
             renderToastErrorState(it)
         }
@@ -110,18 +106,11 @@ class AudioPlayerFragment : Fragment() {
     }
 
     private fun renderPlayerState(playerState: PlayerState) {
-        when (playerState) {
-            is PlayerState.Error -> {
-                binding.playImageView.setImageResource(R.drawable.play_button)
-            }
+        if (playerState.isPlaying) {
+            binding.playImageView.setImageResource(R.drawable.pause_button)
+        } else binding.playImageView.setImageResource(R.drawable.play_button)
 
-            is PlayerState.Pause, PlayerState.Ready -> binding.playImageView.setImageResource(R.drawable.play_button)
-            is PlayerState.Play -> binding.playImageView.setImageResource(R.drawable.pause_button)
-        }
-    }
-
-    private fun renderTimeState(time: Long) {
-        binding.timeTextView.text = millisToTimeFormat(time)
+        binding.timeTextView.text = playerState.progress
     }
 
     private fun renderToastErrorState(playerError: PlayerError) {
@@ -134,10 +123,6 @@ class AudioPlayerFragment : Fragment() {
 
     private fun showToast(message: String) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
-    }
-
-    private fun millisToTimeFormat(millis: Long): String {
-        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(millis)
     }
 
     companion object {

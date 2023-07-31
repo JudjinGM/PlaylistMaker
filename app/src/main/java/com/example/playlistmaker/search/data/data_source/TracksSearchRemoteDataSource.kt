@@ -1,12 +1,7 @@
 package com.example.playlistmaker.search.data.data_source
 
-import com.example.playlistmaker.search.data.model.RemoteDatasourceErrorStatus
-import com.example.playlistmaker.search.domain.model.Track
+import com.example.playlistmaker.search.data.model.Response
 
 interface TracksSearchRemoteDataSource {
-    fun getTracks(
-        query: String,
-        onSuccess: (List<Track>) -> Unit,
-        onError: (RemoteDatasourceErrorStatus) -> Unit
-    )
+    suspend fun getTracks(query: String): Response
 }

@@ -2,28 +2,36 @@ package com.example.playlistmaker.search.data.repository_impl
 
 import com.example.playlistmaker.search.data.data_source.TracksSearchLocalDataSource
 import com.example.playlistmaker.search.data.data_source.TracksSearchRemoteDataSource
-import com.example.playlistmaker.search.data.model.RemoteDatasourceErrorStatus
-import com.example.playlistmaker.search.domain.model.ErrorStatus
+import com.example.playlistmaker.search.data.mapper.TracksDtoToListTracksMapper
+import com.example.playlistmaker.search.data.model.ErrorStatusData
+import com.example.playlistmaker.search.data.model.TrackItunesResponse
+import com.example.playlistmaker.search.data.model.Resource
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.domain.repository.SearchRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class SearchRepositoryImpl(
     private val remoteDataSource: TracksSearchRemoteDataSource,
     private val searchLocalDataSource: TracksSearchLocalDataSource,
+    private val mapper: TracksDtoToListTracksMapper
 ) : SearchRepository {
     override fun searchTracks(
-        inputSearchText: String, onSuccess: (List<Track>) -> Unit, onError: (ErrorStatus) -> Unit
-    ) {
-        remoteDataSource.getTracks(inputSearchText, onSuccess = { newTracks ->
-            searchLocalDataSource.clearAllTracks()
-            searchLocalDataSource.addAllTracks(newTracks)
-            onSuccess.invoke(searchLocalDataSource.getAllTracks())
-        }, onError = { errorStatus ->
-            when (errorStatus) {
-                RemoteDatasourceErrorStatus.NOTHING_FOUND -> onError.invoke(ErrorStatus.NOTHING_FOUND)
-                RemoteDatasourceErrorStatus.NO_CONNECTION -> onError.invoke(ErrorStatus.NO_CONNECTION)
+        inputSearchText: String
+    ): Flow<Resource<List<Track>>> = flow {
+        val response = remoteDataSource.getTracks(inputSearchText)
+        when (response.resultCode) {
+            200 -> {
+                with(response as TrackItunesResponse) {
+                    val tracks = mapper.execute(results)
+                    searchLocalDataSource.clearAllTracks()
+                    searchLocalDataSource.addAllTracks(tracks)
+                    emit(Resource.Success(tracks))
+                }
             }
-        })
+
+            else -> emit(Resource.Error(ErrorStatusData.NO_CONNECTION))
+        }
     }
 
     override fun addAllTracks(tracks: List<Track>) {

@@ -45,7 +45,7 @@ val searchDataModule = module {
 
     single<TracksSearchRemoteDataSource> {
         TracksSearchRemoteDataSourceImpl(
-            itunesService = get(), tracksDtoToTracksMapper = get()
+            itunesService = get()
         )
     }
 
@@ -70,6 +70,6 @@ val searchDataModule = module {
     }
 
     single<SearchRepository> {
-        SearchRepositoryImpl(remoteDataSource = get(), searchLocalDataSource = get())
+        SearchRepositoryImpl(remoteDataSource = get(), searchLocalDataSource = get(), mapper = get())
     }
 }

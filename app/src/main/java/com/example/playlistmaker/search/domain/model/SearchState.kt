@@ -1,5 +1,7 @@
 package com.example.playlistmaker.search.domain.model
 
+import com.example.playlistmaker.search.ui.model.ErrorStatusUi
+
 sealed interface SearchState {
     object Loading : SearchState
 
@@ -16,7 +18,7 @@ sealed interface SearchState {
     }
 
     data class Error(
-        val errorStatus: ErrorStatus
+        val errorStatus: ErrorStatusUi
     ) : SearchState
 
 

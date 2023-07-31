@@ -3,8 +3,6 @@ package com.example.playlistmaker.search.ui.fragments
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
@@ -13,19 +11,22 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.audio_player.ui.fragments.AudioPlayerFragment.Companion.ARGS_TRACK
 import com.example.playlistmaker.databinding.FragmentSearchBinding
-import com.example.playlistmaker.search.domain.model.ErrorStatus
 import com.example.playlistmaker.search.domain.model.PlaceholderStatus
 import com.example.playlistmaker.search.domain.model.SearchState
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.ui.TracksAdapter
+import com.example.playlistmaker.search.ui.model.ErrorStatusUi
 import com.example.playlistmaker.search.ui.model.SavedTracks
 import com.example.playlistmaker.search.ui.model.TextWatcherJustOnTextChanged
 import com.example.playlistmaker.search.ui.view_model.SearchViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
@@ -46,8 +47,6 @@ class SearchFragment : Fragment() {
 
     private var isClickAllowed = true
     private var isFragmentJustCreated = false
-
-    private val handler = Handler(Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,12 +74,14 @@ class SearchFragment : Fragment() {
 
         viewModel.init(savedSearchedTracks)
 
-        viewModel.observeSavedTracks().observe(viewLifecycleOwner) {tracks->
+        viewModel.observeSavedTracks().observe(viewLifecycleOwner) { tracks ->
             savedSearchedTracks = SavedTracks(ArrayList(tracks))
         }
 
         recycleViewInit()
         setOnClicksAndActions()
+
+        isClickAllowed = true
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
@@ -116,7 +117,7 @@ class SearchFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-       _binding = null
+        _binding = null
     }
 
 
@@ -139,11 +140,11 @@ class SearchFragment : Fragment() {
         showPlaceholder(PlaceholderStatus.PROGRESS_BAR)
     }
 
-    private fun showError(errorStatus: ErrorStatus) {
+    private fun showError(errorStatus: ErrorStatusUi) {
         tracksAdapter.updateAdapter(listOf())
         when (errorStatus) {
-            ErrorStatus.NOTHING_FOUND -> showPlaceholder(PlaceholderStatus.NOTHING_FOUND)
-            ErrorStatus.NO_CONNECTION -> showPlaceholder(PlaceholderStatus.NO_CONNECTION)
+            ErrorStatusUi.NOTHING_FOUND -> showPlaceholder(PlaceholderStatus.NOTHING_FOUND)
+            ErrorStatusUi.NO_CONNECTION -> showPlaceholder(PlaceholderStatus.NO_CONNECTION)
         }
     }
 
@@ -243,7 +244,7 @@ class SearchFragment : Fragment() {
         }
 
         tracksAdapter.onTrackClicked = { track ->
-            if (clickDebounce()) {
+            if (isClickDebounce()) {
                 viewModel.addToListenHistory(track)
                 findNavController().navigate(
                     R.id.action_searchFragment_to_audioPlayerFragment,
@@ -253,7 +254,7 @@ class SearchFragment : Fragment() {
         }
 
         binding.refreshButton.setOnClickListener {
-            if (clickDebounce()) {
+            if (isClickDebounce()) {
                 viewModel.searchDebounced(inputSearchText)
             }
         }
@@ -279,11 +280,15 @@ class SearchFragment : Fragment() {
         textWatcher?.let { binding.inputSearchFieldEditText.addTextChangedListener(it) }
     }
 
-    private fun clickDebounce(): Boolean {
+    private fun isClickDebounce(): Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY_MILLIS)
+
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY_MILLIS)
+                isClickAllowed = true
+            }
         }
         return current
     }
