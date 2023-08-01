@@ -50,6 +50,7 @@ class SearchViewModel(
         if (tracks.isNotEmpty()) {
             addTracksToSearchResultUseCase.execute(tracks)
             postStateMainThread(SearchState.Success.SearchContent(tracks))
+
         } else {
             if (getIsListenHistoryTracksNotEmptyUseCase.execute()) {
                 postStateMainThread(SearchState.Success.ListenHistoryContent(getListenHistoryTracksUseCase.execute()))
