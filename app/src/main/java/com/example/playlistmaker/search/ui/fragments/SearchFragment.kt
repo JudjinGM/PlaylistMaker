@@ -1,28 +1,24 @@
 package com.example.playlistmaker.search.ui.fragments
 
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
-import com.example.playlistmaker.audio_player.ui.fragments.AudioPlayerFragment.Companion.ARGS_TRACK
 import com.example.playlistmaker.databinding.FragmentSearchBinding
-import com.example.playlistmaker.search.domain.model.PlaceholderStatus
-import com.example.playlistmaker.search.domain.model.SearchState
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.ui.TracksAdapter
 import com.example.playlistmaker.search.ui.model.ErrorStatusUi
-import com.example.playlistmaker.search.ui.model.SavedTracks
+import com.example.playlistmaker.search.ui.model.PlaceholderStatus
+import com.example.playlistmaker.search.ui.model.SearchState
 import com.example.playlistmaker.search.ui.model.TextWatcherJustOnTextChanged
 import com.example.playlistmaker.search.ui.view_model.SearchViewModel
 import kotlinx.coroutines.delay
@@ -36,25 +32,17 @@ class SearchFragment : Fragment() {
 
     private lateinit var tracksAdapter: TracksAdapter
 
-    //for restoring tracks from bundle if android kills app
-    private var savedSearchedTracks: SavedTracks? = null
-
-
-    private var inputSearchText: String = DEFAULT_TEXT
-
     private val viewModel: SearchViewModel by viewModel()
+
     private var textWatcher: TextWatcher? = null
 
+    private var inputSearchText: String = DEFAULT_TEXT
     private var isClickAllowed = true
     private var isFragmentJustCreated = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         isFragmentJustCreated = true
-
-        savedSearchedTracks = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            savedInstanceState?.getParcelable(SAVED_SEARCH_TRACKS, SavedTracks::class.java)
-        } else savedInstanceState?.getParcelable(SAVED_SEARCH_TRACKS)
     }
 
     override fun onCreateView(
@@ -62,7 +50,6 @@ class SearchFragment : Fragment() {
     ): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -70,12 +57,6 @@ class SearchFragment : Fragment() {
 
         viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
-        }
-
-        viewModel.init(savedSearchedTracks)
-
-        viewModel.observeSavedTracks().observe(viewLifecycleOwner) { tracks ->
-            savedSearchedTracks = SavedTracks(ArrayList(tracks))
         }
 
         recycleViewInit()
@@ -107,7 +88,6 @@ class SearchFragment : Fragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(SAVED_TEXT, inputSearchText)
-        outState.putParcelable(SAVED_SEARCH_TRACKS, savedSearchedTracks)
     }
 
     override fun onPause() {
@@ -230,7 +210,6 @@ class SearchFragment : Fragment() {
         binding.clearImageView.setOnClickListener {
             viewModel.clearSearchInput()
 
-
             val inputMethodManager =
                 activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(
@@ -246,10 +225,9 @@ class SearchFragment : Fragment() {
         tracksAdapter.onTrackClicked = { track ->
             if (isClickDebounce()) {
                 viewModel.addToListenHistory(track)
-                findNavController().navigate(
-                    R.id.action_searchFragment_to_audioPlayerFragment,
-                    createArgs(track)
-                )
+                val directions =
+                    SearchFragmentDirections.actionSearchFragmentToAudioPlayerFragment(track)
+                findNavController().navigate(directions)
             }
         }
 
@@ -303,11 +281,7 @@ class SearchFragment : Fragment() {
 
     companion object {
         const val SAVED_TEXT = "SAVED_TEXT"
-        const val SAVED_SEARCH_TRACKS = "SAVED_SEARCH_TRACKS"
         const val DEFAULT_TEXT = ""
         private const val CLICK_DEBOUNCE_DELAY_MILLIS = 1000L
-
-        fun createArgs(track: Track) =
-            bundleOf(ARGS_TRACK to track)
     }
 }

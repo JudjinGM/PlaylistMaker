@@ -7,6 +7,7 @@ import org.koin.dsl.module
 val searchUiModule = module {
     viewModel {
         SearchViewModel(
+            savedStateHandle= get(),
             addTrackToListenHistoryUseCase = get(),
             clearListenHistoryTracksUseCase = get(),
             clearSearchResultTracksUseCase = get(),

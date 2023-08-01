@@ -1,6 +1,5 @@
 package com.example.playlistmaker.audio_player.ui.fragments
 
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
@@ -27,15 +27,15 @@ class AudioPlayerFragment : Fragment() {
 
     private var isTrackLiked = false
 
+    private val args: AudioPlayerFragmentArgs by navArgs()
+
     private val viewModel: AudioPlayerViewModel by viewModel {
-        parametersOf(track)
+        parametersOf(args.track)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            requireArguments().getParcelable(ARGS_TRACK, Track::class.java) ?: Track()
-        } else requireArguments().getParcelable(ARGS_TRACK) ?: Track()
+        track = args.track ?: Track()
     }
 
     override fun onCreateView(
@@ -123,9 +123,5 @@ class AudioPlayerFragment : Fragment() {
 
     private fun showToast(message: String) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
-    }
-
-    companion object {
-        const val ARGS_TRACK = "args_track"
     }
 }

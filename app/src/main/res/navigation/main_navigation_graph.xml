@@ -8,7 +8,14 @@
         android:id="@+id/audioPlayerFragment"
         android:name="com.example.playlistmaker.audio_player.ui.fragments.AudioPlayerFragment"
         android:label="fragment_audioplayer"
-        tools:layout="@layout/fragment_audioplayer" />
+        tools:layout="@layout/fragment_audioplayer">
+        <argument
+            android:name="track"
+            app:argType="com.example.playlistmaker.search.domain.model.Track"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.playlistmaker.settings.ui.fragments.SettingsFragment"

@@ -24,12 +24,9 @@ class SearchRepositoryImpl(
             200 -> {
                 with(response as TrackItunesResponse) {
                     val tracks = mapper.execute(results)
-                    searchLocalDataSource.clearAllTracks()
-                    searchLocalDataSource.addAllTracks(tracks)
                     emit(Resource.Success(tracks))
                 }
             }
-
             else -> emit(Resource.Error(ErrorStatusData.NO_CONNECTION))
         }
     }
