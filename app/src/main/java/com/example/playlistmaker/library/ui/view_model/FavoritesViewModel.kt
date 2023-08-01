@@ -11,12 +11,12 @@ class FavoritesViewModel : ViewModel() {
     private var favoritesState = MutableLiveData<FavoritesState>()
 
     init {
-        postState(FavoritesState.Error(FavoritesError.EMPTY))
+        setState(FavoritesState.Error(FavoritesError.EMPTY))
     }
 
     fun observeState(): LiveData<FavoritesState> = favoritesState
 
-    private fun postState(state: FavoritesState) {
-        favoritesState.postValue(state)
+    private fun setState(state: FavoritesState) {
+        favoritesState.value = state
     }
 }

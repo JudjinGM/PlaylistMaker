@@ -42,7 +42,7 @@ class AudioPlayerViewModel(
 
     fun togglePlay() {
         when (playerStateLiveData.value) {
-            is PlayerState.Default -> postToastState(PlayerError.NOT_READY)
+            is PlayerState.Default -> setToastState(PlayerError.NOT_READY)
             is PlayerState.Paused, is PlayerState.Prepared -> startPlayer()
             is PlayerState.Playing -> pausePlayer()
             else -> {
@@ -50,35 +50,35 @@ class AudioPlayerViewModel(
         }
     }
 
-    private fun postPlayerState(state: PlayerState) {
-        playerStateLiveData.postValue(state)
+    private fun setPlayerState(state: PlayerState) {
+        playerStateLiveData.value = state
     }
 
-    private fun postToastState(playerError: PlayerError) {
-        toastStateLiveData.postValue(playerError)
+    private fun setToastState(playerError: PlayerError) {
+        toastStateLiveData.value = playerError
     }
 
     private fun initMediaPlayer() {
         mediaPlayerContract.setOnPreparedListener {
-            postPlayerState(PlayerState.Prepared())
+            setPlayerState(PlayerState.Prepared())
         }
         mediaPlayerContract.setOnPlayListener {
-            postPlayerState(PlayerState.Playing(getCurrentPosition()))
+            setPlayerState(PlayerState.Playing(getCurrentPosition()))
         }
         mediaPlayerContract.setOnPauseListener {
-            postPlayerState(PlayerState.Paused(getCurrentPosition()))
+            setPlayerState(PlayerState.Paused(getCurrentPosition()))
         }
         mediaPlayerContract.setOnCompletionListener {
-            postPlayerState(PlayerState.Prepared())
+            setPlayerState(PlayerState.Prepared())
             stopTimer()
         }
         mediaPlayerContract.setOnErrorListener {
-            postToastState(PlayerError.ERROR_OCCURRED)
+            setToastState(PlayerError.ERROR_OCCURRED)
         }
 
         if (isConnectedToNetworkUseCase.execute()) {
             mediaPlayerContract.initMediaPlayer(track.previewUrl)
-        } else postToastState(PlayerError.NO_CONNECTION)
+        } else setToastState(PlayerError.NO_CONNECTION)
     }
 
     private fun startPlayer() {
@@ -95,7 +95,7 @@ class AudioPlayerViewModel(
         timerJob = viewModelScope.launch {
             while (mediaPlayerContract.isPlaying()) {
                 delay(DELAY_MILLIS)
-                postPlayerState(PlayerState.Playing(getCurrentPosition()))
+                setPlayerState(PlayerState.Playing(getCurrentPosition()))
             }
         }
     }

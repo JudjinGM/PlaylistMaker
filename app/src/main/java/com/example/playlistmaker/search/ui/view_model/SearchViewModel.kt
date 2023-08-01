@@ -49,12 +49,12 @@ class SearchViewModel(
         val tracks = savedTracks?.tracks?.toList() ?: listOf()
         if (tracks.isNotEmpty()) {
             addTracksToSearchResultUseCase.execute(tracks)
-            postStateMainThread(SearchState.Success.SearchContent(tracks))
+            setState(SearchState.Success.SearchContent(tracks))
 
         } else {
             if (getIsListenHistoryTracksNotEmptyUseCase.execute()) {
-                postStateMainThread(SearchState.Success.ListenHistoryContent(getListenHistoryTracksUseCase.execute()))
-            } else postStateMainThread(SearchState.Success.Empty)
+                setState(SearchState.Success.ListenHistoryContent(getListenHistoryTracksUseCase.execute()))
+            } else setState(SearchState.Success.Empty)
         }
     }
 
@@ -65,7 +65,7 @@ class SearchViewModel(
 
     fun observeState(): LiveData<SearchState> = stateLiveData
 
-    private fun postStateMainThread(state: SearchState) {
+    private fun setState(state: SearchState) {
         stateLiveData.value = state
     }
 
@@ -80,7 +80,7 @@ class SearchViewModel(
 
     private fun searchRequest(inputSearchText: String) {
         if (inputSearchText.isNotEmpty()) {
-            postStateMainThread(SearchState.Loading)
+            setState(SearchState.Loading)
 
             viewModelScope.launch {
                 searchSongsUseCase.execute(inputSearchText).collect {
@@ -99,18 +99,18 @@ class SearchViewModel(
             errorStatus != null -> {
                 when (errorStatus) {
                     ErrorStatusDomain.NO_CONNECTION -> {
-                        postStateMainThread(SearchState.Error(ErrorStatusUi.NO_CONNECTION))
+                        setState(SearchState.Error(ErrorStatusUi.NO_CONNECTION))
                         latestSearchText = DEFAULT_TEXT
                     }
                 }
             }
 
-            tracks.isEmpty() -> postStateMainThread(SearchState.Error(ErrorStatusUi.NOTHING_FOUND))
+            tracks.isEmpty() -> setState(SearchState.Error(ErrorStatusUi.NOTHING_FOUND))
 
             else -> {
                 addTracksToSearchResultUseCase.execute(tracks)
                 savedStateHandle[SAVED_SEARCH_TRACKS] = SavedTracks(ArrayList(tracks))
-                postStateMainThread(SearchState.Success.SearchContent(tracks))
+                setState(SearchState.Success.SearchContent(tracks))
             }
         }
     }
@@ -121,24 +121,24 @@ class SearchViewModel(
 
     fun clearListenHistory() {
         clearListenHistoryTracksUseCase.execute()
-        postStateMainThread(SearchState.Success.Empty)
+        setState(SearchState.Success.Empty)
     }
 
     fun clearSearchInput() {
         clearSearchResultTracksUseCase.execute()
         savedStateHandle[SAVED_SEARCH_TRACKS] = SavedTracks(arrayListOf())
         if (getIsListenHistoryTracksNotEmptyUseCase.execute()) {
-            postStateMainThread(SearchState.Success.ListenHistoryContent(getListenHistoryTracksUseCase.execute()))
+            setState(SearchState.Success.ListenHistoryContent(getListenHistoryTracksUseCase.execute()))
         } else {
-            postStateMainThread(SearchState.Success.Empty)
+            setState(SearchState.Success.Empty)
         }
     }
 
     fun updateState() {
         if (getIsListenHistoryTracksNotEmptyUseCase.execute() && getIsSearchResultIsEmptyUseCase.execute()) {
-            postStateMainThread(SearchState.Success.ListenHistoryContent(getListenHistoryTracksUseCase.execute()))
+            setState(SearchState.Success.ListenHistoryContent(getListenHistoryTracksUseCase.execute()))
         } else {
-            postStateMainThread(SearchState.Success.SearchContent(getSearchResultTracksUseCase.execute()))
+            setState(SearchState.Success.SearchContent(getSearchResultTracksUseCase.execute()))
         }
     }
 
