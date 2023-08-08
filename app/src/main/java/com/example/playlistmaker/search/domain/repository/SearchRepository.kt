@@ -1,15 +1,14 @@
 package com.example.playlistmaker.search.domain.repository
 
-import com.example.playlistmaker.search.domain.model.ErrorStatus
+import com.example.playlistmaker.search.data.model.Resource
 import com.example.playlistmaker.search.domain.model.Track
+import kotlinx.coroutines.flow.Flow
 
 interface SearchRepository {
 
     fun searchTracks(
-        inputSearchText: String,
-        onSuccess: (List<Track>) -> Unit,
-        onError: (ErrorStatus) -> Unit
-    )
+        inputSearchText: String
+    ): Flow<Resource<List<Track>>>
 
     fun addAllTracks(tracks: List<Track>)
     fun getSearchTracks(): List<Track>

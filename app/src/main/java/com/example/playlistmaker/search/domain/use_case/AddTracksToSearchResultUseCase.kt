@@ -10,6 +10,7 @@ interface AddTracksToSearchResultUseCase {
         private val searchRepository: SearchRepository
     ) : AddTracksToSearchResultUseCase {
         override fun execute(tracks: List<Track>) {
+            searchRepository.clearSearchTracks()
             searchRepository.addAllTracks(tracks)
         }
     }

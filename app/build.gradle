@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'androidx.navigation.safeargs.kotlin'
 }
 
 android {
@@ -57,7 +58,7 @@ dependencies {
     //Testing
     testImplementation "io.insert-koin:koin-test:$koin_version"
 
-    def fragment_version = "1.6.0"
+    def fragment_version = "1.6.1"
     implementation "androidx.fragment:fragment:$fragment_version"
     implementation 'androidx.fragment:fragment-ktx'
 
@@ -65,5 +66,10 @@ dependencies {
 
     implementation "androidx.navigation:navigation-fragment-ktx:2.6.0"
     implementation "androidx.navigation:navigation-ui-ktx:2.6.0"
+
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+
+    implementation("androidx.savedstate:savedstate-ktx:1.2.1")
+
 
 }

@@ -11,12 +11,12 @@ class PlaylistViewModel : ViewModel() {
     private var playlistState = MutableLiveData<PlaylistsState>()
 
     init {
-        postState(PlaylistsState.Error(PlaylistsError.EMPTY))
+        setState(PlaylistsState.Error(PlaylistsError.EMPTY))
     }
 
     fun observeState(): LiveData<PlaylistsState> = playlistState
 
-    private fun postState(state: PlaylistsState) {
-        playlistState.postValue(state)
+    private fun setState(state: PlaylistsState) {
+        playlistState.value = state
     }
 }

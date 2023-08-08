@@ -13,4 +13,6 @@ interface MediaPlayerContract {
     fun setOnPauseListener(callback: () -> Unit)
     fun setOnStopListener(callback: () -> Unit)
     fun getCurrentPosition(): Long
+
+    fun isPlaying(): Boolean
 }

@@ -1,140 +1,118 @@
 package com.example.playlistmaker.audio_player.ui.view_model
 
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.audio_player.domain.repository.MediaPlayerContract
 import com.example.playlistmaker.audio_player.domain.use_case.IsConnectedToNetworkUseCase
-import com.example.playlistmaker.audio_player.domain.use_case.MediaPlayerControlInteractor
 import com.example.playlistmaker.audio_player.ui.model.PlayerError
 import com.example.playlistmaker.audio_player.ui.model.PlayerState
-import com.example.playlistmaker.audio_player.ui.model.PlayerStatus
 import com.example.playlistmaker.search.domain.model.Track
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class AudioPlayerViewModel(
-    track: Track,
-    private val mediaPlayerControlInteractor: MediaPlayerControlInteractor,
-    isConnectedToNetworkUseCase: IsConnectedToNetworkUseCase
+    private val track: Track,
+    private val mediaPlayerContract: MediaPlayerContract,
+    private val isConnectedToNetworkUseCase: IsConnectedToNetworkUseCase
 ) : ViewModel() {
 
-    private val playerStateLiveData = MutableLiveData<PlayerState>()
+    private val playerStateLiveData = MutableLiveData<PlayerState>(PlayerState.Default())
+
     private val toastStateLiveData = SingleLiveEvent<PlayerError>()
-    private val timeLiveData = MutableLiveData<Long>()
 
-    private var mainTreadHandler: Handler = Handler(Looper.getMainLooper())
-    private var trackTimeUpdateRunnable: Runnable? = null
-
-    private val playerStatus
-        get() = mediaPlayerControlInteractor.getMediaPlayerStatus()
+    private var timerJob: Job? = null
 
     init {
-        mediaPlayerControlInteractor.setOnCompletionListener {
-            playerStateToPlayerStatusUpdate()
-            timeStateUpdate()
-        }
-
-        if (isConnectedToNetworkUseCase.execute()) {
-            mediaPlayerControlInteractor.initPlayer(track.previewUrl)
-        }
+        initMediaPlayer()
     }
 
     override fun onCleared() {
         super.onCleared()
-        mediaPlayerControlInteractor.releasePlayer()
-        trackTimeUpdateRunnable?.let { mainTreadHandler.removeCallbacks(it) }
-        trackTimeUpdateRunnable = null
+        mediaPlayerContract.release()
     }
 
     fun observeToastState(): LiveData<PlayerError> = toastStateLiveData
     fun observePlayerState(): LiveData<PlayerState> = playerStateLiveData
-    fun observeTime(): LiveData<Long> = timeLiveData
 
-    private fun postPlayerState(state: PlayerState) {
-        playerStateLiveData.postValue(state)
-    }
-
-    private fun postTimeState(time: Long) {
-        timeLiveData.postValue(time)
-    }
-
-    private fun postToastState(playerError: PlayerError) {
-        toastStateLiveData.postValue(playerError)
-    }
 
     fun togglePlay() {
-        playbackControl()
-        playerStateToPlayerStatusUpdate()
-        timeStateUpdate()
-    }
-
-    fun pausePlayer() {
-        if (playerStatus == PlayerStatus.STATE_PLAYING || playerStatus == PlayerStatus.STATE_PAUSED) {
-            mediaPlayerControlInteractor.pausePlayer()
-            playerStateToPlayerStatusUpdate()
-            timeStateUpdate()
-        }
-    }
-
-    private fun playbackControl() {
-        when (playerStatus) {
-            PlayerStatus.STATE_PLAYING -> {
-                mediaPlayerControlInteractor.pausePlayer()
-            }
-
-            PlayerStatus.STATE_PREPARED, PlayerStatus.STATE_PAUSED -> {
-                mediaPlayerControlInteractor.playPlayer()
-            }
-
+        when (playerStateLiveData.value) {
+            is PlayerState.Default -> setToastState(PlayerError.NOT_READY)
+            is PlayerState.Paused, is PlayerState.Prepared -> startPlayer()
+            is PlayerState.Playing -> pausePlayer()
             else -> {
             }
         }
     }
 
-    private fun playerStateToPlayerStatusUpdate() = when (playerStatus) {
-        PlayerStatus.STATE_PREPARED -> postPlayerState(PlayerState.Pause)
-        PlayerStatus.STATE_PLAYING -> postPlayerState(PlayerState.Play)
-        PlayerStatus.STATE_PAUSED -> postPlayerState(PlayerState.Pause)
-        PlayerStatus.STATE_DEFAULT -> postToastState(PlayerError.NOT_READY)
-        PlayerStatus.STATE_ERROR -> postToastState(PlayerError.ERROR_OCCURRED)
-        PlayerStatus.STATE_NETWORK_ERROR -> postToastState(PlayerError.NO_CONNECTION)
+    private fun setPlayerState(state: PlayerState) {
+        playerStateLiveData.value = state
     }
 
-    private fun timeStateUpdate() {
-        var runnable = trackTimeUpdateRunnable
-        if (runnable?.let { mainTreadHandler.hasCallbacks(it) } == true) {
-            mainTreadHandler.removeCallbacks(runnable)
+    private fun setToastState(playerError: PlayerError) {
+        toastStateLiveData.value = playerError
+    }
+
+    private fun initMediaPlayer() {
+        mediaPlayerContract.setOnPreparedListener {
+            setPlayerState(PlayerState.Prepared())
         }
-        runnable = getTrackTimeUpdateRunnable()
-        mainTreadHandler.post(runnable)
-        trackTimeUpdateRunnable = runnable
+        mediaPlayerContract.setOnPlayListener {
+            setPlayerState(PlayerState.Playing(getCurrentPosition()))
+        }
+        mediaPlayerContract.setOnPauseListener {
+            setPlayerState(PlayerState.Paused(getCurrentPosition()))
+        }
+        mediaPlayerContract.setOnCompletionListener {
+            setPlayerState(PlayerState.Prepared())
+            stopTimer()
+        }
+        mediaPlayerContract.setOnErrorListener {
+            setToastState(PlayerError.ERROR_OCCURRED)
+        }
+
+        if (isConnectedToNetworkUseCase.execute()) {
+            mediaPlayerContract.initMediaPlayer(track.previewUrl)
+        } else setToastState(PlayerError.NO_CONNECTION)
     }
 
-    private fun getTrackTimeUpdateRunnable(): Runnable {
-        val result = object : Runnable {
-            override fun run() {
-                when (playerStatus) {
-                    PlayerStatus.STATE_DEFAULT, PlayerStatus.STATE_PREPARED, PlayerStatus.STATE_ERROR, PlayerStatus.STATE_NETWORK_ERROR -> {
-                        mainTreadHandler.removeCallbacks(this)
-                        postTimeState(DEFAULT_TIME)
-                    }
+    private fun startPlayer() {
+        mediaPlayerContract.play()
+        startTimer()
+    }
 
-                    PlayerStatus.STATE_PLAYING -> {
-                        mainTreadHandler.postDelayed(this, DELAY_MILLIS)
-                        postTimeState(mediaPlayerControlInteractor.getMediaPlayerCurrentPosition())
-                    }
+    fun pausePlayer() {
+        mediaPlayerContract.pause()
+        stopTimer()
+    }
 
-                    PlayerStatus.STATE_PAUSED -> {
-                        postTimeState(mediaPlayerControlInteractor.getMediaPlayerCurrentPosition())
-                    }
-                }
+    private fun startTimer() {
+        timerJob = viewModelScope.launch {
+            while (mediaPlayerContract.isPlaying()) {
+                delay(DELAY_MILLIS)
+                setPlayerState(PlayerState.Playing(getCurrentPosition()))
             }
         }
-        return result
+    }
+
+    private fun stopTimer() {
+        timerJob?.cancel()
+    }
+
+
+    private fun getCurrentPosition(): String {
+        return SimpleDateFormat(
+            "mm:ss", Locale.getDefault()
+        ).format(mediaPlayerContract.getCurrentPosition()) ?: DEFAULT_TIME
     }
 
     companion object {
         private const val DELAY_MILLIS = 300L
-        private const val DEFAULT_TIME = 0L
+        private const val DEFAULT_TIME = "00:00"
     }
 }

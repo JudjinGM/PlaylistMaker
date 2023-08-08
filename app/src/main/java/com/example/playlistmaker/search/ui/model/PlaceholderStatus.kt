@@ -1,4 +1,4 @@
-package com.example.playlistmaker.search.domain.model
+package com.example.playlistmaker.search.ui.model
 
 enum class PlaceholderStatus {
     NO_PLACEHOLDER,
