@@ -6,6 +6,8 @@ interface ListenHistoryRepository {
 
     fun getListenHistoryTracks(): List<Track>
 
+    fun updateFavoriteListenHistory(favoriteTracksId:List<Long>)
+
     fun addTrackToListenHistory(track: Track)
 
     fun clearListenHistory()

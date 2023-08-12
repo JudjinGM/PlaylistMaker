@@ -20,6 +20,13 @@ class TracksListenHistoryLocalDatabaseImpl(private val playlistSharedPreferences
             .apply()
     }
 
+    override fun updateTracks(favoriteTracksId: List<Long>) {
+        val tracks = getListenHistoryTrackList().onEach { track ->
+            track.isFavorite = favoriteTracksId.contains(track.trackId)
+        }
+        addListenHistoryTracks(tracks)
+    }
+
     companion object {
         const val PLAYLIST_PREFS = "playlist_maker_prefs"
         const val TRACKS_LISTEN_HISTORY = "tracks_listen_history"

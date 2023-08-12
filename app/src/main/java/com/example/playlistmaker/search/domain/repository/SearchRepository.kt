@@ -14,4 +14,6 @@ interface SearchRepository {
     fun getSearchTracks(): List<Track>
     fun clearSearchTracks()
     fun isSearchRepositoryEmpty(): Boolean
+
+    fun updateSearchResultFavorite(favoriteTracks: List<Long>)
 }

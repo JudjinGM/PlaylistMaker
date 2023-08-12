@@ -28,8 +28,11 @@ class LibraryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         viewInit()
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 
 
@@ -46,9 +49,9 @@ class LibraryFragment : Fragment() {
         tabLayoutMediator = TabLayoutMediator(
             binding.libraryTableLayout, binding.libraryViewPager
         ) { tab, position ->
-            tab.text = if (position == 0) getString(R.string.favorite_tracks) else getString(R.string.playlists)
+            tab.text =
+                if (position == 0) getString(R.string.favorite_tracks) else getString(R.string.playlists)
         }
         tabLayoutMediator.attach()
     }
-
 }

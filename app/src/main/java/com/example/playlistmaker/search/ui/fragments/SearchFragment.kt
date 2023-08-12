@@ -3,6 +3,7 @@ package com.example.playlistmaker.search.ui.fragments
 import android.content.Context
 import android.os.Bundle
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,12 +30,10 @@ class SearchFragment : Fragment() {
 
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
-
-    private lateinit var tracksAdapter: TracksAdapter
-
     private val viewModel: SearchViewModel by viewModel()
 
     private var textWatcher: TextWatcher? = null
+    private var tracksAdapter: TracksAdapter? = null
 
     private var inputSearchText: String = DEFAULT_TEXT
     private var isClickAllowed = true
@@ -43,10 +42,13 @@ class SearchFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         isFragmentJustCreated = true
+
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
@@ -54,15 +56,20 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        viewModel.observeState().observe(viewLifecycleOwner) {
-            render(it)
-        }
+        Log.d("judjin_search", "onViewCreated SearchFragment")
+        Log.d("judjin_search", "$viewModel")
 
         recycleViewInit()
         setOnClicksAndActions()
 
         isClickAllowed = true
+
+        viewModel.updateState()
+
+        viewModel.observeState().observe(viewLifecycleOwner) {
+            Log.d("judjin_search", "$it")
+            render(it)
+        }
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
@@ -76,11 +83,12 @@ class SearchFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+
         if (!isFragmentJustCreated) {
             viewModel.updateState()
         }
-        isFragmentJustCreated = false
 
+        isFragmentJustCreated = false
         setOnTextWatchersTextChangeListeners()
         setClearInputTextImageViewVisibility(inputSearchText)
     }
@@ -97,6 +105,8 @@ class SearchFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.tracksRecyclerView.adapter = null
+        tracksAdapter = null
         _binding = null
     }
 
@@ -116,12 +126,12 @@ class SearchFragment : Fragment() {
     }
 
     private fun showLoading() {
-        tracksAdapter.updateAdapter(listOf())
+        tracksAdapter?.updateAdapter(listOf())
         showPlaceholder(PlaceholderStatus.PROGRESS_BAR)
     }
 
     private fun showError(errorStatus: ErrorStatusUi) {
-        tracksAdapter.updateAdapter(listOf())
+        tracksAdapter?.updateAdapter(listOf())
         when (errorStatus) {
             ErrorStatusUi.NOTHING_FOUND -> showPlaceholder(PlaceholderStatus.NOTHING_FOUND)
             ErrorStatusUi.NO_CONNECTION -> showPlaceholder(PlaceholderStatus.NO_CONNECTION)
@@ -129,17 +139,17 @@ class SearchFragment : Fragment() {
     }
 
     private fun showSearchContent(tracks: List<Track>) {
-        tracksAdapter.updateAdapter(tracks)
+        tracksAdapter?.updateAdapter(tracks)
         showPlaceholder(PlaceholderStatus.NO_PLACEHOLDER)
     }
 
     private fun showListenHistory(listenHistoryTracks: List<Track>) {
-        tracksAdapter.updateAdapter(listenHistoryTracks)
+        tracksAdapter?.updateAdapter(listenHistoryTracks)
         showPlaceholder(PlaceholderStatus.LISTEN_HISTORY)
     }
 
     private fun showEmpty() {
-        tracksAdapter.updateAdapter(listOf())
+        tracksAdapter?.updateAdapter(listOf())
         showPlaceholder(PlaceholderStatus.NO_PLACEHOLDER)
     }
 
@@ -222,9 +232,10 @@ class SearchFragment : Fragment() {
             viewModel.clearListenHistory()
         }
 
-        tracksAdapter.onTrackClicked = { track ->
+        tracksAdapter?.onTrackClicked = { track ->
             if (isClickDebounce()) {
                 viewModel.addToListenHistory(track)
+
                 val directions =
                     SearchFragmentDirections.actionSearchFragmentToAudioPlayerFragment(track)
                 findNavController().navigate(directions)

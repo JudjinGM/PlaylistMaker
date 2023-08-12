@@ -8,4 +8,6 @@ interface TracksSearchCache {
     fun clearTracksCache()
     fun removeTrack(track: Track)
     fun addTrack(track: Track)
+
+    fun updateTracks(favoriteTracksId: List<Long>)
 }

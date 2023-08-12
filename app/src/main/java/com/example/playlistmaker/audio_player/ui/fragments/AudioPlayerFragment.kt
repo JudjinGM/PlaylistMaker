@@ -11,6 +11,7 @@ import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
+import com.example.playlistmaker.audio_player.ui.model.FavoriteState
 import com.example.playlistmaker.audio_player.ui.model.PlayerError
 import com.example.playlistmaker.audio_player.ui.model.PlayerState
 import com.example.playlistmaker.audio_player.ui.view_model.AudioPlayerViewModel
@@ -24,8 +25,6 @@ class AudioPlayerFragment : Fragment() {
     private lateinit var track: Track
     private var _binding: FragmentAudioplayerBinding? = null
     private val binding get() = _binding!!
-
-    private var isTrackLiked = false
 
     private val args: AudioPlayerFragmentArgs by navArgs()
 
@@ -57,6 +56,10 @@ class AudioPlayerFragment : Fragment() {
 
         viewModel.observeToastState().observe(viewLifecycleOwner) {
             renderToastErrorState(it)
+        }
+
+        viewModel.observeFavoriteState().observe(viewLifecycleOwner) {
+            renderFavoriteState(it)
         }
     }
 
@@ -90,18 +93,14 @@ class AudioPlayerFragment : Fragment() {
             findNavController().popBackStack()
         }
 
+
+
         binding.playImageView.setOnClickListener {
             viewModel.togglePlay()
         }
 
         binding.likeImageView.setOnClickListener {
-            isTrackLiked = if (!isTrackLiked) {
-                binding.likeImageView.setImageResource(R.drawable.like_button_like)
-                true
-            } else {
-                binding.likeImageView.setImageResource(R.drawable.like_button_no_like)
-                false
-            }
+            viewModel.onFavoriteClicked()
         }
     }
 
@@ -118,6 +117,13 @@ class AudioPlayerFragment : Fragment() {
             PlayerError.NOT_READY -> showToast(getString(R.string.player_not_ready))
             PlayerError.ERROR_OCCURRED -> showToast(getString(R.string.cant_play_song))
             PlayerError.NO_CONNECTION -> showToast(getString(R.string.error_network))
+        }
+    }
+
+    private fun renderFavoriteState(favoriteState: FavoriteState) {
+        when (favoriteState) {
+            FavoriteState.Favorite -> binding.likeImageView.setImageResource(R.drawable.like_button_like)
+            FavoriteState.NotFavorite -> binding.likeImageView.setImageResource(R.drawable.like_button_no_like)
         }
     }
 

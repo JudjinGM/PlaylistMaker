@@ -4,7 +4,7 @@ import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.domain.repository.ListenHistoryRepository
 
 interface GetListenHistoryTracksUseCase {
-    fun execute(): List<Track>
+    fun execute():List<Track>
 
     class Base(
         private val listenHistoryRepository: ListenHistoryRepository
