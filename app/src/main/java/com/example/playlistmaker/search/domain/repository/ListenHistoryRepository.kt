@@ -4,7 +4,7 @@ import com.example.playlistmaker.search.domain.model.Track
 
 interface ListenHistoryRepository {
 
-    fun getListenHistoryTracks(): List<Track>
+    suspend fun getListenHistoryTracks(): List<Track>
 
     fun updateFavoriteListenHistory(favoriteTracksId:List<Long>)
 

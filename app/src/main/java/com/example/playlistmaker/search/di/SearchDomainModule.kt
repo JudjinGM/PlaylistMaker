@@ -4,14 +4,11 @@ import com.example.playlistmaker.search.domain.use_case.AddTrackToListenHistoryU
 import com.example.playlistmaker.search.domain.use_case.AddTracksToSearchResultUseCase
 import com.example.playlistmaker.search.domain.use_case.ClearListenHistoryTracksUseCase
 import com.example.playlistmaker.search.domain.use_case.ClearSearchResultTracksUseCase
-import com.example.playlistmaker.search.domain.use_case.GetFavoriteTracksIdUseCase
 import com.example.playlistmaker.search.domain.use_case.GetIsListenHistoryTracksNotEmptyUseCase
 import com.example.playlistmaker.search.domain.use_case.GetIsSearchResultIsEmptyUseCase
 import com.example.playlistmaker.search.domain.use_case.GetListenHistoryTracksUseCase
 import com.example.playlistmaker.search.domain.use_case.GetSearchResultTracksUseCase
 import com.example.playlistmaker.search.domain.use_case.SearchSongsUseCase
-import com.example.playlistmaker.search.domain.use_case.UpdateListenHistoryTracksFavoriteUseCase
-import com.example.playlistmaker.search.domain.use_case.UpdateSearchTracksIsFavoriteUseCase
 import org.koin.dsl.module
 
 val searchDomainModule = module {
@@ -50,17 +47,5 @@ val searchDomainModule = module {
 
     factory<SearchSongsUseCase> {
         SearchSongsUseCase.Base(searchRepository = get())
-    }
-
-    factory<GetFavoriteTracksIdUseCase> {
-        GetFavoriteTracksIdUseCase.Base(favoriteTracksRepository = get())
-    }
-
-    factory<UpdateSearchTracksIsFavoriteUseCase> {
-        UpdateSearchTracksIsFavoriteUseCase.Base(searchRepository = get())
-    }
-
-    factory<UpdateListenHistoryTracksFavoriteUseCase> {
-        UpdateListenHistoryTracksFavoriteUseCase.Base(listenHistoryRepository = get())
     }
 }

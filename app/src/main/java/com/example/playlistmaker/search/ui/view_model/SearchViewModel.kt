@@ -11,13 +11,11 @@ import com.example.playlistmaker.search.domain.use_case.AddTrackToListenHistoryU
 import com.example.playlistmaker.search.domain.use_case.AddTracksToSearchResultUseCase
 import com.example.playlistmaker.search.domain.use_case.ClearListenHistoryTracksUseCase
 import com.example.playlistmaker.search.domain.use_case.ClearSearchResultTracksUseCase
-import com.example.playlistmaker.search.domain.use_case.GetFavoriteTracksIdUseCase
 import com.example.playlistmaker.search.domain.use_case.GetIsListenHistoryTracksNotEmptyUseCase
 import com.example.playlistmaker.search.domain.use_case.GetIsSearchResultIsEmptyUseCase
 import com.example.playlistmaker.search.domain.use_case.GetListenHistoryTracksUseCase
 import com.example.playlistmaker.search.domain.use_case.GetSearchResultTracksUseCase
 import com.example.playlistmaker.search.domain.use_case.SearchSongsUseCase
-import com.example.playlistmaker.search.domain.use_case.UpdateListenHistoryTracksFavoriteUseCase
 import com.example.playlistmaker.search.ui.model.ErrorStatusUi
 import com.example.playlistmaker.search.ui.model.SavedTracks
 import com.example.playlistmaker.search.ui.model.SearchState
@@ -35,8 +33,6 @@ class SearchViewModel(
     private val getIsSearchResultIsEmptyUseCase: GetIsSearchResultIsEmptyUseCase,
     private val searchSongsUseCase: SearchSongsUseCase,
     private val addTracksToSearchResultUseCase: AddTracksToSearchResultUseCase,
-    private val getFavoriteTracksIdUseCase: GetFavoriteTracksIdUseCase,
-    private val updateListenHistoryTracksFavoriteUseCase: UpdateListenHistoryTracksFavoriteUseCase
 ) : ViewModel() {
 
     private var latestSearchText: String? = null
@@ -52,13 +48,6 @@ class SearchViewModel(
         val savedTracks = savedStateHandle.get<SavedTracks?>(SAVED_SEARCH_TRACKS)
         val tracks = savedTracks?.tracks?.toList() ?: listOf()
         addTracksToSearchResultUseCase.execute(tracks)
-
-        viewModelScope.launch {
-            getFavoriteTracksIdUseCase.execute().collect{
-                updateListenHistoryTracksFavoriteUseCase.execute(it)
- //               updateState()
-            }
-        }
     }
 
     override fun onCleared() {
@@ -123,7 +112,7 @@ class SearchViewModel(
 
     fun clearListenHistory() {
         clearListenHistoryTracksUseCase.execute()
-        setState(SearchState.Success.Empty)
+        updateState()
     }
 
     fun clearSearchInput() {
@@ -134,9 +123,14 @@ class SearchViewModel(
 
     fun updateState() {
         if (getIsListenHistoryTracksNotEmptyUseCase.execute() && getIsSearchResultIsEmptyUseCase.execute()) {
-            setState(SearchState.Success.ListenHistoryContent(getListenHistoryTracksUseCase.execute()))
+            setState(SearchState.Loading)
+            viewModelScope.launch {
+                setState(SearchState.Success.ListenHistoryContent(getListenHistoryTracksUseCase.execute()))
+            }
         } else {
-            setState(SearchState.Success.SearchContent(getSearchResultTracksUseCase.execute()))
+            viewModelScope.launch {
+                setState(SearchState.Success.SearchContent(getSearchResultTracksUseCase.execute()))
+            }
         }
     }
 

@@ -9,11 +9,11 @@ class FavoriteTracksDataSourceImpl(
     private val database: AppDatabase
 ) : FavoriteTracksDataSource {
 
-    override fun getAllFavoriteTracksFlow(): Flow<List<FavoriteTrackEntity>> {
+    override suspend fun getAllFavoriteTracksFlow(): Flow<List<FavoriteTrackEntity>> {
         return database.favoriteTracksDao().getFavoriteTracksFlow()
     }
 
-    override fun getAllFavoriteTracksIdFlow(): Flow<List<Long>> {
+    override suspend fun getAllFavoriteTracksIdFlow(): Flow<List<Long>> {
         return database.favoriteTracksDao().getFavoritesTracksIdFlow()
     }
 

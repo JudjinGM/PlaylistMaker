@@ -17,8 +17,6 @@ val searchUiModule = module {
             getIsSearchResultIsEmptyUseCase = get(),
             searchSongsUseCase = get(),
             addTracksToSearchResultUseCase = get(),
-            getFavoriteTracksIdUseCase = get(),
-            updateListenHistoryTracksFavoriteUseCase = get(),
         )
     }
 }

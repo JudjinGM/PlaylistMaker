@@ -3,7 +3,6 @@ package com.example.playlistmaker.search.ui.fragments
 import android.content.Context
 import android.os.Bundle
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,8 +55,6 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("judjin_search", "onViewCreated SearchFragment")
-        Log.d("judjin_search", "$viewModel")
 
         recycleViewInit()
         setOnClicksAndActions()
@@ -67,7 +64,6 @@ class SearchFragment : Fragment() {
         viewModel.updateState()
 
         viewModel.observeState().observe(viewLifecycleOwner) {
-            Log.d("judjin_search", "$it")
             render(it)
         }
     }
@@ -83,12 +79,6 @@ class SearchFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-
-        if (!isFragmentJustCreated) {
-            viewModel.updateState()
-        }
-
-        isFragmentJustCreated = false
         setOnTextWatchersTextChangeListeners()
         setClearInputTextImageViewVisibility(inputSearchText)
     }

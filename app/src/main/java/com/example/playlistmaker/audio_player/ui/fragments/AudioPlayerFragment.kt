@@ -88,7 +88,6 @@ class AudioPlayerFragment : Fragment() {
     }
 
     private fun onClicks() {
-
         binding.backPlayerImageView.setOnClickListener {
             findNavController().popBackStack()
         }

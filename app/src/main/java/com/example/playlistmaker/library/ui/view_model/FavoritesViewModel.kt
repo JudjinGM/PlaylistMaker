@@ -28,15 +28,18 @@ class FavoritesViewModel(
         stateLiveData.value = state
     }
 
-    private fun updateState(){
+    private fun updateState() {
         viewModelScope.launch {
             getFavoriteTrackUseCase.execute().collect { tracks ->
                 if (tracks.isEmpty()) {
                     setState(FavoritesState.Error(FavoritesError.EMPTY))
-                } else setState(FavoritesState.Success.FavoriteContent(tracks))
+                } else {
+                    setState(FavoritesState.Success.FavoriteContent(tracks))
+                }
             }
         }
     }
+
     fun addToListenHistory(track: Track) {
         addTrackToListenHistoryUseCase.execute(track)
     }

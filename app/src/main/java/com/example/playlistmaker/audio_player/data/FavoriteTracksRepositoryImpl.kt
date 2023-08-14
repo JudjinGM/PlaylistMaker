@@ -25,7 +25,7 @@ class FavoriteTracksRepositoryImpl(
         dataSource.deleteFromFavorites(favoriteTrackEntity)
     }
 
-    override fun getAllFavorites(): Flow<List<Track>> {
+    override suspend fun getAllFavorites(): Flow<List<Track>> {
         return dataSource.getAllFavoriteTracksFlow().map { tracksList: List<FavoriteTrackEntity> ->
             tracksList.map { favoriteTracksEntity: FavoriteTrackEntity ->
                 favoriteTrackEntityToTrackMapper.execute(favoriteTracksEntity)
@@ -33,7 +33,7 @@ class FavoriteTracksRepositoryImpl(
         }
     }
 
-    override fun getAllFavoritesIdFlow(): Flow<List<Long>> {
+    override suspend fun getAllFavoritesIdFlow(): Flow<List<Long>> {
         return dataSource.getAllFavoriteTracksIdFlow()
     }
 

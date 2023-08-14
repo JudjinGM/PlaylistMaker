@@ -70,6 +70,6 @@ val searchDataModule = module {
     }
 
     single<SearchRepository> {
-        SearchRepositoryImpl(remoteDataSource = get(), searchLocalDataSource = get(), mapper = get(), favoriteTracksRepository = get())
+        SearchRepositoryImpl(remoteDataSource = get(), searchLocalDataSource = get(), mapper = get(), favoriteTrackDataSource = get())
     }
 }

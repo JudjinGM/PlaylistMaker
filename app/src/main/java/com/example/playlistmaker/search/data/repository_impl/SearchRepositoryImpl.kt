@@ -1,6 +1,6 @@
 package com.example.playlistmaker.search.data.repository_impl
 
-import com.example.playlistmaker.audio_player.domain.repository.FavoriteTracksRepository
+import com.example.playlistmaker.library.data.data_source.FavoriteTracksDataSource
 import com.example.playlistmaker.search.data.data_source.TracksSearchLocalDataSource
 import com.example.playlistmaker.search.data.data_source.TracksSearchRemoteDataSource
 import com.example.playlistmaker.search.data.mapper.TracksDtoToListTracksMapper
@@ -16,7 +16,7 @@ class SearchRepositoryImpl(
     private val remoteDataSource: TracksSearchRemoteDataSource,
     private val searchLocalDataSource: TracksSearchLocalDataSource,
     private val mapper: TracksDtoToListTracksMapper,
-    private val favoriteTracksRepository: FavoriteTracksRepository
+    private val favoriteTrackDataSource: FavoriteTracksDataSource
 ) : SearchRepository {
 
     override fun searchTracks(
@@ -29,7 +29,7 @@ class SearchRepositoryImpl(
                     val tracks = mapper.execute(results)
                     tracks.onEach { track ->
                         track.isFavorite =
-                            favoriteTracksRepository.getAllFavoritesId().contains(track.trackId)
+                            favoriteTrackDataSource.getAllFavoriteTrackId().contains(track.trackId)
                     }
                     emit(Resource.Success(tracks))
                 }
@@ -43,7 +43,13 @@ class SearchRepositoryImpl(
         searchLocalDataSource.addAllTracks(tracks)
     }
 
-    override fun getSearchTracks(): List<Track> = searchLocalDataSource.getAllTracks()
+    override suspend fun getSearchTracks(): List<Track> {
+        val tracks = searchLocalDataSource.getAllTracks()
+        return tracks.onEach { track ->
+            track.isFavorite =
+                favoriteTrackDataSource.getAllFavoriteTrackId().contains(track.trackId)
+        }
+    }
 
     override fun clearSearchTracks() {
         searchLocalDataSource.clearAllTracks()

@@ -10,7 +10,9 @@ class ListenHistoryRepositoryImpl(
     private val favoriteTracksDataSource: FavoriteTracksDataSource
 ) : ListenHistoryRepository {
 
-    override  fun getListenHistoryTracks(): List<Track> {
+    override suspend fun getListenHistoryTracks(): List<Track> {
+        val favoriteTracksId = favoriteTracksDataSource.getAllFavoriteTrackId()
+        listenHistoryLocalDataSource.updateFavoriteTracks(favoriteTracksId)
         return listenHistoryLocalDataSource.getAllTracks()
     }
 
