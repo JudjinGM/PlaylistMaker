@@ -66,10 +66,10 @@ val searchDataModule = module {
     }
 
     single<ListenHistoryRepository> {
-        ListenHistoryRepositoryImpl(listenHistoryLocalDataSource = get())
+        ListenHistoryRepositoryImpl(listenHistoryLocalDataSource = get(), favoriteTracksDataSource = get())
     }
 
     single<SearchRepository> {
-        SearchRepositoryImpl(remoteDataSource = get(), searchLocalDataSource = get(), mapper = get())
+        SearchRepositoryImpl(remoteDataSource = get(), searchLocalDataSource = get(), mapper = get(), favoriteTrackDataSource = get())
     }
 }

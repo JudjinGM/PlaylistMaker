@@ -13,7 +13,9 @@ data class Track(
     val releaseDate: String = "",
     val country: String = "",
     val primaryGenreName: String = "",
-    val previewUrl: String = ""
+    val previewUrl: String = "",
+    var isFavorite: Boolean = false
+
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
@@ -27,6 +29,7 @@ data class Track(
         parcel.readString() ?: "",
         parcel.readString() ?: "",
         parcel.readString() ?: "",
+        parcel.readBoolean()
     )
 
     fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
@@ -42,6 +45,7 @@ data class Track(
         parcel.writeString(country)
         parcel.writeString(primaryGenreName)
         parcel.writeString(previewUrl)
+        parcel.writeBoolean(isFavorite)
     }
 
     override fun describeContents(): Int {

@@ -5,7 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.audio_player.domain.repository.MediaPlayerContract
+import com.example.playlistmaker.audio_player.domain.use_case.AddTrackToFavoritesUseCase
+import com.example.playlistmaker.audio_player.domain.use_case.DeleteTrackFromFavoritesUseCase
 import com.example.playlistmaker.audio_player.domain.use_case.IsConnectedToNetworkUseCase
+import com.example.playlistmaker.audio_player.ui.model.FavoriteState
 import com.example.playlistmaker.audio_player.ui.model.PlayerError
 import com.example.playlistmaker.audio_player.ui.model.PlayerState
 import com.example.playlistmaker.search.domain.model.Track
@@ -18,10 +21,15 @@ import java.util.Locale
 class AudioPlayerViewModel(
     private val track: Track,
     private val mediaPlayerContract: MediaPlayerContract,
-    private val isConnectedToNetworkUseCase: IsConnectedToNetworkUseCase
+    private val isConnectedToNetworkUseCase: IsConnectedToNetworkUseCase,
+    private val addTrackToFavoritesUseCase: AddTrackToFavoritesUseCase,
+    private val deleteTrackFromFavoritesUseCase: DeleteTrackFromFavoritesUseCase,
+
+
 ) : ViewModel() {
 
     private val playerStateLiveData = MutableLiveData<PlayerState>(PlayerState.Default())
+    private val favoriteStateLiveData = MutableLiveData<FavoriteState>()
 
     private val toastStateLiveData = SingleLiveEvent<PlayerError>()
 
@@ -29,6 +37,10 @@ class AudioPlayerViewModel(
 
     init {
         initMediaPlayer()
+
+        if (track.isFavorite) {
+            setFavoriteState(FavoriteState.Favorite)
+        } else setFavoriteState(FavoriteState.NotFavorite)
     }
 
     override fun onCleared() {
@@ -38,6 +50,8 @@ class AudioPlayerViewModel(
 
     fun observeToastState(): LiveData<PlayerError> = toastStateLiveData
     fun observePlayerState(): LiveData<PlayerState> = playerStateLiveData
+
+    fun observeFavoriteState(): LiveData<FavoriteState> = favoriteStateLiveData
 
 
     fun togglePlay() {
@@ -56,6 +70,10 @@ class AudioPlayerViewModel(
 
     private fun setToastState(playerError: PlayerError) {
         toastStateLiveData.value = playerError
+    }
+
+    private fun setFavoriteState(favoriteState: FavoriteState) {
+        favoriteStateLiveData.value = favoriteState
     }
 
     private fun initMediaPlayer() {
@@ -89,6 +107,22 @@ class AudioPlayerViewModel(
     fun pausePlayer() {
         mediaPlayerContract.pause()
         stopTimer()
+    }
+
+    fun onFavoriteClicked() {
+        if (track.isFavorite) {
+            track.isFavorite = false
+            setFavoriteState(FavoriteState.NotFavorite)
+            viewModelScope.launch {
+                deleteTrackFromFavoritesUseCase.execute(track)
+            }
+        } else {
+            track.isFavorite = true
+            setFavoriteState(FavoriteState.Favorite)
+            viewModelScope.launch {
+                addTrackToFavoritesUseCase.execute(track)
+            }
+        }
     }
 
     private fun startTimer() {

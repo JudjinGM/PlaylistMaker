@@ -9,7 +9,7 @@ interface GetIsSearchResultIsEmptyUseCase {
         private val searchRepository: SearchRepository
     ) : GetIsSearchResultIsEmptyUseCase {
         override fun execute(): Boolean {
-            return searchRepository.getSearchTracks().isEmpty()
+            return searchRepository.isSearchRepositoryEmpty()
         }
     }
 }

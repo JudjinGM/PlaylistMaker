@@ -1,6 +1,14 @@
 package com.example.playlistmaker.search.di
 
-import com.example.playlistmaker.search.domain.use_case.*
+import com.example.playlistmaker.search.domain.use_case.AddTrackToListenHistoryUseCase
+import com.example.playlistmaker.search.domain.use_case.AddTracksToSearchResultUseCase
+import com.example.playlistmaker.search.domain.use_case.ClearListenHistoryTracksUseCase
+import com.example.playlistmaker.search.domain.use_case.ClearSearchResultTracksUseCase
+import com.example.playlistmaker.search.domain.use_case.GetIsListenHistoryTracksNotEmptyUseCase
+import com.example.playlistmaker.search.domain.use_case.GetIsSearchResultIsEmptyUseCase
+import com.example.playlistmaker.search.domain.use_case.GetListenHistoryTracksUseCase
+import com.example.playlistmaker.search.domain.use_case.GetSearchResultTracksUseCase
+import com.example.playlistmaker.search.domain.use_case.SearchSongsUseCase
 import org.koin.dsl.module
 
 val searchDomainModule = module {

@@ -6,7 +6,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.search.domain.model.ErrorStatusDomain
-import com.example.playlistmaker.search.ui.model.SearchState
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.domain.use_case.AddTrackToListenHistoryUseCase
 import com.example.playlistmaker.search.domain.use_case.AddTracksToSearchResultUseCase
@@ -19,6 +18,7 @@ import com.example.playlistmaker.search.domain.use_case.GetSearchResultTracksUse
 import com.example.playlistmaker.search.domain.use_case.SearchSongsUseCase
 import com.example.playlistmaker.search.ui.model.ErrorStatusUi
 import com.example.playlistmaker.search.ui.model.SavedTracks
+import com.example.playlistmaker.search.ui.model.SearchState
 import com.example.playlistmaker.utils.debounce
 import kotlinx.coroutines.launch
 
@@ -32,7 +32,7 @@ class SearchViewModel(
     private val getSearchResultTracksUseCase: GetSearchResultTracksUseCase,
     private val getIsSearchResultIsEmptyUseCase: GetIsSearchResultIsEmptyUseCase,
     private val searchSongsUseCase: SearchSongsUseCase,
-    private val addTracksToSearchResultUseCase: AddTracksToSearchResultUseCase
+    private val addTracksToSearchResultUseCase: AddTracksToSearchResultUseCase,
 ) : ViewModel() {
 
     private var latestSearchText: String? = null
@@ -47,15 +47,7 @@ class SearchViewModel(
     init {
         val savedTracks = savedStateHandle.get<SavedTracks?>(SAVED_SEARCH_TRACKS)
         val tracks = savedTracks?.tracks?.toList() ?: listOf()
-        if (tracks.isNotEmpty()) {
-            addTracksToSearchResultUseCase.execute(tracks)
-            setState(SearchState.Success.SearchContent(tracks))
-
-        } else {
-            if (getIsListenHistoryTracksNotEmptyUseCase.execute()) {
-                setState(SearchState.Success.ListenHistoryContent(getListenHistoryTracksUseCase.execute()))
-            } else setState(SearchState.Success.Empty)
-        }
+        addTracksToSearchResultUseCase.execute(tracks)
     }
 
     override fun onCleared() {
@@ -74,7 +66,6 @@ class SearchViewModel(
             return
         }
         latestSearchText = changedText
-
         tracksSearchDebounce(changedText)
     }
 
@@ -121,24 +112,25 @@ class SearchViewModel(
 
     fun clearListenHistory() {
         clearListenHistoryTracksUseCase.execute()
-        setState(SearchState.Success.Empty)
+        updateState()
     }
 
     fun clearSearchInput() {
         clearSearchResultTracksUseCase.execute()
         savedStateHandle[SAVED_SEARCH_TRACKS] = SavedTracks(arrayListOf())
-        if (getIsListenHistoryTracksNotEmptyUseCase.execute()) {
-            setState(SearchState.Success.ListenHistoryContent(getListenHistoryTracksUseCase.execute()))
-        } else {
-            setState(SearchState.Success.Empty)
-        }
+        updateState()
     }
 
     fun updateState() {
         if (getIsListenHistoryTracksNotEmptyUseCase.execute() && getIsSearchResultIsEmptyUseCase.execute()) {
-            setState(SearchState.Success.ListenHistoryContent(getListenHistoryTracksUseCase.execute()))
+            setState(SearchState.Loading)
+            viewModelScope.launch {
+                setState(SearchState.Success.ListenHistoryContent(getListenHistoryTracksUseCase.execute()))
+            }
         } else {
-            setState(SearchState.Success.SearchContent(getSearchResultTracksUseCase.execute()))
+            viewModelScope.launch {
+                setState(SearchState.Success.SearchContent(getSearchResultTracksUseCase.execute()))
+            }
         }
     }
 

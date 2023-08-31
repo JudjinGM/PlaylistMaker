@@ -10,4 +10,5 @@ interface TracksListenHistoryLocalDataSource {
     fun deleteTrack(id: Long)
     fun clearAllTracks()
     fun getTracksCount(): Int
+    fun updateFavoriteTracks(favoriteTracksId: List<Long>)
 }

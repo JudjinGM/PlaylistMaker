@@ -59,6 +59,10 @@ class TracksListenHistoryLocalDataSourceImpl(
         return database.getListenHistoryTrackList().size
     }
 
+    override fun updateFavoriteTracks(favoriteTracksId: List<Long>) {
+        database.updateTracks(favoriteTracksId)
+    }
+
     companion object {
         const val LISTEN_HISTORY_MAX_LIST_SIZE = 10
     }

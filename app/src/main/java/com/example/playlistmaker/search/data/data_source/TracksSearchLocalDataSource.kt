@@ -17,4 +17,6 @@ interface TracksSearchLocalDataSource {
     fun clearAllTracks()
 
     fun getTracksCount(): Int
+
+    fun updateSearchLocalDatasource(favoriteTracks: List<Long>)
 }

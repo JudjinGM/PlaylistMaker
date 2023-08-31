@@ -25,4 +25,10 @@ class TracksSearchCacheImpl() : TracksSearchCache {
     override fun addTrack(track: Track) {
         mutableTracks.add(track)
     }
+
+    override fun updateTracks(favoriteTracksId: List<Long>) {
+        mutableTracks.onEach {
+            it.isFavorite = favoriteTracksId.contains(it.trackId)
+        }
+    }
 }

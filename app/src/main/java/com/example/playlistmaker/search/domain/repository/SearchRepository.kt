@@ -11,7 +11,9 @@ interface SearchRepository {
     ): Flow<Resource<List<Track>>>
 
     fun addAllTracks(tracks: List<Track>)
-    fun getSearchTracks(): List<Track>
+    suspend fun getSearchTracks(): List<Track>
     fun clearSearchTracks()
     fun isSearchRepositoryEmpty(): Boolean
+
+    fun updateSearchResultFavorite(favoriteTracks: List<Long>)
 }

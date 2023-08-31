@@ -3,7 +3,6 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'androidx.navigation.safeargs.kotlin'
     id 'kotlin-kapt'
-
 }
 
 android {
@@ -58,10 +57,10 @@ dependencies {
     implementation "io.insert-koin:koin-core:$koin_version"
     implementation "io.insert-koin:koin-android:$koin_version"
     //Testing
-    testImplementation "io.insert-koin:koin-test:$koin_version"
+    testImplementation "io.insert-koin:koin-test:3.4.3"
 
     def fragment_version = "1.6.1"
-    implementation "androidx.fragment:fragment:$fragment_version"
+    implementation "androidx.fragment:fragment-ktx:$fragment_version"
     implementation 'androidx.fragment:fragment-ktx'
 
     implementation "androidx.viewpager2:viewpager2:1.0.0"
@@ -73,5 +72,8 @@ dependencies {
 
     implementation("androidx.savedstate:savedstate-ktx:1.2.1")
 
-
+    def room_version = "2.5.2"
+    implementation("androidx.room:room-runtime:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
 }

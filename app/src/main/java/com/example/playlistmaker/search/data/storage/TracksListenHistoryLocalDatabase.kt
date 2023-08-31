@@ -5,5 +5,6 @@ import com.example.playlistmaker.search.domain.model.Track
 interface TracksListenHistoryLocalDatabase {
     fun getListenHistoryTrackList(): List<Track>
     fun addListenHistoryTracks(tracks: List<Track>)
+    fun updateTracks(favoriteTracksId: List<Long>)
 
 }

@@ -45,4 +45,8 @@ class TracksSearchLocalDataSourceImpl(
     override fun getTracksCount(): Int {
         return database.getTrackList().size
     }
+
+    override fun updateSearchLocalDatasource(favoriteTracks: List<Long>) {
+        database.updateTracks(favoriteTracks)
+    }
 }
