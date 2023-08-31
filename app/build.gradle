@@ -57,16 +57,16 @@ dependencies {
     implementation "io.insert-koin:koin-core:$koin_version"
     implementation "io.insert-koin:koin-android:$koin_version"
     //Testing
-    testImplementation "io.insert-koin:koin-test:$koin_version"
+    testImplementation "io.insert-koin:koin-test:3.4.3"
 
     def fragment_version = "1.6.1"
-    implementation "androidx.fragment:fragment:$fragment_version"
+    implementation "androidx.fragment:fragment-ktx:$fragment_version"
     implementation 'androidx.fragment:fragment-ktx'
 
     implementation "androidx.viewpager2:viewpager2:1.0.0"
 
-    implementation "androidx.navigation:navigation-fragment-ktx:2.7.1"
-    implementation "androidx.navigation:navigation-ui-ktx:2.7.1"
+    implementation "androidx.navigation:navigation-fragment-ktx:2.6.0"
+    implementation "androidx.navigation:navigation-ui-ktx:2.6.0"
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
 
