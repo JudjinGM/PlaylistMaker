@@ -4,11 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.library.domain.use_case.GetFavoriteTrackUseCase
+import com.example.playlistmaker.library.domain.useCase.GetFavoriteTrackUseCase
 import com.example.playlistmaker.library.ui.model.FavoritesError
 import com.example.playlistmaker.library.ui.model.FavoritesState
 import com.example.playlistmaker.search.domain.model.Track
-import com.example.playlistmaker.search.domain.use_case.AddTrackToListenHistoryUseCase
+import com.example.playlistmaker.search.domain.useCase.AddTrackToListenHistoryUseCase
 import kotlinx.coroutines.launch
 
 class FavoritesViewModel(

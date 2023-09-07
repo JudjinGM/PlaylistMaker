@@ -15,6 +15,6 @@ val libraryUiModule = module {
     }
 
     viewModel {
-        PlaylistViewModel()
+        PlaylistViewModel(getPlaylistListUseCase = get())
     }
 }

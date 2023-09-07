@@ -1,8 +1,11 @@
 package com.example.playlistmaker.app
 
 import android.app.Application
-import com.example.playlistmaker.audio_player.di.audioPlayerDomainModule
-import com.example.playlistmaker.audio_player.di.audioPlayerUiModule
+import com.example.playlistmaker.audioPlayer.di.audioPlayerDomainModule
+import com.example.playlistmaker.audioPlayer.di.audioPlayerUiModule
+import com.example.playlistmaker.createPlaylist.di.createPlaylistDataModule
+import com.example.playlistmaker.createPlaylist.di.createPlaylistDomainModule
+import com.example.playlistmaker.createPlaylist.di.createPlaylistUiModule
 import com.example.playlistmaker.library.di.libraryDataModule
 import com.example.playlistmaker.library.di.libraryDomainModule
 import com.example.playlistmaker.library.di.libraryUiModule
@@ -41,7 +44,10 @@ class App : Application() {
                     shareDomainModule,
                     libraryDataModule,
                     libraryDomainModule,
-                    libraryUiModule
+                    libraryUiModule,
+                    createPlaylistDataModule,
+                    createPlaylistDomainModule,
+                    createPlaylistUiModule
                 )
             )
         }

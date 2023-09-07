@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".audio_player.ui.fragments.AudioPlayerFragment">
+    tools:context=".audioPlayer.ui.fragments.AudioPlayerFragment">
 
     <Button
         android:id="@+id/newPlaylistButton"
@@ -32,7 +32,7 @@
         android:layout_marginTop="@dimen/placeholder_image_library_margin_top"
         android:contentDescription="@string/error"
         android:src="@drawable/error_search"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -48,4 +48,32 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/placeholderLibraryPlaylistImage" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/margin_top_progress_bar"
+        android:indeterminateTint="@color/royal_blue"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/newPlaylistButton" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/playlistRecycleView"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/weight_0_dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/newPlaylistButton"
+        android:layout_marginStart="@dimen/margin_12"
+        android:layout_marginEnd="@dimen/margin_12"
+        android:layout_marginTop="@dimen/margin_12"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="2"
+        tools:itemCount="6"
+        tools:listitem="@layout/playlist_view" />
 </androidx.constraintlayout.widget.ConstraintLayout>
