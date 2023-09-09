@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottomsheetLinearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bottom_sheet_background"
+    style="@style/BottomSheetStyle"
+    app:behavior_hideable="true"
+    app:behavior_peekHeight="504dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/margin_8"
+        android:src="@drawable/bottom_sheet_rectangle_draw" />
+
+    <TextView
+        style="@style/PlaceholderText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/margin_30"
+        android:text="@string/add_to_playlist" />
+
+    <Button
+        android:id="@+id/newPlaylistButton"
+        style="@style/SmallButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/margin_28"
+        android:paddingStart="@dimen/button_playlist_padding_start"
+        android:paddingTop="@dimen/button_playlist_padding_top"
+        android:paddingEnd="@dimen/button_playlist_padding_end"
+        android:paddingBottom="@dimen/button_playlist_padding_bottom"
+        android:text="@string/new_playlist"
+        android:textAppearance="@style/MediumVariantText"
+        android:visibility="visible"
+        app:cornerRadius="@dimen/small_button_corner_radius" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="@dimen/progress_bar_width"
+        android:layout_height="@dimen/progress_bar_height"
+        android:layout_gravity="center"
+        android:indeterminateTint="@color/royal_blue"
+        android:layout_marginTop="@dimen/margin_24"
+        android:visibility="gone" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/playlistsRecycleView"
+        tools:itemCount="10"
+        tools:listitem="@layout/playlist_small_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/margin_24" />
+
+
+</LinearLayout>

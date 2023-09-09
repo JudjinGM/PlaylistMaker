@@ -30,7 +30,9 @@ val audioPlayerUiModule = module {
             mediaPlayerContract = get(),
             isConnectedToNetworkUseCase = get(),
             addTrackToFavoritesUseCase = get(),
-            deleteTrackFromFavoritesUseCase = get()
+            deleteTrackFromFavoritesUseCase = get(),
+            getPlaylistListUseCase = get(),
+            addTrackToPlaylistUseCase = get()
         )
     }
 }

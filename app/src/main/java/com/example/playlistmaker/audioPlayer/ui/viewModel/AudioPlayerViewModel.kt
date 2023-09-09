@@ -6,11 +6,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.audioPlayer.domain.repository.MediaPlayerContract
 import com.example.playlistmaker.audioPlayer.domain.useCase.AddTrackToFavoritesUseCase
+import com.example.playlistmaker.audioPlayer.domain.useCase.AddTrackToPlaylistUseCase
 import com.example.playlistmaker.audioPlayer.domain.useCase.DeleteTrackFromFavoritesUseCase
 import com.example.playlistmaker.audioPlayer.domain.useCase.IsConnectedToNetworkUseCase
+import com.example.playlistmaker.audioPlayer.ui.model.AddPlaylistState
+import com.example.playlistmaker.audioPlayer.ui.model.BottomSheetState
 import com.example.playlistmaker.audioPlayer.ui.model.FavoriteState
 import com.example.playlistmaker.audioPlayer.ui.model.PlayerError
 import com.example.playlistmaker.audioPlayer.ui.model.PlayerState
+import com.example.playlistmaker.audioPlayer.ui.model.PlaylistListState
+import com.example.playlistmaker.createPlaylist.domain.model.PlaylistModel
+import com.example.playlistmaker.library.domain.useCase.GetPlaylistListUseCase
 import com.example.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -24,14 +30,22 @@ class AudioPlayerViewModel(
     private val isConnectedToNetworkUseCase: IsConnectedToNetworkUseCase,
     private val addTrackToFavoritesUseCase: AddTrackToFavoritesUseCase,
     private val deleteTrackFromFavoritesUseCase: DeleteTrackFromFavoritesUseCase,
-
+    private val getPlaylistListUseCase: GetPlaylistListUseCase,
+    private val addTrackToPlaylistUseCase: AddTrackToPlaylistUseCase
 
 ) : ViewModel() {
 
     private val playerStateLiveData = MutableLiveData<PlayerState>(PlayerState.Default())
+
     private val favoriteStateLiveData = MutableLiveData<FavoriteState>()
 
-    private val toastStateLiveData = SingleLiveEvent<PlayerError>()
+    private val bottomSheetStateLiveData = MutableLiveData<BottomSheetState>()
+
+    private val toastErrorStateLiveData = SingleLiveEvent<PlayerError>()
+
+    private val toastStateLiveData = SingleLiveEvent<AddPlaylistState>()
+
+    private val playlistListState = MutableLiveData<PlaylistListState>()
 
     private var timerJob: Job? = null
 
@@ -41,6 +55,12 @@ class AudioPlayerViewModel(
         if (track.isFavorite) {
             setFavoriteState(FavoriteState.Favorite)
         } else setFavoriteState(FavoriteState.NotFavorite)
+
+        viewModelScope.launch {
+            getPlaylistListUseCase.execute().collect {
+                playlistListState.value = PlaylistListState.Success(it)
+            }
+        }
     }
 
     override fun onCleared() {
@@ -48,10 +68,15 @@ class AudioPlayerViewModel(
         mediaPlayerContract.release()
     }
 
-    fun observeToastState(): LiveData<PlayerError> = toastStateLiveData
+    fun observeErrorToastState(): LiveData<PlayerError> = toastErrorStateLiveData
     fun observePlayerState(): LiveData<PlayerState> = playerStateLiveData
 
     fun observeFavoriteState(): LiveData<FavoriteState> = favoriteStateLiveData
+    fun observePlaylistToastState(): LiveData<AddPlaylistState> = toastStateLiveData
+
+    fun observeBottomSheetState(): LiveData<BottomSheetState> = bottomSheetStateLiveData
+
+    fun observePlaylistListState(): LiveData<PlaylistListState> = playlistListState
 
 
     fun togglePlay() {
@@ -69,7 +94,7 @@ class AudioPlayerViewModel(
     }
 
     private fun setToastState(playerError: PlayerError) {
-        toastStateLiveData.value = playerError
+        toastErrorStateLiveData.value = playerError
     }
 
     private fun setFavoriteState(favoriteState: FavoriteState) {
@@ -122,6 +147,32 @@ class AudioPlayerViewModel(
             viewModelScope.launch {
                 addTrackToFavoritesUseCase.execute(track)
             }
+        }
+    }
+
+    fun onLibraryClicked() {
+        bottomSheetStateLiveData.value = BottomSheetState.Show
+    }
+
+    fun addTrackToPlaylist(playlist: PlaylistModel) {
+
+        var isPlaylistHaveTrack: Boolean = false
+
+        playlist.tracks.forEach {
+            if (it.trackId == track.trackId) {
+                isPlaylistHaveTrack = true
+            }
+        }
+
+        if (isPlaylistHaveTrack) {
+            toastStateLiveData.value = AddPlaylistState.Error.AlreadyHaveTrack
+        } else {
+            bottomSheetStateLiveData.value = BottomSheetState.Hide
+
+            viewModelScope.launch {
+                addTrackToPlaylistUseCase.execute(playlist.playlistId, track)
+            }
+            toastStateLiveData.value = AddPlaylistState.Success
         }
     }
 

@@ -212,7 +212,9 @@ class CreatePlaylistFragment : Fragment() {
 
     private fun renderSaveImageToStorageState(state: SaveImageState) {
         when (state) {
-            is SaveImageState.Allow -> saveImageToPrivateStorage(state.uri)
+            is SaveImageState.Allow -> {
+                saveImageToPrivateStorage(state.uri)
+            }
         }
     }
 

@@ -25,15 +25,13 @@ class PlaylistDataSourceImpl(private val dataBase: AppDatabase) : PlaylistsDataS
 
     override suspend fun addTrackToPlaylist(playlistId: Long, trackEntity: TrackEntity) {
         dataBase.trackDao().insertTrack(trackEntity)
-        val playlistEntity = dataBase.playlistDao().getPlaylistById(playlistId)
-        if (playlistEntity != null) {
-            dataBase.playlistTrackCrossRefDao().insertPlaylistTrackCrossRef(
-                PlaylistTrackCrossRefEntity(
-                    playlistId, trackEntity.trackId
-                )
+        dataBase.playlistTrackCrossRefDao().insertPlaylistTrackCrossRef(
+            PlaylistTrackCrossRefEntity(
+                playlistId, trackEntity.trackId
             )
-        }
+        )
     }
+
 
     override suspend fun removeTrackFromPlaylist(playlistId: Long, trackEntity: TrackEntity) {
         dataBase.playlistTrackCrossRefDao()

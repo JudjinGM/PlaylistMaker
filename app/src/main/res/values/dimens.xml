@@ -22,6 +22,8 @@
     <dimen name="share_image_margin_end">12dp</dimen>
     <dimen name="support_image_margin_end">12dp</dimen>
     <dimen name="arrow_image_margin_end">12dp</dimen>
+    <dimen name="progress_bar_width">44dp</dimen>
+    <dimen name="progress_bar_height">44dp</dimen>
     <dimen name="main_margin_for_content">16dp</dimen>
     <dimen name="margin_top_for_content">24dp</dimen>
     <dimen name="margin_top_for_artist_name">12dp</dimen>
@@ -43,7 +45,6 @@
     <dimen name="padding_for_create_button_text">12.5dp</dimen>
     <dimen name="padding_for_cover_28dp">28dp</dimen>
     <dimen name="padding_for_cover_29dp">29dp</dimen>
-
     <dimen name="margin_end_for_clear_icon">10dp</dimen>
     <dimen name="track_list_element_min_height">61dp</dimen>
     <dimen name="album_cover_height_and_width">45dp</dimen>
@@ -55,8 +56,11 @@
     <dimen name="margin_14">14dp</dimen>
     <dimen name="margin_16">16dp</dimen>
     <dimen name="margin_24">24dp</dimen>
+    <dimen name="margin_28">28dp</dimen>
+    <dimen name="margin_30">30dp</dimen>
     <dimen name="margin_32">32dp</dimen>
     <dimen name="margin_42">42dp</dimen>
+    <dimen name="margin_44">44dp</dimen>
     <dimen name="margin_1">1dp</dimen>
     <dimen name="zero_dp">0dp</dimen>
     <dimen name="corner_radius_8dp">8dp</dimen>

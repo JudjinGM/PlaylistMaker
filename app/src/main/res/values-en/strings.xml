@@ -51,4 +51,7 @@
     <string name="cancel">Cancel</string>
     <string name="count_track">%1$d track</string>
     <string name="count_tracks">%1$d tracks</string>
+    <string name="add_to_playlist">Add to playlist</string>
+    <string name="track_added_to_playlist">Track added to playlist</string>
+    <string name="track_already_in_playlist">Track is already in playlist</string>
 </resources>

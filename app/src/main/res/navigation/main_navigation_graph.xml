@@ -15,6 +15,9 @@
             app:argType="com.example.playlistmaker.search.domain.model.Track"
             app:nullable="true"
             android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_audioPlayerFragment_to_createPlaylistFragment"
+            app:destination="@id/createPlaylistFragment" />
     </fragment>
 
     <fragment

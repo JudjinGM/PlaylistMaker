@@ -55,4 +55,7 @@
     <string name="finish">Завершить</string>
     <string name="count_track">%1$d трек</string>
     <string name="count_tracks">%1$d треков</string>
+    <string name="add_to_playlist">Добавить в плейлист</string>
+    <string name="track_added_to_playlist">Трек добавлен в плейлист</string>
+    <string name="track_already_in_playlist">Трек уже добавлен в данный плейлист</string>
 </resources>

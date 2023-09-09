@@ -133,5 +133,9 @@
         <item name="android:backgroundTint">@null</item>
     </style>
 
+    <style name="BottomSheetStyle">
+        <item name="android:backgroundTint">@color/white</item>
+    </style>
+
 
 </resources>
