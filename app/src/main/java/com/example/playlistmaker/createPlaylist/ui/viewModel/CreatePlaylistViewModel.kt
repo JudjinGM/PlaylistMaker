@@ -1,26 +1,28 @@
 package com.example.playlistmaker.createPlaylist.ui.viewModel
 
 import android.net.Uri
-import android.util.Log
+import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.createPlaylist.data.model.ResultForFile
 import com.example.playlistmaker.createPlaylist.domain.useCase.CreatePlaylistUseCase
+import com.example.playlistmaker.createPlaylist.domain.useCase.SaveImageToPrivateStorageUseCase
 import com.example.playlistmaker.createPlaylist.ui.model.BackState
 import com.example.playlistmaker.createPlaylist.ui.model.CreateButtonState
+import com.example.playlistmaker.createPlaylist.ui.model.CreatePlaylistErrorState
 import com.example.playlistmaker.createPlaylist.ui.model.CreatePlaylistState
-import com.example.playlistmaker.createPlaylist.ui.model.SaveImageState
 import kotlinx.coroutines.launch
 
 class CreatePlaylistViewModel(
-    private val createPlaylistUseCase: CreatePlaylistUseCase
+    private val createPlaylistUseCase: CreatePlaylistUseCase,
+    private val saveImageToPrivateStorageUseCase: SaveImageToPrivateStorageUseCase
 ) : ViewModel() {
 
     private val toastStateLiveData = MutableLiveData<CreatePlaylistState>()
     private val createButtonState = MutableLiveData<CreateButtonState>(CreateButtonState.Disabled)
     private val backBehaviourState = MutableLiveData<BackState>(BackState.Success)
-    private val saveImageToStorageState = MutableLiveData<SaveImageState>()
 
     private var playlistName: String = DEFAULT_TEXT
     private var playlistDescription: String = DEFAULT_TEXT
@@ -31,8 +33,6 @@ class CreatePlaylistViewModel(
     fun observeCreateButtonState(): LiveData<CreateButtonState> = createButtonState
 
     fun observeBackBehaviourState(): LiveData<BackState> = backBehaviourState
-
-    fun saveImageToStorageState(): LiveData<SaveImageState> = saveImageToStorageState
 
     fun getNameInput(s: CharSequence?) {
         if (s.isNullOrEmpty()) {
@@ -45,10 +45,10 @@ class CreatePlaylistViewModel(
     }
 
     fun getDescriptionInput(s: CharSequence?) {
-        if (s.isNullOrEmpty()) {
-            playlistDescription = DEFAULT_TEXT
+        playlistDescription = if (s.isNullOrEmpty()) {
+            DEFAULT_TEXT
         } else {
-            playlistDescription = s.toString()
+            s.toString()
         }
     }
 
@@ -56,24 +56,37 @@ class CreatePlaylistViewModel(
         playlistCoverLoaded = uri
     }
 
-    fun getCoverImageSavedToStorageUri(uri: Uri) {
-        playlistCoverSavedToStorage = uri
+    private fun saveCoverImageToStorage(uri: Uri) {
+        viewModelScope.launch {
+            val result = saveImageToPrivateStorageUseCase.execute(uri)
+
+            when (result) {
+                ResultForFile.Error -> {
+                    toastStateLiveData.value =
+                        CreatePlaylistState.Error(CreatePlaylistErrorState.CANNOT_SAVE_IMAGE)
+                }
+
+                is ResultForFile.Success -> {
+                    playlistCoverSavedToStorage = result.file.toUri()
+                }
+            }
+        }
     }
 
     fun createButtonClicked() {
         if (playlistCoverLoaded != null) {
-            saveImageToStorageState.value =
-                playlistCoverLoaded?.let { SaveImageState.Allow(uri = it) }
+            playlistCoverLoaded?.let { saveCoverImageToStorage(it) }
         }
 
-        if (createButtonState.value == CreateButtonState.Enabled) viewModelScope.launch {
-            createPlaylistUseCase.execute(
-                playlistName, playlistDescription, playlistCoverSavedToStorage
-            )
+        if (createButtonState.value == CreateButtonState.Enabled) {
+            viewModelScope.launch {
+                createPlaylistUseCase.execute(
+                    playlistName, playlistDescription, playlistCoverSavedToStorage
+                )
+            }
         }
 
         toastStateLiveData.value = CreatePlaylistState.Success(playlistName)
-        Log.d("judjin", playlistCoverSavedToStorage.toString())
     }
 
     fun backStateBehaviour() {
@@ -85,5 +98,4 @@ class CreatePlaylistViewModel(
     companion object {
         const val DEFAULT_TEXT = ""
     }
-
 }

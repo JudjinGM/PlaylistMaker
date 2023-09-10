@@ -7,6 +7,7 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/playlistCoverCardView"
+        style="@style/PlaylistCover"
         android:layout_width="@dimen/album_cover_height_and_width"
         android:layout_height="@dimen/album_cover_height_and_width"
         android:layout_marginStart="@dimen/album_cover_margin_start"

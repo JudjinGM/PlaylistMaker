@@ -58,4 +58,6 @@
     <string name="add_to_playlist">Добавить в плейлист</string>
     <string name="track_added_to_playlist">Трек добавлен в плейлист</string>
     <string name="track_already_in_playlist">Трек уже добавлен в данный плейлист</string>
+    <string name="cannot_save_image">Не удалось сохранить изображение</string>
+    <string name="cannot_create_playlist">Не удалось создать плейлист</string>
 </resources>

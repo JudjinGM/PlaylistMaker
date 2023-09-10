@@ -60,19 +60,20 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/coverCardView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="@dimen/zero_dp"
+        android:layout_height="@dimen/zero_dp"
         android:layout_marginTop="@dimen/margin_42"
         app:cardCornerRadius="@dimen/corner_radius_8dp"
         app:cardElevation="@dimen/zero_dp"
+        app:layout_constraintBottom_toTopOf="@id/playlistNameTextLayout"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@+id/guidLineSecondEnd"
         app:layout_constraintStart_toStartOf="@+id/guidLineSecondStart"
         app:layout_constraintTop_toBottomOf="@+id/toolbarLibrary">
 
         <ImageView
-            style="@style/PlaylistCover"
             android:id="@+id/coverImageView"
+            style="@style/PlaylistCover"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/rectangle_rounded_dashed"
@@ -84,13 +85,15 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/playlistNameTextLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:theme="@style/ThemeOverlay.AppTheme.TextInputEditText.Outlined"
         android:layout_width="@dimen/weight_0_dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_32"
         android:hint="@string/playlist_name_hint"
         app:boxStrokeColor="@color/box_stroke_color_selector_grey"
         app:hintTextColor="@color/box_stroke_color_selector_blue"
-        app:layout_constraintEnd_toStartOf="@+id/guidLineSecondEnd"
+        app:layout_constraintBottom_toTopOf="@id/playlistDescriptionTextLayout"
+        app:layout_constraintEnd_toStartOf="@+id/guidLineEnd"
         app:layout_constraintStart_toStartOf="@+id/guidLineStart"
         app:layout_constraintTop_toBottomOf="@+id/coverCardView">
 
@@ -104,13 +107,15 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/playlistDescriptionTextLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:theme="@style/ThemeOverlay.AppTheme.TextInputEditText.Outlined"
         android:layout_width="@dimen/weight_0_dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_top_for_text"
+        android:layout_marginTop="@dimen/margin_16"
         android:hint="@string/playlist_description_hint"
         app:boxStrokeColor="@color/box_stroke_color_selector_grey"
         app:hintTextColor="@color/box_stroke_color_selector_blue"
-        app:layout_constraintEnd_toStartOf="@+id/guidLineSecondEnd"
+        app:layout_constraintBottom_toTopOf="@id/buttonCreateImageView"
+        app:layout_constraintEnd_toStartOf="@+id/guidLineEnd"
         app:layout_constraintStart_toStartOf="@+id/guidLineStart"
         app:layout_constraintTop_toBottomOf="@+id/playlistNameTextLayout">
 
@@ -127,6 +132,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_for_button_create"
+        android:layout_marginTop="@dimen/margin_16"
         android:layout_marginEnd="@dimen/margin_for_button_create"
         android:layout_marginBottom="@dimen/bottom_margin_for_button_create"
         android:background="@drawable/button_create"
@@ -135,6 +141,8 @@
         android:text="@string/create"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/playlistDescriptionTextLayout"
+        app:layout_constraintVertical_bias="1" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

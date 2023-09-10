@@ -7,6 +7,9 @@ import org.koin.dsl.module
 val createPlaylistUiModule = module {
 
     viewModel {
-        CreatePlaylistViewModel(createPlaylistUseCase = get())
+        CreatePlaylistViewModel(
+            createPlaylistUseCase = get(),
+            saveImageToPrivateStorageUseCase = get()
+        )
     }
 }

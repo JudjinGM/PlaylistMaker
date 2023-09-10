@@ -1,14 +1,11 @@
 package com.example.playlistmaker.createPlaylist.ui.fragments
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.addCallback
@@ -16,22 +13,19 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.createPlaylist.ui.model.BackState
 import com.example.playlistmaker.createPlaylist.ui.model.CreateButtonState
+import com.example.playlistmaker.createPlaylist.ui.model.CreatePlaylistErrorState
 import com.example.playlistmaker.createPlaylist.ui.model.CreatePlaylistState
-import com.example.playlistmaker.createPlaylist.ui.model.SaveImageState
 import com.example.playlistmaker.createPlaylist.ui.viewModel.CreatePlaylistViewModel
 import com.example.playlistmaker.databinding.FragmentCreatePlaylistBinding
 import com.example.playlistmaker.search.ui.model.TextWatcherJustOnTextChanged
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.io.File
-import java.io.FileOutputStream
 
 class CreatePlaylistFragment : Fragment() {
 
@@ -46,6 +40,12 @@ class CreatePlaylistFragment : Fragment() {
 
     private var confirmDialog: MaterialAlertDialogBuilder? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -56,17 +56,15 @@ class CreatePlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        confirmDialog =
-            MaterialAlertDialogBuilder(
-                requireContext(),
-                R.style.MaterialAlertDialogText
-            ).setTitle(R.string.finish_creating_playlist)
-                .setMessage(R.string.all_unsaved_data_will_be_lost)
-                .setNegativeButton(R.string.cancel) { _, _ ->
+        confirmDialog = MaterialAlertDialogBuilder(
+            requireContext(), R.style.MaterialAlertDialogText
+        ).setTitle(R.string.finish_creating_playlist)
+            .setMessage(R.string.all_unsaved_data_will_be_lost)
+            .setNegativeButton(R.string.cancel) { _, _ ->
 
-                }.setPositiveButton(R.string.finish) { _, _ ->
-                    findNavController().popBackStack()
-                }
+            }.setPositiveButton(R.string.finish) { _, _ ->
+                findNavController().popBackStack()
+            }
 
         initView()
         initMediaPicker()
@@ -83,12 +81,12 @@ class CreatePlaylistFragment : Fragment() {
             renderBackBehaviour(it)
         }
 
-        viewModel.saveImageToStorageState().observe(viewLifecycleOwner) {
-            renderSaveImageToStorageState(it)
-        }
-
         setOnClicksAndTextListeners()
+    }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
     }
 
 
@@ -118,9 +116,7 @@ class CreatePlaylistFragment : Fragment() {
 
         binding.playlistNameEditText.setOnFocusChangeListener { _, hasFocus ->
             textInputLayoutHintBehaviour(
-                binding.playlistNameTextLayout,
-                binding.playlistNameEditText.text,
-                hasFocus
+                binding.playlistNameTextLayout, binding.playlistNameEditText.text, hasFocus
             )
         }
 
@@ -163,11 +159,9 @@ class CreatePlaylistFragment : Fragment() {
                 requireContext(), R.color.box_stroke_color_selector_blue
             )?.let { textInputLayout.setBoxStrokeColorStateList(it) }
 
-            textInputLayout.defaultHintTextColor =
-                ContextCompat.getColorStateList(
-                    requireContext(),
-                    R.color.box_stroke_color_selector_blue
-                )
+            textInputLayout.defaultHintTextColor = ContextCompat.getColorStateList(
+                requireContext(), R.color.box_stroke_color_selector_blue
+            )
         } else {
             ContextCompat.getColorStateList(
                 requireContext(), R.color.box_stroke_color_selector_grey
@@ -182,11 +176,9 @@ class CreatePlaylistFragment : Fragment() {
             textInputLayout.defaultHintTextColor =
                 ContextCompat.getColorStateList(requireContext(), R.color.hint_state_color_selector)
         } else {
-            textInputLayout.defaultHintTextColor =
-                ContextCompat.getColorStateList(
-                    requireContext(),
-                    R.color.box_stroke_color_selector_blue
-                )
+            textInputLayout.defaultHintTextColor = ContextCompat.getColorStateList(
+                requireContext(), R.color.box_stroke_color_selector_blue
+            )
         }
     }
 
@@ -202,18 +194,23 @@ class CreatePlaylistFragment : Fragment() {
 
     private fun renderToast(state: CreatePlaylistState) {
         when (state) {
-            is CreatePlaylistState.Success -> Toast.makeText(
-                context,
-                requireContext().getString(R.string.playlist_name_created, state.name),
-                Toast.LENGTH_LONG
-            ).show()
-        }
-    }
+            is CreatePlaylistState.Success -> showToast(
+                requireContext().getString(
+                    R.string.playlist_name_created, state.name
+                ),
+            )
 
-    private fun renderSaveImageToStorageState(state: SaveImageState) {
-        when (state) {
-            is SaveImageState.Allow -> {
-                saveImageToPrivateStorage(state.uri)
+            is CreatePlaylistState.Error -> when (state.error) {
+
+                CreatePlaylistErrorState.CANNOT_SAVE_IMAGE -> showToast(
+                    requireContext().getString(R.string.cannot_save_image)
+                )
+
+                CreatePlaylistErrorState.CANNOT_CREATE_PLAYLIST -> showToast(
+                    requireContext().getString(
+                        R.string.cannot_create_playlist
+                    )
+                )
             }
         }
     }
@@ -251,35 +248,13 @@ class CreatePlaylistFragment : Fragment() {
                 viewModel.getCoverImageLoadedUri(uri)
                 viewModel.backStateBehaviour()
             }
-
         }
     }
 
-    private fun saveImageToPrivateStorage(uri: Uri) {
-        val filePath =
-            File(
-                requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                DIRECTORY_PATH
-            )
-        if (!filePath.exists()) {
-            filePath.mkdir()
-        }
-
-        val file = File(filePath, System.currentTimeMillis().toString() + COVER_IMAGE_FILE_NAME)
-
-        requireContext().contentResolver.openInputStream(uri)?.use { inputStream ->
-            FileOutputStream(file).use { outputStream ->
-                BitmapFactory.decodeStream(inputStream)
-                    .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
-            }
-        }
-
-        viewModel.getCoverImageSavedToStorageUri(file.toUri())
-    }
-
-    companion object {
-        const val DIRECTORY_PATH = "playlist_covers"
-        const val COVER_IMAGE_FILE_NAME = "playlist_cover.jpg"
+    private fun showToast(message: String) {
+        Toast.makeText(
+            context, message, Toast.LENGTH_LONG
+        ).show()
     }
 }
 
