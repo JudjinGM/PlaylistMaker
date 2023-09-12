@@ -44,5 +44,20 @@
     <string name="error_favorites_is_empty">Ваша медиатека пуста</string>
     <string name="favorite_tracks">Избранные треки</string>
     <string name="playlists">Плейлисты</string>
-
+    <string name="playlist_name_hint">Название*</string>
+    <string name="playlist_description_hint">Описание</string>
+    <string name="create">Создать</string>
+    <string name="playlist_name_created">Плейлист %1s создан</string>
+    <string name="playlist">Плейлист</string>
+    <string name="finish_creating_playlist">Завершить создание плейлиста?</string>
+    <string name="all_unsaved_data_will_be_lost">Все несохраненные данные будут потеряны</string>
+    <string name="cancel">Отмена</string>
+    <string name="finish">Завершить</string>
+    <string name="count_track">%1$d трек</string>
+    <string name="count_tracks">%1$d треков</string>
+    <string name="add_to_playlist">Добавить в плейлист</string>
+    <string name="track_added_to_playlist">Трек добавлен в плейлист</string>
+    <string name="track_already_in_playlist">Трек уже добавлен в данный плейлист</string>
+    <string name="cannot_save_image">Не удалось сохранить изображение</string>
+    <string name="cannot_create_playlist">Не удалось создать плейлист</string>
 </resources>

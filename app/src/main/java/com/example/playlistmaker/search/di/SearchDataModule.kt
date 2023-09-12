@@ -2,16 +2,16 @@ package com.example.playlistmaker.search.di
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.example.playlistmaker.search.data.data_source.TracksListenHistoryLocalDataSource
-import com.example.playlistmaker.search.data.data_source.TracksSearchLocalDataSource
-import com.example.playlistmaker.search.data.data_source.TracksSearchRemoteDataSource
-import com.example.playlistmaker.search.data.data_source_impl.TracksListenHistoryLocalDataSourceImpl
-import com.example.playlistmaker.search.data.data_source_impl.TracksSearchLocalDataSourceImpl
-import com.example.playlistmaker.search.data.data_source_impl.TracksSearchRemoteDataSourceImpl
+import com.example.playlistmaker.search.data.dataSource.TracksListenHistoryLocalDataSource
+import com.example.playlistmaker.search.data.dataSource.TracksSearchLocalDataSource
+import com.example.playlistmaker.search.data.dataSource.TracksSearchRemoteDataSource
+import com.example.playlistmaker.search.data.dataSourceImpl.TracksListenHistoryLocalDataSourceImpl
+import com.example.playlistmaker.search.data.dataSourceImpl.TracksSearchLocalDataSourceImpl
+import com.example.playlistmaker.search.data.dataSourceImpl.TracksSearchRemoteDataSourceImpl
 import com.example.playlistmaker.search.data.mapper.TracksDtoToListTracksMapper
 import com.example.playlistmaker.search.data.network.ItunesApi
-import com.example.playlistmaker.search.data.repository_impl.ListenHistoryRepositoryImpl
-import com.example.playlistmaker.search.data.repository_impl.SearchRepositoryImpl
+import com.example.playlistmaker.search.data.repositoryImpl.ListenHistoryRepositoryImpl
+import com.example.playlistmaker.search.data.repositoryImpl.SearchRepositoryImpl
 import com.example.playlistmaker.search.data.storage.TracksListenHistoryLocalDatabase
 import com.example.playlistmaker.search.data.storage.TracksListenHistoryLocalDatabaseImpl
 import com.example.playlistmaker.search.data.storage.TracksSearchCache

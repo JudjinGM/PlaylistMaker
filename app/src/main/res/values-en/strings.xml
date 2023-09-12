@@ -40,4 +40,20 @@
     <string name="error_favorites_is_empty">Your library is empty</string>
     <string name="favorite_tracks">Favorite tracks</string>
     <string name="playlists">Playlists</string>
+    <string name="playlist_name_hint">Name*</string>
+    <string name="playlist_description_hint">Description</string>
+    <string name="create">Create</string>
+    <string name="playlist_name_created">Playlist %1s created</string>
+    <string name="playlist">Playlist</string>
+    <string name="finish_creating_playlist">Finish creating a playlist?</string>
+    <string name="all_unsaved_data_will_be_lost">All unsaved data will be lost</string>
+    <string name="finish">Finish</string>
+    <string name="cancel">Cancel</string>
+    <string name="count_track">%1$d track</string>
+    <string name="count_tracks">%1$d tracks</string>
+    <string name="add_to_playlist">Add to playlist</string>
+    <string name="track_added_to_playlist">Track added to playlist</string>
+    <string name="track_already_in_playlist">Track is already in playlist</string>
+    <string name="cannot_save_image">Failed to save image</string>
+    <string name="cannot_create_playlist">Failed to creagte playlist</string>
 </resources>

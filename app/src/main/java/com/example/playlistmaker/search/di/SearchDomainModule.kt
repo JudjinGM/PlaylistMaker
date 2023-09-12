@@ -1,14 +1,14 @@
 package com.example.playlistmaker.search.di
 
-import com.example.playlistmaker.search.domain.use_case.AddTrackToListenHistoryUseCase
-import com.example.playlistmaker.search.domain.use_case.AddTracksToSearchResultUseCase
-import com.example.playlistmaker.search.domain.use_case.ClearListenHistoryTracksUseCase
-import com.example.playlistmaker.search.domain.use_case.ClearSearchResultTracksUseCase
-import com.example.playlistmaker.search.domain.use_case.GetIsListenHistoryTracksNotEmptyUseCase
-import com.example.playlistmaker.search.domain.use_case.GetIsSearchResultIsEmptyUseCase
-import com.example.playlistmaker.search.domain.use_case.GetListenHistoryTracksUseCase
-import com.example.playlistmaker.search.domain.use_case.GetSearchResultTracksUseCase
-import com.example.playlistmaker.search.domain.use_case.SearchSongsUseCase
+import com.example.playlistmaker.search.domain.useCase.AddTrackToListenHistoryUseCase
+import com.example.playlistmaker.search.domain.useCase.AddTracksToSearchResultUseCase
+import com.example.playlistmaker.search.domain.useCase.ClearListenHistoryTracksUseCase
+import com.example.playlistmaker.search.domain.useCase.ClearSearchResultTracksUseCase
+import com.example.playlistmaker.search.domain.useCase.GetIsListenHistoryTracksNotEmptyUseCase
+import com.example.playlistmaker.search.domain.useCase.GetIsSearchResultIsEmptyUseCase
+import com.example.playlistmaker.search.domain.useCase.GetListenHistoryTracksUseCase
+import com.example.playlistmaker.search.domain.useCase.GetSearchResultTracksUseCase
+import com.example.playlistmaker.search.domain.useCase.SearchSongsUseCase
 import org.koin.dsl.module
 
 val searchDomainModule = module {

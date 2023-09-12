@@ -20,7 +20,7 @@ import com.example.playlistmaker.search.ui.model.ErrorStatusUi
 import com.example.playlistmaker.search.ui.model.PlaceholderStatus
 import com.example.playlistmaker.search.ui.model.SearchState
 import com.example.playlistmaker.search.ui.model.TextWatcherJustOnTextChanged
-import com.example.playlistmaker.search.ui.view_model.SearchViewModel
+import com.example.playlistmaker.search.ui.viewModel.SearchViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel

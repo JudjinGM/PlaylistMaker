@@ -32,4 +32,16 @@
         <item name="itemIconTint">@drawable/bottom_navigation_selector_night</item>
         <item name="itemTextColor">@drawable/bottom_navigation_selector_night</item>
     </style>
+
+    <style name="PlaylistCover">
+        <item name="android:backgroundTint">@color/yp_black</item>
+    </style>
+
+    <style name="MaterialAlertDialogText" parent="@style/MaterialAlertDialog.MaterialComponents.Title.Text">
+        <item name="android:textColor">@color/yp_black</item>
+    </style>
+
+    <style name="BottomSheetStyle">
+        <item name="android:backgroundTint">@color/yp_black</item>
+    </style>
 </resources>

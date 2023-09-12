@@ -1,8 +1,8 @@
 package com.example.playlistmaker.share.di
 
-import com.example.playlistmaker.share.domain.use_case.OpenLinkUseCase
-import com.example.playlistmaker.share.domain.use_case.OpenMailUseCase
-import com.example.playlistmaker.share.domain.use_case.ShareLinkUseCase
+import com.example.playlistmaker.share.domain.useCase.OpenLinkUseCase
+import com.example.playlistmaker.share.domain.useCase.OpenMailUseCase
+import com.example.playlistmaker.share.domain.useCase.ShareLinkUseCase
 import org.koin.dsl.module
 
 val shareDomainModule = module {
