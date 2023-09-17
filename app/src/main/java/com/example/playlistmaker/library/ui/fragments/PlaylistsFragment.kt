@@ -48,6 +48,12 @@ class PlaylistsFragment : Fragment() {
         binding.newPlaylistButton.setOnClickListener {
             findNavController().navigate(R.id.action_libraryFragment_to_createPlaylistFragment)
         }
+
+        playlistAdapter?.onPlaylistClicked = { playlistId ->
+            val directions =
+                LibraryFragmentDirections.actionLibraryFragmentToPlaylistFragment(playlistId)
+            findNavController().navigate(directions)
+        }
     }
 
     override fun onDestroyView() {

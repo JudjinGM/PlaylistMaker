@@ -7,7 +7,10 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.createPlaylist.domain.model.PlaylistModel
 import com.example.playlistmaker.databinding.PlaylistViewBinding
 
-class PlaylistViewHolder(private val binding: PlaylistViewBinding) :
+class PlaylistViewHolder(
+    private val binding: PlaylistViewBinding,
+    private val onPlaylistClicked: (Long) -> Unit
+) :
     RecyclerView.ViewHolder(binding.root) {
     fun onBind(item: PlaylistModel) {
 
@@ -25,6 +28,10 @@ class PlaylistViewHolder(private val binding: PlaylistViewBinding) :
         } else {
             binding.tracksCountTextView.text =
                 binding.root.context.getString(R.string.count_tracks, item.tracks.size)
+        }
+
+        itemView.setOnClickListener {
+            onPlaylistClicked.invoke(item.playlistId)
         }
     }
 }

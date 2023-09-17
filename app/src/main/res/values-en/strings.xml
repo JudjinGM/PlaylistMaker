@@ -56,4 +56,18 @@
     <string name="track_already_in_playlist">Track is already in playlist</string>
     <string name="cannot_save_image">Failed to save image</string>
     <string name="cannot_create_playlist">Failed to creagte playlist</string>
+
+
+    <plurals name="tracks_plural">
+        <item quantity="one"> %1$d track</item>
+        <item quantity="other"> %1$d tracks</item>
+    </plurals>
+
+    <plurals name="minute_plural">
+        <item quantity="one"> %1$d minute</item>
+        <item quantity="other"> %1$d minutes</item>
+    </plurals>
+    <string name="delete_track">Delete tack?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>

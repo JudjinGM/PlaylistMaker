@@ -6,10 +6,13 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.TracksViewBinding
 import com.example.playlistmaker.search.domain.model.Track
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class TracksViewHolder(
     private val binding: TracksViewBinding,
-    private val onTrackClicked: ((Track) -> Unit)
+    private val onTrackClicked: ((Track) -> Unit),
+    private val onTrackClickedLong: ((Track) -> Unit)
 ) :
     RecyclerView.ViewHolder(binding.root) {
 
@@ -20,10 +23,18 @@ class TracksViewHolder(
             .into(binding.albumCoverImageView)
         binding.songNameTextView.text = item.trackName
         binding.artistNameTextView.text = item.artistName
-        binding.songTimeStampTextView.text = item.trackTimeMillis
+        binding.songTimeStampTextView.text = SimpleDateFormat(
+            "mm:ss",
+            Locale.getDefault()
+        ).format(item.trackTimeMillis)
 
         itemView.setOnClickListener {
             onTrackClicked.invoke(item)
+        }
+
+        itemView.setOnLongClickListener {
+            onTrackClickedLong.invoke(item)
+            true
         }
     }
 }

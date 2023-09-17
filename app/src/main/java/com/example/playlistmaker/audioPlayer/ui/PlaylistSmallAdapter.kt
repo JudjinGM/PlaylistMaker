@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.createPlaylist.domain.model.PlaylistModel
 import com.example.playlistmaker.databinding.PlaylistSmallViewBinding
 
-class PlaylistSmallAdapter(var onPlaylistClicked: ((PlaylistModel) -> Unit) = { }) :
+class PlaylistSmallAdapter(var onPlaylistClicked: (PlaylistModel) -> Unit = { }) :
     RecyclerView.Adapter<PlaylistSmallViewHolder>() {
     var playlists: List<PlaylistModel> = listOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistSmallViewHolder {

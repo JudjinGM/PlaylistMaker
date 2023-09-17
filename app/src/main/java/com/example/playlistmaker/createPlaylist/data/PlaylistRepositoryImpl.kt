@@ -36,7 +36,19 @@ class PlaylistRepositoryImpl(
         dataSource.removeTrackFromPlaylist(playlistId, trackToTracksEntityMapper.execute(track))
     }
 
-    override fun getAllPlaylists(): Flow<List<PlaylistModel>> {
+    override fun getPlaylistByIdFlow(playlistId: Long): Flow<PlaylistModel> {
+        return dataSource.getPlaylistByIdFlow(playlistId).map { playlistWithSongs ->
+            val playlistModel = playlistWithSongToPlaylistModelMapper.execute(playlistWithSongs)
+            playlistModel.tracks.forEach {
+                if (favoriteTracksDataSource.getAllFavoriteTrackId().contains(it.trackId)) {
+                    it.isFavorite = true
+                }
+            }
+            playlistModel
+        }
+    }
+
+    override fun getAllPlaylistsFlow(): Flow<List<PlaylistModel>> {
         return dataSource.getAllPlaylists().map { playlistWithSongsList: List<PlaylistWithSongs> ->
             playlistWithSongsList.map { playlistWithSongs ->
                 val playlistModel = playlistWithSongToPlaylistModelMapper.execute(playlistWithSongs)

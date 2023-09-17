@@ -27,6 +27,8 @@ import com.example.playlistmaker.search.domain.model.Track
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class AudioPlayerFragment : Fragment() {
 
@@ -113,7 +115,9 @@ class AudioPlayerFragment : Fragment() {
 
         binding.songNamePlayerTextView.text = track.trackName
         binding.artistNamePlayerTextView.text = track.artistName
-        binding.durationTextView.text = track.trackTimeMillis
+        binding.durationTextView.text = SimpleDateFormat(
+            "mm:ss", Locale.getDefault()
+        ).format(track.trackTimeMillis)
         binding.albumTextView.text = track.collectionName
         binding.yearTextView.text = track.getShortReleaseDate()
         binding.genreTextView.text = track.primaryGenreName

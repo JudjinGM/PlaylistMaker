@@ -60,4 +60,26 @@
     <string name="track_already_in_playlist">Трек уже добавлен в данный плейлист</string>
     <string name="cannot_save_image">Не удалось сохранить изображение</string>
     <string name="cannot_create_playlist">Не удалось создать плейлист</string>
+
+
+    <plurals name="tracks_plural">
+        <item quantity="zero"> %1$d треков</item>
+        <item quantity="one"> %1$d трек</item>
+        <item quantity="two"> %1$d трека </item>
+        <item quantity="few"> %1$d трека </item>
+        <item quantity="many"> %1$d треков</item>
+        <item quantity="other"> %1$d треков</item>
+    </plurals>
+
+    <plurals name="minute_plural">
+        <item quantity="zero"> %1$d минут</item>
+        <item quantity="one"> %1$d минута</item>
+        <item quantity="two"> %1$d минуты </item>
+        <item quantity="few"> %1$d минуты </item>
+        <item quantity="many"> %1$d минут</item>
+        <item quantity="other"> %1$d минут</item>
+    </plurals>
+    <string name="delete_track">Хотите удалить трек?</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
 </resources>
