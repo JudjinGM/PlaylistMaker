@@ -14,9 +14,9 @@ class PlaylistDataSourceImpl(private val dataBase: AppDatabase) : PlaylistsDataS
     }
 
     override suspend fun removePlaylist(playlistEntity: PlaylistEntity) {
-        dataBase.playlistDao().deletePlaylist(playlistEntity)
         dataBase.playlistTrackCrossRefDao()
             .deletePlaylistFromPlaylistTrackCrossRef(playlistEntity.playlistId)
+        dataBase.playlistDao().deletePlaylist(playlistEntity)
     }
 
     override fun getAllPlaylists(): Flow<List<PlaylistWithSongs>> {

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -14,6 +15,7 @@ import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistBinding
 import com.example.playlistmaker.playlist.ui.model.PlaylistState
+import com.example.playlistmaker.playlist.ui.model.SharePlaylistState
 import com.example.playlistmaker.playlist.ui.viewModel.PlaylistViewModel
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.ui.TracksAdapter
@@ -28,11 +30,13 @@ import kotlin.properties.Delegates
 class PlaylistFragment : Fragment() {
     private var playlistId by Delegates.notNull<Long>()
     private val args: PlaylistFragmentArgs by navArgs()
+
     private var _binding: FragmentPlaylistBinding? = null
+    private val binding get() = _binding!!
+
     private val viewModel: PlaylistViewModel by viewModel {
         parametersOf(args.playlistId)
     }
-    private val binding get() = _binding!!
 
     private lateinit var bottomSheetBehaviorTracks: BottomSheetBehavior<LinearLayout>
 
@@ -61,36 +65,15 @@ class PlaylistFragment : Fragment() {
 
         confirmDialog = MaterialAlertDialogBuilder(
             requireContext(), R.style.MaterialAlertDialogText
-        ).setTitle(R.string.delete_track)
-            .setNegativeButton(R.string.no) { _, _ ->
-            }
+        )
 
         viewModel.observePlaylistState().observe(viewLifecycleOwner) {
             renderPlaylistState(it)
         }
-    }
 
-    private fun onClicksInit() {
-        binding.backImageView.setOnClickListener {
-            findNavController().popBackStack()
+        viewModel.observeSharePlaylistState().observe(viewLifecycleOwner) {
+            renderSharePlaylistState(it)
         }
-
-        tracksAdapter?.onTrackClicked = {
-            val directions =
-                PlaylistFragmentDirections.actionPlaylistFragmentToAudioPlayerFragment(it)
-            findNavController().navigate(directions)
-        }
-
-        tracksAdapter?.onTrackClickedLong = {
-            deleteTrackConfirmDialogRequest(it)
-        }
-    }
-
-    private fun deleteTrackConfirmDialogRequest(it: Track) {
-        confirmDialog?.setPositiveButton(R.string.yes) { _, _ ->
-            viewModel.deleteTrack(it)
-        }
-        confirmDialog?.show()
     }
 
     private fun initBottomSheetTracks() {
@@ -109,6 +92,26 @@ class PlaylistFragment : Fragment() {
         binding.bottomSheetTracks.playlistsRecycleView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.bottomSheetTracks.playlistsRecycleView.adapter = tracksAdapter
+    }
+
+    private fun onClicksInit() {
+        binding.backImageView.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
+        tracksAdapter?.onTrackClicked = {
+            val directions =
+                PlaylistFragmentDirections.actionPlaylistFragmentToAudioPlayerFragment(it)
+            findNavController().navigate(directions)
+        }
+
+        tracksAdapter?.onTrackClickedLong = {
+            deleteTrackConfirmDialogRequest(it)
+        }
+
+        binding.shareImageView.setOnClickListener {
+            viewModel.sharePlaylistClicked()
+        }
     }
 
     private fun renderPlaylistState(state: PlaylistState) {
@@ -142,6 +145,28 @@ class PlaylistFragment : Fragment() {
 
             }
         }
+    }
+
+    private fun renderSharePlaylistState(state: SharePlaylistState) {
+        when (state) {
+            SharePlaylistState.Error -> showToast(getString(R.string.share_playlist_error))
+            SharePlaylistState.Success -> viewModel.sharePlaylist()
+        }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun deleteTrackConfirmDialogRequest(it: Track) {
+
+        confirmDialog?.setTitle(R.string.delete_track)
+            ?.setNegativeButton(R.string.no) { _, _ ->
+            }
+            ?.setPositiveButton(R.string.yes) { _, _ ->
+                viewModel.deleteTrack(it)
+            }
+        confirmDialog?.show()
     }
 
     private fun getTotalTracksTime(tracks: List<Track>): Int {

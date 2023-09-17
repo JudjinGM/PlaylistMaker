@@ -82,4 +82,5 @@
     <string name="delete_track">Хотите удалить трек?</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
+    <string name="share_playlist_error">В этом плейлисте нет списка треков, которым можно поделиться</string>
 </resources>

@@ -9,7 +9,8 @@ val playlistUiModule = module {
         PlaylistViewModel(
             playlistId = playlistID,
             getPlaylistUseCase = get(),
-            deleteTrackFromPlaylistUseCase = get()
+            deleteTrackFromPlaylistUseCase = get(),
+            sharePlaylistUseCase = get()
         )
     }
 }

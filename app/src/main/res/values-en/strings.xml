@@ -70,4 +70,5 @@
     <string name="delete_track">Delete tack?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="share_playlist_error">This playlist does not have a list of tracks to share</string>
 </resources>

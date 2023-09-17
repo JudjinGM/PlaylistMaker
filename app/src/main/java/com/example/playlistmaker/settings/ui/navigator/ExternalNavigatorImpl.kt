@@ -3,6 +3,7 @@ package com.example.playlistmaker.settings.ui.navigator
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import com.example.playlistmaker.createPlaylist.domain.model.PlaylistModel
 import com.example.playlistmaker.share.domain.navigator.ExternalNavigator
 import com.example.playlistmaker.share.domain.repository.ShareResourceRepository
 
@@ -39,6 +40,27 @@ class ExternalNavigatorImpl(
         agreementIntent.data = Uri.parse(shareResourceRepository.getTermsLink())
         agreementIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         context.startActivity(agreementIntent)
+    }
+
+    override fun sharePlaylist(playlistModel: PlaylistModel) {
+
+        val playlistNameAndDescription = playlistModel.playlistName +
+                "\n" + playlistModel.playlistDescription
+        var playlistTracks = ""
+
+        playlistModel.tracks.forEachIndexed { index, track ->
+            playlistTracks += "\n$index. ${track.artistName} - ${track.trackName}"
+        }
+
+        val playlistTextToShare = playlistNameAndDescription + playlistTracks
+
+        val shareIntent = Intent(Intent.ACTION_SEND)
+        shareIntent.type = INTENT_EMAIL_TYPE
+        shareIntent.putExtra(Intent.EXTRA_TEXT, playlistTextToShare)
+
+        val chooserIntent = Intent.createChooser(shareIntent, CHOOSER_TITLE)
+        chooserIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        context.startActivity(chooserIntent)
     }
 
     private companion object {
