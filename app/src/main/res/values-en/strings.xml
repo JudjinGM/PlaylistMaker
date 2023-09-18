@@ -73,5 +73,9 @@
     <string name="share_playlist_error">This playlist does not have a list of tracks to share</string>
     <string name="share">Share</string>
     <string name="edit_info">Edit info</string>
-    <string name="delete_playlist">Delete playlist</string>
+    <string name="delete_playlist_title">Delete playlist</string>
+    <string name="delete_track_title">Delete track</string>
+    <string name="delete_playlist">Delete playlist «%1s»?</string>
+    <string name="yes_delete">Delete</string>
+
 </resources>

@@ -72,4 +72,8 @@ class PlaylistViewModel(
     fun sharePlaylist() {
         playlistModel?.let { sharePlaylistUseCase.execute(it) }
     }
+
+    fun getPlaylistName(): String {
+        return playlistModel?.playlistName ?: ""
+    }
 }

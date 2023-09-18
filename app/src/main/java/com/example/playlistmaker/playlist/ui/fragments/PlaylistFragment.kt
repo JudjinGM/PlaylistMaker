@@ -159,7 +159,7 @@ class PlaylistFragment : Fragment() {
 
         }
         binding.bottomSheetMenu.deletePlaylistTextView.setOnClickListener {
-            viewModel.deletePlaylist()
+            deletePlaylistConfirmDialogRequest()
         }
     }
 
@@ -217,11 +217,23 @@ class PlaylistFragment : Fragment() {
     }
 
     private fun deleteTrackConfirmDialogRequest(it: Track) {
+        confirmDialog?.setTitle(R.string.delete_track_title)
+            ?.setMessage(R.string.delete_track)
+            ?.setNegativeButton(R.string.cancel) { _, _ ->
+            }?.setPositiveButton(R.string.yes_delete) { _, _ ->
+                viewModel.deleteTrack(it)
+            }
+        confirmDialog?.show()
+    }
 
-        confirmDialog?.setTitle(R.string.delete_track)?.setNegativeButton(R.string.no) { _, _ ->
-        }?.setPositiveButton(R.string.yes) { _, _ ->
-            viewModel.deleteTrack(it)
-        }
+    private fun deletePlaylistConfirmDialogRequest() {
+
+        confirmDialog?.setTitle(R.string.delete_playlist_title)
+            ?.setMessage(resources.getString(R.string.delete_playlist, viewModel.getPlaylistName()))
+            ?.setNegativeButton(R.string.no) { _, _ ->
+            }?.setPositiveButton(R.string.yes) { _, _ ->
+                viewModel.deletePlaylist()
+            }
         confirmDialog?.show()
     }
 
