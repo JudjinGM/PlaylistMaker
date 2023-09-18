@@ -3,13 +3,15 @@ package com.example.playlistmaker.settings.ui.navigator
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import com.example.playlistmaker.R
 import com.example.playlistmaker.createPlaylist.domain.model.PlaylistModel
 import com.example.playlistmaker.share.domain.navigator.ExternalNavigator
 import com.example.playlistmaker.share.domain.repository.ShareResourceRepository
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class ExternalNavigatorImpl(
-    private val context: Context,
-    private val shareResourceRepository: ShareResourceRepository
+    private val context: Context, private val shareResourceRepository: ShareResourceRepository
 ) : ExternalNavigator {
     override fun shareLink() {
         val shareIntent = Intent(Intent.ACTION_SEND)
@@ -52,10 +54,17 @@ class ExternalNavigatorImpl(
         } else {
             playlistName + "\n" + playlistDescription
         }
+        playlistNameAndDescription += "\n" + context.resources.getQuantityString(
+            R.plurals.tracks_plural, playlistModel.tracks.size, playlistModel.tracks.size
+        )
         var playlistTracks = ""
 
         playlistModel.tracks.forEachIndexed { index, track ->
-            playlistTracks += "\n${index + 1}. ${track.artistName} - ${track.trackName}"
+            playlistTracks += "\n${index + 1}. ${track.artistName} - ${track.trackName} ${
+                SimpleDateFormat(
+                    "mm:ss", Locale.getDefault()
+                ).format(track.trackTimeMillis)
+            }"
         }
 
         val playlistTextToShare = playlistNameAndDescription + playlistTracks

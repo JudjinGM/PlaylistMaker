@@ -26,16 +26,6 @@
             android:orientation="vertical"
             app:layout_constraintGuide_end="@dimen/main_margin_for_content" />
 
-        <ImageView
-            android:id="@+id/backImageView"
-            style="@style/ArrowBackImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/title_image_margin"
-            android:layout_marginTop="@dimen/title_image_margin"
-            android:contentDescription="@string/back_button_image"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/playlistCoverPlayerImageView"
@@ -48,6 +38,18 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/backImageView"
+            style="@style/ArrowBackImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/title_image_margin"
+            android:layout_marginTop="@dimen/title_image_margin"
+            android:contentDescription="@string/back_button_image"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/yp_black" />
 
         <TextView
             android:id="@+id/playlistNameTextView"
