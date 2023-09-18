@@ -44,12 +44,18 @@ class ExternalNavigatorImpl(
 
     override fun sharePlaylist(playlistModel: PlaylistModel) {
 
-        val playlistNameAndDescription = playlistModel.playlistName +
-                "\n" + playlistModel.playlistDescription
+        val playlistName = playlistModel.playlistName
+        val playlistDescription = playlistModel.playlistDescription
+        var playlistNameAndDescription = ""
+        playlistNameAndDescription += if (playlistDescription.isEmpty()) {
+            playlistName
+        } else {
+            playlistName + "\n" + playlistDescription
+        }
         var playlistTracks = ""
 
         playlistModel.tracks.forEachIndexed { index, track ->
-            playlistTracks += "\n$index. ${track.artistName} - ${track.trackName}"
+            playlistTracks += "\n${index + 1}. ${track.artistName} - ${track.trackName}"
         }
 
         val playlistTextToShare = playlistNameAndDescription + playlistTracks

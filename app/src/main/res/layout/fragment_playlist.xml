@@ -8,6 +8,7 @@
     tools:context=".playlist.ui.fragments.PlaylistFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/fragment_playlist_constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -109,36 +110,52 @@
             android:id="@+id/shareImageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/share_playlist"
             android:layout_marginTop="@dimen/margin_16"
-            app:layout_constraintTop_toBottomOf="@id/tracksTimeTextView"
-            app:layout_constraintStart_toEndOf="@id/guidLineStart" />
+            android:src="@drawable/share_playlist"
+            app:layout_constraintStart_toEndOf="@id/guidLineStart"
+            app:layout_constraintTop_toBottomOf="@id/tracksTimeTextView" />
 
         <ImageView
             android:id="@+id/moreImageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/more_playlist"
-            android:layout_marginTop="@dimen/margin_16"
             android:layout_marginStart="@dimen/margin_16"
-            app:layout_constraintTop_toBottomOf="@id/tracksTimeTextView"
-            app:layout_constraintStart_toEndOf="@id/shareImageView" />
+            android:layout_marginTop="@dimen/margin_16"
+            android:src="@drawable/more_playlist"
+            app:layout_constraintStart_toEndOf="@id/shareImageView"
+            app:layout_constraintTop_toBottomOf="@id/tracksTimeTextView" />
 
         <View
             android:id="@+id/supportingView"
             android:layout_width="match_parent"
             android:layout_height="@dimen/zero_dp"
+            android:layout_marginTop="@dimen/margin_24"
             android:background="#00000000"
             android:visibility="visible"
-            android:layout_marginTop="@dimen/margin_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/shareImageView" />
+
+        <View
+            android:id="@+id/overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:background="#99000000"
+            android:visibility="gone" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <include
         android:id="@+id/bottom_sheet_tracks"
         layout="@layout/bottom_sheet_tracks" />
+
+    <include
+        android:id="@+id/bottom_sheet_menu"
+        layout="@layout/bottom_sheet_playlist_menu" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

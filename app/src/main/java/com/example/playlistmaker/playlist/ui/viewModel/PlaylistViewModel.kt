@@ -5,19 +5,22 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.createPlaylist.domain.model.PlaylistModel
+import com.example.playlistmaker.playlist.domain.useCase.DeletePlaylistUseCase
 import com.example.playlistmaker.playlist.domain.useCase.DeleteTrackFromPlaylistUseCase
 import com.example.playlistmaker.playlist.domain.useCase.GetPlaylistUseCase
 import com.example.playlistmaker.playlist.domain.useCase.SharePlaylistUseCase
 import com.example.playlistmaker.playlist.ui.model.PlaylistState
 import com.example.playlistmaker.playlist.ui.model.SharePlaylistState
 import com.example.playlistmaker.search.domain.model.Track
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class PlaylistViewModel(
     private val playlistId: Long,
     private val getPlaylistUseCase: GetPlaylistUseCase,
     private val deleteTrackFromPlaylistUseCase: DeleteTrackFromPlaylistUseCase,
-    private val sharePlaylistUseCase: SharePlaylistUseCase
+    private val deletePlaylistUseCase: DeletePlaylistUseCase,
+    private val sharePlaylistUseCase: SharePlaylistUseCase,
 ) : ViewModel() {
 
     private var playlistStateLiveData = MutableLiveData<PlaylistState>()
@@ -44,6 +47,17 @@ class PlaylistViewModel(
     fun deleteTrack(track: Track) {
         viewModelScope.launch {
             deleteTrackFromPlaylistUseCase.execute(playlistId, track)
+        }
+    }
+
+    fun deletePlaylist() {
+        viewModelScope.launch {
+            val resultDeferred = async {
+                playlistModel?.let { deletePlaylistUseCase.execute(playlistId, it) }
+            }
+            resultDeferred.await()
+            playlistStateLiveData.value = PlaylistState.CloseScreen
+
         }
     }
 

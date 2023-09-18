@@ -23,7 +23,7 @@ class PlaylistDataSourceImpl(private val dataBase: AppDatabase) : PlaylistsDataS
         return dataBase.playlistDao().getPlaylistWithSongsFlow()
     }
 
-    override fun getPlaylistByIdFlow(playlistId: Long): Flow<PlaylistWithSongs> {
+    override fun getPlaylistByIdFlow(playlistId: Long): Flow<PlaylistWithSongs?> {
         return dataBase.playlistDao().getPlaylistByIdFlow(playlistId)
     }
 
@@ -35,7 +35,6 @@ class PlaylistDataSourceImpl(private val dataBase: AppDatabase) : PlaylistsDataS
             )
         )
     }
-
 
     override suspend fun removeTrackFromPlaylist(playlistId: Long, trackEntity: TrackEntity) {
         dataBase.playlistTrackCrossRefDao()

@@ -50,7 +50,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/content_margin_top"
-        android:text="@string/share"
+        android:text="@string/share_app"
         app:layout_constraintStart_toStartOf="@id/guidLineStart"
         app:layout_constraintTop_toBottomOf="@id/text_dark_theme" />
 
@@ -59,7 +59,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/share_image_margin_end"
-        android:contentDescription="@string/share"
+        android:contentDescription="@string/share_app"
         android:src="@drawable/share"
         app:layout_constraintBottom_toBottomOf="@id/text_share_app"
         app:layout_constraintEnd_toEndOf="parent"

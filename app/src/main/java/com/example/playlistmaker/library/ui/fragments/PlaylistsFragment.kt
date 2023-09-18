@@ -14,14 +14,14 @@ import com.example.playlistmaker.databinding.FragmentPlaylistsBinding
 import com.example.playlistmaker.library.ui.PlaylistAdapter
 import com.example.playlistmaker.library.ui.model.PlaylistsError
 import com.example.playlistmaker.library.ui.model.PlaylistsState
-import com.example.playlistmaker.library.ui.view_model.PlaylistViewModel
+import com.example.playlistmaker.library.ui.view_model.PlaylistsViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistsFragment : Fragment() {
     private var _binding: FragmentPlaylistsBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: PlaylistViewModel by viewModel()
+    private val viewModel: PlaylistsViewModel by viewModel()
 
     private var playlistAdapter: PlaylistAdapter? = null
 

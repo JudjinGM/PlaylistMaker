@@ -9,7 +9,7 @@ interface PlaylistsDataSource {
     suspend fun addPlaylist(playlistEntity: PlaylistEntity)
     suspend fun removePlaylist(playlistEntity: PlaylistEntity)
     fun getAllPlaylists(): Flow<List<PlaylistWithSongs>>
-    fun getPlaylistByIdFlow(playlistId: Long): Flow<PlaylistWithSongs>
+    fun getPlaylistByIdFlow(playlistId: Long): Flow<PlaylistWithSongs?>
 
     suspend fun addTrackToPlaylist(playlistId: Long, trackEntity: TrackEntity)
     suspend fun removeTrackFromPlaylist(playlistId: Long, trackEntity: TrackEntity)

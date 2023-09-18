@@ -1,17 +1,18 @@
 package com.example.playlistmaker.playlist.ui.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistBinding
 import com.example.playlistmaker.playlist.ui.model.PlaylistState
@@ -39,6 +40,8 @@ class PlaylistFragment : Fragment() {
     }
 
     private lateinit var bottomSheetBehaviorTracks: BottomSheetBehavior<LinearLayout>
+    private lateinit var bottomSheetBehaviorMenu: BottomSheetBehavior<LinearLayout>
+
 
     private var tracksAdapter: TracksAdapter? = null
 
@@ -59,7 +62,8 @@ class PlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initBottomSheetTracks()
+        initBottomSheetsTracks()
+        initBottomSheetsMenu()
         initRecycleView()
         onClicksInit()
 
@@ -76,16 +80,47 @@ class PlaylistFragment : Fragment() {
         }
     }
 
-    private fun initBottomSheetTracks() {
-        val peekHeight = binding.supportingView.measuredHeight
-        val bottomSheetContainer = binding.bottomSheetTracks.bottomsheetLinearLayout
+    private fun initBottomSheetsTracks() {
+//        val peekHeight = binding.supportingView.measuredHeight
+        val bottomSheetContainer = binding.bottomSheetTracks.bottomSheetTracksLinearLayout
         bottomSheetBehaviorTracks = BottomSheetBehavior.from(bottomSheetContainer)
-//        bottomSheetBehaviorTracks.peekHeight = peekHeight
-        Log.d("judjin", "$peekHeight")
+////        bottomSheetBehaviorTracks.peekHeight = peekHeight
+//        Log.d("judjin", "$peekHeight")
 
         bottomSheetBehaviorTracks.state = BottomSheetBehavior.STATE_COLLAPSED
 
     }
+
+    private fun initBottomSheetsMenu() {
+        val bottomSheetContainer = binding.bottomSheetMenu.bottomSheetMenuLinearLayout
+        bottomSheetBehaviorMenu = BottomSheetBehavior.from(bottomSheetContainer)
+        bottomSheetBehaviorMenu.state = BottomSheetBehavior.STATE_HIDDEN
+
+        bottomSheetBehaviorMenu.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        binding.overlay.isVisible = false
+                        binding.bottomSheetTracks.bottomSheetTracksLinearLayout.isEnabled = true
+                        binding.fragmentPlaylistConstraintLayout.isEnabled = true
+                    }
+
+                    else -> {
+                        binding.overlay.isVisible = true
+                        binding.bottomSheetTracks.bottomSheetTracksLinearLayout.isEnabled = false
+                        binding.fragmentPlaylistConstraintLayout.isEnabled = false
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+            }
+        })
+
+        binding.bottomSheetMenu.playlistView.playlistNameTextView
+    }
+
 
     private fun initRecycleView() {
         tracksAdapter = TracksAdapter()
@@ -112,38 +147,61 @@ class PlaylistFragment : Fragment() {
         binding.shareImageView.setOnClickListener {
             viewModel.sharePlaylistClicked()
         }
+
+        binding.moreImageView.setOnClickListener {
+            bottomSheetBehaviorMenu.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+
+        binding.bottomSheetMenu.shareTextView.setOnClickListener {
+            viewModel.sharePlaylistClicked()
+        }
+        binding.bottomSheetMenu.editInfoTextView.setOnClickListener {
+
+        }
+        binding.bottomSheetMenu.deletePlaylistTextView.setOnClickListener {
+            viewModel.deletePlaylist()
+        }
     }
 
     private fun renderPlaylistState(state: PlaylistState) {
         when (state) {
-            is PlaylistState.Loading -> {
-
-            }
-
-            is PlaylistState.Error -> {
-
-            }
-
             is PlaylistState.Success -> {
+                if (state.playlistModel.playlistName.isNotEmpty()) {
 
-                val minutesCount = getTotalTracksTime(state.playlistModel.tracks)
-                val tracksCount = state.playlistModel.tracks.size
+                    val minutesCount = getTotalTracksTime(state.playlistModel.tracks)
+                    val tracksCount = state.playlistModel.tracks.size
 
-                Glide.with(this).load(state.playlistModel.playlistCoverImage)
-                    .placeholder(R.drawable.album).centerInside()
-                    .into(binding.playlistCoverPlayerImageView)
-                binding.playlistNameTextView.text = state.playlistModel.playlistName
-                binding.playlistDescriptionTextView.text = state.playlistModel.playlistDescription
-                binding.tracksTimeTextView.text = resources.getQuantityString(
-                    R.plurals.minute_plural, minutesCount, minutesCount
-                )
-                binding.tracksCountTextView.text = resources.getQuantityString(
-                    R.plurals.tracks_plural, tracksCount, tracksCount
-                )
+                    Glide.with(this).load(state.playlistModel.playlistCoverImage)
+                        .placeholder(R.drawable.album).centerCrop()
+                        .into(binding.playlistCoverPlayerImageView)
+                    binding.playlistNameTextView.text = state.playlistModel.playlistName
+                    binding.playlistDescriptionTextView.text =
+                        state.playlistModel.playlistDescription
+                    binding.tracksTimeTextView.text = resources.getQuantityString(
+                        R.plurals.minute_plural, minutesCount, minutesCount
+                    )
+                    binding.tracksCountTextView.text = resources.getQuantityString(
+                        R.plurals.tracks_plural, tracksCount, tracksCount
+                    )
+                    //init menu playlist view
+                    Glide.with(this).load(state.playlistModel.playlistCoverImage)
+                        .placeholder(R.drawable.no_album).centerCrop()
+                        .transform(RoundedCorners(resources.getDimensionPixelSize(R.dimen.album_cover_corner_radius)))
+                        .into(binding.bottomSheetMenu.playlistView.playlistCoverImageView)
 
-                tracksAdapter?.updateAdapter(state.playlistModel.tracks)
+                    binding.bottomSheetMenu.playlistView.playlistNameTextView.text =
+                        state.playlistModel.playlistName
+                    binding.bottomSheetMenu.playlistView.trackCountTextView.text =
+                        resources.getQuantityString(
+                            R.plurals.tracks_plural, tracksCount, tracksCount
+                        )
+                    //update recycle view
+                    tracksAdapter?.updateAdapter(state.playlistModel.tracks)
+                }
 
             }
+
+            PlaylistState.CloseScreen -> findNavController().popBackStack()
         }
     }
 
@@ -155,17 +213,15 @@ class PlaylistFragment : Fragment() {
     }
 
     private fun showToast(message: String) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
 
     private fun deleteTrackConfirmDialogRequest(it: Track) {
 
-        confirmDialog?.setTitle(R.string.delete_track)
-            ?.setNegativeButton(R.string.no) { _, _ ->
-            }
-            ?.setPositiveButton(R.string.yes) { _, _ ->
-                viewModel.deleteTrack(it)
-            }
+        confirmDialog?.setTitle(R.string.delete_track)?.setNegativeButton(R.string.no) { _, _ ->
+        }?.setPositiveButton(R.string.yes) { _, _ ->
+            viewModel.deleteTrack(it)
+        }
         confirmDialog?.show()
     }
 

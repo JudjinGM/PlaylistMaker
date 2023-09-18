@@ -126,7 +126,7 @@ class AudioPlayerFragment : Fragment() {
 
 
     private fun initBottomSheet() {
-        val bottomSheetContainer = binding.bottomSheetLayout.bottomsheetLinearLayout
+        val bottomSheetContainer = binding.bottomSheetLayout.bottomSheetAddTracksLinearLayout
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer)
 
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN

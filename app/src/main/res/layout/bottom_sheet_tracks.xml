@@ -2,14 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/bottomsheetLinearLayout"
+    android:id="@+id/bottomSheetTracksLinearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/bottom_sheet_background"
     style="@style/BottomSheetStyle"
     app:behavior_hideable="false"
-    app:behavior_peekHeight="160dp"
+    app:behavior_peekHeight="240dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
     <ImageView

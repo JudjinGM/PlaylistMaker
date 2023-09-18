@@ -24,8 +24,13 @@ class PlaylistRepositoryImpl(
         dataSource.addPlaylist(playlistModelToPlaylistEntityMapper.execute(playlistModel))
     }
 
-    override suspend fun deletePlaylist(playlistModel: PlaylistModel) {
-        dataSource.removePlaylist(playlistModelToPlaylistEntityMapper.execute(playlistModel))
+    override suspend fun deletePlaylist(playlistId: Long, playlistModel: PlaylistModel) {
+        dataSource.removePlaylist(
+            playlistModelToPlaylistEntityMapper.execute(
+                playlistModel,
+                playlistId
+            )
+        )
     }
 
     override suspend fun addTrackToPlayList(playlistId: Long, track: Track) {

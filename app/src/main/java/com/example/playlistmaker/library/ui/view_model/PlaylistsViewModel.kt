@@ -9,7 +9,7 @@ import com.example.playlistmaker.library.ui.model.PlaylistsError
 import com.example.playlistmaker.library.ui.model.PlaylistsState
 import kotlinx.coroutines.launch
 
-class PlaylistViewModel(private val getPlaylistListUseCase: GetPlaylistListUseCase) : ViewModel() {
+class PlaylistsViewModel(private val getPlaylistListUseCase: GetPlaylistListUseCase) : ViewModel() {
 
     private var playlistState = MutableLiveData<PlaylistsState>()
 

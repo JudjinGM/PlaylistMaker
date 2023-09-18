@@ -6,7 +6,7 @@
     <string name="dark_theme">Темная тема</string>
     <string name="write_to_support">Написать в поддержку</string>
     <string name="term_of_use">Пользовательское соглашение</string>
-    <string name="share">Поделиться приложением</string>
+    <string name="share_app">Поделиться приложением</string>
     <string name="share_link" translatable="false">"https://practicum.yandex.ru/android-developer/"</string>
     <string name="mail_to_support_subject">"Сообщение разработчикам и разработчицам приложения Playlist Maker"</string>
     <string name="mail_to_support_message">Спасибо разработчикам и разработчицам за крутое приложение!</string>
@@ -83,4 +83,7 @@
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="share_playlist_error">В этом плейлисте нет списка треков, которым можно поделиться</string>
+    <string name="share">Поделиться</string>
+    <string name="edit_info">Редактировать информацию</string>
+    <string name="delete_playlist">Удалить плейлист</string>
 </resources>
