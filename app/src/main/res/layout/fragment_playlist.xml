@@ -126,7 +126,7 @@
             app:layout_constraintTop_toBottomOf="@id/tracksTimeTextView" />
 
         <View
-            android:id="@+id/supportingView"
+            android:id="@+id/supportingViewTrack"
             android:layout_width="match_parent"
             android:layout_height="@dimen/zero_dp"
             android:layout_marginTop="@dimen/margin_24"
@@ -138,15 +138,26 @@
             app:layout_constraintTop_toBottomOf="@id/shareImageView" />
 
         <View
+            android:id="@+id/supportingViewMenu"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/zero_dp"
+            android:background="#00000000"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/playlistDescriptionTextView" />
+
+        <View
             android:id="@+id/overlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             android:background="#99000000"
-            android:visibility="gone" />
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

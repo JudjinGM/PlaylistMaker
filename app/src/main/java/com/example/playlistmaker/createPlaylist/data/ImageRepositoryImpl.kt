@@ -10,4 +10,8 @@ class ImageRepositoryImpl(private val imagePrivateDataSource: ImagePrivateDataSo
     override suspend fun saveImageToPrivate(uri: Uri): ResultForFile {
         return imagePrivateDataSource.saveToPrivateStorage(uri)
     }
+
+    override suspend fun deleteImageFromPrivate(uri: Uri) {
+        imagePrivateDataSource.deleteImageFromPrivateStorage(uri)
+    }
 }

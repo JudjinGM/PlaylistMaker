@@ -1,40 +1,72 @@
 package com.example.playlistmaker.editPlaylist.ui.viewModel
 
-import android.net.Uri
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.createPlaylist.domain.model.PlaylistModel
 import com.example.playlistmaker.createPlaylist.domain.useCase.CreatePlaylistUseCase
 import com.example.playlistmaker.createPlaylist.domain.useCase.SaveImageToPrivateStorageUseCase
+import com.example.playlistmaker.createPlaylist.ui.model.CreateButtonState
 import com.example.playlistmaker.createPlaylist.ui.viewModel.CreatePlaylistViewModel
-import com.example.playlistmaker.playlist.domain.useCase.GetPlaylistFlowUseCase
+import com.example.playlistmaker.editPlaylist.domain.useCase.DeleteImageFromPrivateStorageUseCase
+import com.example.playlistmaker.editPlaylist.domain.useCase.GetPlaylistByIdUseCase
+import com.example.playlistmaker.editPlaylist.domain.useCase.UpdatePlaylistUseCase
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class EditPlaylistViewModel(
     private val playlistId: Long,
-    private val getPlaylistFlowUseCase: GetPlaylistFlowUseCase,
+    private val getPlaylistByIdUseCase: GetPlaylistByIdUseCase,
     createPlaylistUseCase: CreatePlaylistUseCase,
-    saveImageToPrivateStorageUseCase: SaveImageToPrivateStorageUseCase
+    saveImageToPrivateStorageUseCase: SaveImageToPrivateStorageUseCase,
+    private val updatePlaylistUseCase: UpdatePlaylistUseCase,
+    private val deleteImageFromPrivateStorageUseCase: DeleteImageFromPrivateStorageUseCase
 ) : CreatePlaylistViewModel(createPlaylistUseCase, saveImageToPrivateStorageUseCase) {
+
+    lateinit var playlistModel: PlaylistModel
+    private val playlistInitState = MutableLiveData<PlaylistModel>()
 
     init {
         viewModelScope.launch {
-            getPlaylistFlowUseCase.execute(playlistId).collect {
-                playlistName = it.playlistName
-                playlistDescription = it.playlistDescription
-                playlistCoverSavedToStorage = it.playlistCoverImage
+            val resultDeferred = async {
+                playlistModel = getPlaylistByIdUseCase.execute(playlistId)
+
             }
+            resultDeferred.await()
+            playlistInitState.value = playlistModel
         }
     }
 
-    fun setNameInput(): String {
-        return playlistName
-    }
+    fun observePlaylistInitState(): LiveData<PlaylistModel> = playlistInitState
 
-    fun setNameDescription(): String {
-        return playlistDescription
-    }
+    override fun createButtonClicked() {
+        if (playlistCoverLoaded != null) {
+            playlistCoverLoaded?.let {
+                saveCoverImageToStorage(it)
+                val uriForFileDelete = playlistModel.playlistCoverImage
+                if (uriForFileDelete != null) {
+                    viewModelScope.launch {
+                        deleteImageFromPrivateStorageUseCase.execute(uriForFileDelete)
+                    }
+                }
+            }
 
-    fun setCoverImage(): Uri? {
-        return playlistCoverSavedToStorage
-    }
+        } else playlistCoverSavedToStorage = playlistModel.playlistCoverImage
 
+        if (createButtonState.value == CreateButtonState.Enabled) {
+            viewModelScope.launch {
+                val resultDeferred = async {
+                    updatePlaylistUseCase.execute(
+                        playlistId,
+                        playlistName,
+                        playlistDescription,
+                        playlistCoverSavedToStorage,
+                        playlistModel.tracks
+                    )
+                }
+                resultDeferred.await()
+                closeScreen()
+            }
+        }
+    }
 }

@@ -6,6 +6,7 @@ import com.example.playlistmaker.audioPlayer.di.audioPlayerUiModule
 import com.example.playlistmaker.createPlaylist.di.createPlaylistDataModule
 import com.example.playlistmaker.createPlaylist.di.createPlaylistDomainModule
 import com.example.playlistmaker.createPlaylist.di.createPlaylistUiModule
+import com.example.playlistmaker.editPlaylist.di.editPlaylistDomainModule
 import com.example.playlistmaker.editPlaylist.di.editPlaylistUiModule
 import com.example.playlistmaker.library.di.libraryDataModule
 import com.example.playlistmaker.library.di.libraryDomainModule
@@ -53,6 +54,7 @@ class App : Application() {
                     createPlaylistUiModule,
                     playlistDomainModule,
                     playlistUiModule,
+                    editPlaylistDomainModule,
                     editPlaylistUiModule
                 )
             )

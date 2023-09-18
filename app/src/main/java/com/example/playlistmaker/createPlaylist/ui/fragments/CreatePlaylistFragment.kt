@@ -58,16 +58,8 @@ open class CreatePlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        confirmDialog = MaterialAlertDialogBuilder(
-            requireContext(), R.style.MaterialAlertDialogText
-        ).setTitle(R.string.finish_creating_playlist)
-            .setMessage(R.string.all_unsaved_data_will_be_lost)
-            .setNegativeButton(R.string.cancel) { _, _ ->
 
-            }.setPositiveButton(R.string.finish) { _, _ ->
-                findNavController().popBackStack()
-            }
-
+        initConfirmDialog()
         initView()
         initMediaPicker()
 
@@ -108,6 +100,18 @@ open class CreatePlaylistFragment : Fragment() {
 
         binding.playlistDescriptionTextLayout.defaultHintTextColor =
             ContextCompat.getColorStateList(requireContext(), R.color.hint_state_color_selector)
+    }
+
+    open fun initConfirmDialog() {
+        confirmDialog = MaterialAlertDialogBuilder(
+            requireContext(), R.style.CustomDialogTheme
+        ).setTitle(R.string.finish_creating_playlist)
+            .setMessage(R.string.all_unsaved_data_will_be_lost)
+            .setNegativeButton(R.string.cancel) { _, _ ->
+
+            }.setPositiveButton(R.string.finish) { _, _ ->
+                findNavController().popBackStack()
+            }
     }
 
 
@@ -197,7 +201,7 @@ open class CreatePlaylistFragment : Fragment() {
         }
     }
 
-    private fun renderToast(state: CreatePlaylistState) {
+    open fun renderToast(state: CreatePlaylistState) {
         when (state) {
             is CreatePlaylistState.Success -> showToast(
                 requireContext().getString(
@@ -220,7 +224,7 @@ open class CreatePlaylistFragment : Fragment() {
         }
     }
 
-    private fun renderBackBehaviour(state: BackState) {
+    open fun renderBackBehaviour(state: BackState) {
         when (state) {
             BackState.Error -> {
                 requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
@@ -237,7 +241,7 @@ open class CreatePlaylistFragment : Fragment() {
                     viewModel.closeScreen()
                 }
                 binding.backImageView.setOnClickListener {
-                    findNavController().popBackStack()
+                    viewModel.closeScreen()
                 }
 
             }
@@ -261,7 +265,7 @@ open class CreatePlaylistFragment : Fragment() {
         }
     }
 
-    private fun showToast(message: String) {
+    protected fun showToast(message: String) {
         Toast.makeText(
             context, message, Toast.LENGTH_LONG
         ).show()

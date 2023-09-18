@@ -37,8 +37,11 @@
         <item name="android:backgroundTint">@color/yp_black</item>
     </style>
 
-    <style name="MaterialAlertDialogText" parent="@style/MaterialAlertDialog.MaterialComponents.Title.Text">
-        <item name="android:textColor">@color/yp_black</item>
+
+    <style name="TitleStyle" parent="@style/MaterialAlertDialog.MaterialComponents.Title.Text">
+        <item name="android:maxLines">2</item>
+        <item name="android:singleLine">false</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
     <style name="BottomSheetStyle">

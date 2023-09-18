@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.createPlaylist.domain.model.PlaylistModel
+import com.example.playlistmaker.editPlaylist.domain.useCase.DeleteImageFromPrivateStorageUseCase
 import com.example.playlistmaker.playlist.domain.useCase.DeletePlaylistUseCase
 import com.example.playlistmaker.playlist.domain.useCase.DeleteTrackFromPlaylistUseCase
 import com.example.playlistmaker.playlist.domain.useCase.GetPlaylistFlowUseCase
@@ -21,6 +22,7 @@ class PlaylistViewModel(
     private val deleteTrackFromPlaylistUseCase: DeleteTrackFromPlaylistUseCase,
     private val deletePlaylistUseCase: DeletePlaylistUseCase,
     private val sharePlaylistUseCase: SharePlaylistUseCase,
+    private val deleteImageFromPrivateStorageUseCase: DeleteImageFromPrivateStorageUseCase
 ) : ViewModel() {
 
     private var playlistStateLiveData = MutableLiveData<PlaylistState>()
@@ -54,10 +56,12 @@ class PlaylistViewModel(
         viewModelScope.launch {
             val resultDeferred = async {
                 playlistModel?.let { deletePlaylistUseCase.execute(playlistId, it) }
+                playlistModel?.playlistCoverImage?.let {
+                    deleteImageFromPrivateStorageUseCase.execute(it)
+                }
             }
             resultDeferred.await()
             playlistStateLiveData.value = PlaylistState.CloseScreen
-
         }
     }
 

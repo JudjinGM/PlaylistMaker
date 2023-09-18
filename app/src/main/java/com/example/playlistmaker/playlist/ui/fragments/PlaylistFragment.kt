@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.view.isVisible
@@ -47,6 +48,7 @@ class PlaylistFragment : Fragment() {
 
     private var confirmDialog: MaterialAlertDialogBuilder? = null
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         playlistId = args.playlistId
@@ -68,7 +70,7 @@ class PlaylistFragment : Fragment() {
         onClicksInit()
 
         confirmDialog = MaterialAlertDialogBuilder(
-            requireContext(), R.style.MaterialAlertDialogText
+            requireContext(), R.style.CustomDialogTheme
         )
 
         viewModel.observePlaylistState().observe(viewLifecycleOwner) {
@@ -81,19 +83,36 @@ class PlaylistFragment : Fragment() {
     }
 
     private fun initBottomSheetsTracks() {
-//        val peekHeight = binding.supportingView.measuredHeight
+        var bottomSheetPeekHeight = 0
+
+        val viewTreeObserver: ViewTreeObserver = binding.supportingViewTrack.viewTreeObserver
+        if (viewTreeObserver.isAlive) {
+            viewTreeObserver.addOnGlobalLayoutListener(object :
+                ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    if (binding.supportingViewTrack.width > 0 && binding.supportingViewTrack.height > 0) {
+                        bottomSheetPeekHeight = binding.supportingViewTrack.height
+                        bottomSheetBehaviorTracks.peekHeight = bottomSheetPeekHeight
+
+                        viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    }
+                }
+            })
+        }
+
         val bottomSheetContainer = binding.bottomSheetTracks.bottomSheetTracksLinearLayout
         bottomSheetBehaviorTracks = BottomSheetBehavior.from(bottomSheetContainer)
-////        bottomSheetBehaviorTracks.peekHeight = peekHeight
-//        Log.d("judjin", "$peekHeight")
+        bottomSheetBehaviorTracks.peekHeight = bottomSheetPeekHeight
 
         bottomSheetBehaviorTracks.state = BottomSheetBehavior.STATE_COLLAPSED
 
     }
 
     private fun initBottomSheetsMenu() {
+
         val bottomSheetContainer = binding.bottomSheetMenu.bottomSheetMenuLinearLayout
         bottomSheetBehaviorMenu = BottomSheetBehavior.from(bottomSheetContainer)
+
         bottomSheetBehaviorMenu.state = BottomSheetBehavior.STATE_HIDDEN
 
         bottomSheetBehaviorMenu.addBottomSheetCallback(object :
@@ -159,6 +178,7 @@ class PlaylistFragment : Fragment() {
 
         }
         binding.bottomSheetMenu.deletePlaylistTextView.setOnClickListener {
+            bottomSheetBehaviorMenu.state = BottomSheetBehavior.STATE_HIDDEN
             deletePlaylistConfirmDialogRequest()
         }
 
@@ -191,6 +211,7 @@ class PlaylistFragment : Fragment() {
                     binding.tracksCountTextView.text = resources.getQuantityString(
                         R.plurals.tracks_plural, tracksCount, tracksCount
                     )
+
                     //init menu playlist view
                     Glide.with(this).load(state.playlistModel.playlistCoverImage)
                         .placeholder(R.drawable.no_album).centerCrop()
@@ -203,6 +224,7 @@ class PlaylistFragment : Fragment() {
                         resources.getQuantityString(
                             R.plurals.tracks_plural, tracksCount, tracksCount
                         )
+
                     //update recycle view
                     tracksAdapter?.updateAdapter(state.playlistModel.tracks)
                 }
@@ -225,8 +247,7 @@ class PlaylistFragment : Fragment() {
     }
 
     private fun deleteTrackConfirmDialogRequest(it: Track) {
-        confirmDialog?.setTitle(R.string.delete_track_title)
-            ?.setMessage(R.string.delete_track)
+        confirmDialog?.setTitle(R.string.delete_track_title)?.setMessage(R.string.delete_track)
             ?.setNegativeButton(R.string.cancel) { _, _ ->
             }?.setPositiveButton(R.string.yes_delete) { _, _ ->
                 viewModel.deleteTrack(it)
@@ -252,4 +273,5 @@ class PlaylistFragment : Fragment() {
         }
         return SimpleDateFormat("mm", Locale.getDefault()).format(durationSum).toInt()
     }
+
 }

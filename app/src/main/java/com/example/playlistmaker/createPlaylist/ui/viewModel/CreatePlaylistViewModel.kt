@@ -22,10 +22,10 @@ open class CreatePlaylistViewModel(
     private val saveImageToPrivateStorageUseCase: SaveImageToPrivateStorageUseCase
 ) : ViewModel() {
 
-    protected val toastStateLiveData = MutableLiveData<CreatePlaylistState>()
+    private val toastStateLiveData = MutableLiveData<CreatePlaylistState>()
     protected val createButtonState = MutableLiveData<CreateButtonState>(CreateButtonState.Disabled)
-    protected val backBehaviourState = MutableLiveData<BackState>(BackState.Success)
-    protected val createPlaylistScreenState = MutableLiveData<CreatePlaylistScreenState>()
+    private val backBehaviourState = MutableLiveData<BackState>(BackState.Success)
+    private val createPlaylistScreenState = MutableLiveData<CreatePlaylistScreenState>()
 
     protected var playlistName: String = DEFAULT_TEXT
     protected var playlistDescription: String = DEFAULT_TEXT
@@ -79,7 +79,7 @@ open class CreatePlaylistViewModel(
         }
     }
 
-    fun createButtonClicked() {
+    open fun createButtonClicked() {
         if (playlistCoverLoaded != null) {
             playlistCoverLoaded?.let { saveCoverImageToStorage(it) }
         }

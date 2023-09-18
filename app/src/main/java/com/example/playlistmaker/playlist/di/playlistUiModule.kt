@@ -11,7 +11,8 @@ val playlistUiModule = module {
             getPlaylistFlowUseCase = get(),
             deleteTrackFromPlaylistUseCase = get(),
             deletePlaylistUseCase = get(),
-            sharePlaylistUseCase = get()
+            sharePlaylistUseCase = get(),
+            deleteImageFromPrivateStorageUseCase = get()
         )
     }
 }

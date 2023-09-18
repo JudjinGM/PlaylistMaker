@@ -27,6 +27,10 @@ class PlaylistDataSourceImpl(private val dataBase: AppDatabase) : PlaylistsDataS
         return dataBase.playlistDao().getPlaylistByIdFlow(playlistId)
     }
 
+    override suspend fun getPlaylistById(playlistId: Long): PlaylistWithSongs? {
+        return dataBase.playlistDao().getPlaylistById(playlistId)
+    }
+
     override suspend fun addTrackToPlaylist(playlistId: Long, trackEntity: TrackEntity) {
         dataBase.trackDao().insertTrack(trackEntity)
         dataBase.playlistTrackCrossRefDao().insertPlaylistTrackCrossRef(

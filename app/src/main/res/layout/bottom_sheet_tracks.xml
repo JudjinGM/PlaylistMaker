@@ -9,7 +9,7 @@
     android:background="@drawable/bottom_sheet_background"
     style="@style/BottomSheetStyle"
     app:behavior_hideable="false"
-    app:behavior_peekHeight="240dp"
+    app:behavior_peekHeight="0dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
     <ImageView

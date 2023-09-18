@@ -8,9 +8,11 @@ val editPlaylistUiModule = module {
     viewModel { (playlistId: Long) ->
         EditPlaylistViewModel(
             playlistId = playlistId,
-            getPlaylistFlowUseCase = get(),
+            getPlaylistByIdUseCase = get(),
             createPlaylistUseCase = get(),
-            saveImageToPrivateStorageUseCase = get()
+            saveImageToPrivateStorageUseCase = get(),
+            updatePlaylistUseCase = get(),
+            deleteImageFromPrivateStorageUseCase = get()
         )
     }
 }
