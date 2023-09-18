@@ -90,4 +90,6 @@
     <string name="delete_track_title">Удалить трек</string>
     <string name="delete_playlist">Хотите удалить плейлист «%1s»?</string>
     <string name="yes_delete">Удалить</string>
+    <string name="edit">Редактировать</string>
+    <string name="save">Сохранить</string>
 </resources>

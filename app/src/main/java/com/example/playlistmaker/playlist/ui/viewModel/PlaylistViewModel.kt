@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.createPlaylist.domain.model.PlaylistModel
 import com.example.playlistmaker.playlist.domain.useCase.DeletePlaylistUseCase
 import com.example.playlistmaker.playlist.domain.useCase.DeleteTrackFromPlaylistUseCase
-import com.example.playlistmaker.playlist.domain.useCase.GetPlaylistUseCase
+import com.example.playlistmaker.playlist.domain.useCase.GetPlaylistFlowUseCase
 import com.example.playlistmaker.playlist.domain.useCase.SharePlaylistUseCase
 import com.example.playlistmaker.playlist.ui.model.PlaylistState
 import com.example.playlistmaker.playlist.ui.model.SharePlaylistState
@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 
 class PlaylistViewModel(
     private val playlistId: Long,
-    private val getPlaylistUseCase: GetPlaylistUseCase,
+    private val getPlaylistFlowUseCase: GetPlaylistFlowUseCase,
     private val deleteTrackFromPlaylistUseCase: DeleteTrackFromPlaylistUseCase,
     private val deletePlaylistUseCase: DeletePlaylistUseCase,
     private val sharePlaylistUseCase: SharePlaylistUseCase,
@@ -33,7 +33,7 @@ class PlaylistViewModel(
 
     init {
         viewModelScope.launch {
-            getPlaylistUseCase.execute(playlistId).collect {
+            getPlaylistFlowUseCase.execute(playlistId).collect {
                 playlistStateLiveData.value = PlaylistState.Success(it)
                 isTracksNotEmpty = it.tracks.isNotEmpty()
                 playlistModel = it

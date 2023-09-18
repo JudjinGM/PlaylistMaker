@@ -4,10 +4,10 @@ import com.example.playlistmaker.createPlaylist.domain.model.PlaylistModel
 import com.example.playlistmaker.createPlaylist.domain.repository.PlayListRepository
 import kotlinx.coroutines.flow.Flow
 
-interface GetPlaylistUseCase {
+interface GetPlaylistFlowUseCase {
     suspend fun execute(playlistId: Long): Flow<PlaylistModel>
 
-    class Base(private val playListRepository: PlayListRepository) : GetPlaylistUseCase {
+    class Base(private val playListRepository: PlayListRepository) : GetPlaylistFlowUseCase {
         override suspend fun execute(playlistId: Long): Flow<PlaylistModel> {
             return playListRepository.getPlaylistByIdFlow(playlistId)
         }

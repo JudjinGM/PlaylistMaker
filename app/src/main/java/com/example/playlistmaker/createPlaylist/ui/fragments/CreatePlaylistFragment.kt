@@ -19,6 +19,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.createPlaylist.ui.model.BackState
 import com.example.playlistmaker.createPlaylist.ui.model.CreateButtonState
 import com.example.playlistmaker.createPlaylist.ui.model.CreatePlaylistErrorState
+import com.example.playlistmaker.createPlaylist.ui.model.CreatePlaylistScreenState
 import com.example.playlistmaker.createPlaylist.ui.model.CreatePlaylistState
 import com.example.playlistmaker.createPlaylist.ui.viewModel.CreatePlaylistViewModel
 import com.example.playlistmaker.databinding.FragmentCreatePlaylistBinding
@@ -27,16 +28,17 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class CreatePlaylistFragment : Fragment() {
+open class CreatePlaylistFragment : Fragment() {
 
     private var _binding: FragmentCreatePlaylistBinding? = null
-    private val binding get() = _binding!!
+    protected val binding get() = _binding!!
 
     private var textWatcherName: TextWatcher? = null
 
     private var textWatcherDescription: TextWatcher? = null
     private var pickMedia: ActivityResultLauncher<PickVisualMediaRequest>? = null
-    private val viewModel: CreatePlaylistViewModel by viewModel()
+
+    open val viewModel: CreatePlaylistViewModel by viewModel()
 
     private var confirmDialog: MaterialAlertDialogBuilder? = null
 
@@ -79,6 +81,10 @@ class CreatePlaylistFragment : Fragment() {
 
         viewModel.observeBackBehaviourState().observe(viewLifecycleOwner) {
             renderBackBehaviour(it)
+        }
+
+        viewModel.observeCreatePlaylistScreenState().observe(viewLifecycleOwner) {
+            renderCreatePlaylistScreenState(it)
         }
 
         setOnClicksAndTextListeners()
@@ -146,7 +152,6 @@ class CreatePlaylistFragment : Fragment() {
         binding.buttonCreateImageView.setOnClickListener {
             if (it.isEnabled) {
                 viewModel.createButtonClicked()
-                findNavController().popBackStack()
             }
         }
     }
@@ -229,7 +234,7 @@ class CreatePlaylistFragment : Fragment() {
 
             BackState.Success -> {
                 requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-                    findNavController().popBackStack()
+                    viewModel.closeScreen()
                 }
                 binding.backImageView.setOnClickListener {
                     findNavController().popBackStack()
@@ -239,6 +244,11 @@ class CreatePlaylistFragment : Fragment() {
         }
     }
 
+    private fun renderCreatePlaylistScreenState(state: CreatePlaylistScreenState) {
+        when (state) {
+            CreatePlaylistScreenState.CloseScreen -> findNavController().popBackStack()
+        }
+    }
 
     private fun initMediaPicker() {
         pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->

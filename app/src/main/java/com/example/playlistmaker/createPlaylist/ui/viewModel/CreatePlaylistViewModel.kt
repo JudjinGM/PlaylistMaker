@@ -12,27 +12,33 @@ import com.example.playlistmaker.createPlaylist.domain.useCase.SaveImageToPrivat
 import com.example.playlistmaker.createPlaylist.ui.model.BackState
 import com.example.playlistmaker.createPlaylist.ui.model.CreateButtonState
 import com.example.playlistmaker.createPlaylist.ui.model.CreatePlaylistErrorState
+import com.example.playlistmaker.createPlaylist.ui.model.CreatePlaylistScreenState
 import com.example.playlistmaker.createPlaylist.ui.model.CreatePlaylistState
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class CreatePlaylistViewModel(
+open class CreatePlaylistViewModel(
     private val createPlaylistUseCase: CreatePlaylistUseCase,
     private val saveImageToPrivateStorageUseCase: SaveImageToPrivateStorageUseCase
 ) : ViewModel() {
 
-    private val toastStateLiveData = MutableLiveData<CreatePlaylistState>()
-    private val createButtonState = MutableLiveData<CreateButtonState>(CreateButtonState.Disabled)
-    private val backBehaviourState = MutableLiveData<BackState>(BackState.Success)
+    protected val toastStateLiveData = MutableLiveData<CreatePlaylistState>()
+    protected val createButtonState = MutableLiveData<CreateButtonState>(CreateButtonState.Disabled)
+    protected val backBehaviourState = MutableLiveData<BackState>(BackState.Success)
+    protected val createPlaylistScreenState = MutableLiveData<CreatePlaylistScreenState>()
 
-    private var playlistName: String = DEFAULT_TEXT
-    private var playlistDescription: String = DEFAULT_TEXT
-    private var playlistCoverLoaded: Uri? = null
-    private var playlistCoverSavedToStorage: Uri? = null
+    protected var playlistName: String = DEFAULT_TEXT
+    protected var playlistDescription: String = DEFAULT_TEXT
+    protected var playlistCoverLoaded: Uri? = null
+    protected var playlistCoverSavedToStorage: Uri? = null
 
     fun observeToastState(): LiveData<CreatePlaylistState> = toastStateLiveData
     fun observeCreateButtonState(): LiveData<CreateButtonState> = createButtonState
 
     fun observeBackBehaviourState(): LiveData<BackState> = backBehaviourState
+
+    fun observeCreatePlaylistScreenState(): LiveData<CreatePlaylistScreenState> =
+        createPlaylistScreenState
 
     fun getNameInput(s: CharSequence?) {
         if (s.isNullOrEmpty()) {
@@ -56,7 +62,7 @@ class CreatePlaylistViewModel(
         playlistCoverLoaded = uri
     }
 
-    private fun saveCoverImageToStorage(uri: Uri) {
+    protected fun saveCoverImageToStorage(uri: Uri) {
         viewModelScope.launch {
             val result = saveImageToPrivateStorageUseCase.execute(uri)
 
@@ -80,13 +86,20 @@ class CreatePlaylistViewModel(
 
         if (createButtonState.value == CreateButtonState.Enabled) {
             viewModelScope.launch {
-                createPlaylistUseCase.execute(
-                    playlistName, playlistDescription, playlistCoverSavedToStorage
-                )
+                val resultDeferred = async {
+                    createPlaylistUseCase.execute(
+                        playlistName, playlistDescription, playlistCoverSavedToStorage
+                    )
+                }
+                resultDeferred.await()
+                closeScreen()
+                toastStateLiveData.value = CreatePlaylistState.Success(playlistName)
             }
         }
+    }
 
-        toastStateLiveData.value = CreatePlaylistState.Success(playlistName)
+    fun closeScreen() {
+        createPlaylistScreenState.value = CreatePlaylistScreenState.CloseScreen
     }
 
     fun backStateBehaviour() {

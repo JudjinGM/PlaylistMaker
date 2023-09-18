@@ -43,12 +43,12 @@
         android:layout_marginTop="@dimen/title_image_margin"
         android:layout_marginEnd="12dp"
         android:contentDescription="@string/back_button_image"
-        app:layout_constraintEnd_toStartOf="@+id/toolbarLibrary"
+        app:layout_constraintEnd_toStartOf="@+id/toolbarPlaylist"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/toolbarLibrary"
+        android:id="@+id/toolbarPlaylist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_12"
@@ -69,7 +69,7 @@
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@+id/guidLineSecondEnd"
         app:layout_constraintStart_toStartOf="@+id/guidLineSecondStart"
-        app:layout_constraintTop_toBottomOf="@+id/toolbarLibrary">
+        app:layout_constraintTop_toBottomOf="@+id/toolbarPlaylist">
 
         <ImageView
             android:id="@+id/coverImageView"

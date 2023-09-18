@@ -161,6 +161,14 @@ class PlaylistFragment : Fragment() {
         binding.bottomSheetMenu.deletePlaylistTextView.setOnClickListener {
             deletePlaylistConfirmDialogRequest()
         }
+
+        binding.bottomSheetMenu.editInfoTextView.setOnClickListener {
+            val directions =
+                PlaylistFragmentDirections.actionPlaylistFragmentToEditPlaylistFragment(playlistId)
+            findNavController().navigate(
+                directions
+            )
+        }
     }
 
     private fun renderPlaylistState(state: PlaylistState) {

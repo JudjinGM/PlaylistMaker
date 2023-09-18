@@ -12,9 +12,9 @@
         tools:layout="@layout/fragment_audioplayer">
         <argument
             android:name="track"
+            android:defaultValue="@null"
             app:argType="com.example.playlistmaker.search.domain.model.Track"
-            app:nullable="true"
-            android:defaultValue="@null" />
+            app:nullable="true" />
         <action
             android:id="@+id/action_audioPlayerFragment_to_createPlaylistFragment"
             app:destination="@id/createPlaylistFragment" />
@@ -71,5 +71,17 @@
         <action
             android:id="@+id/action_playlistFragment_to_audioPlayerFragment"
             app:destination="@id/audioPlayerFragment" />
+        <action
+            android:id="@+id/action_playlistFragment_to_editPlaylistFragment"
+            app:destination="@id/editPlaylistFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editPlaylistFragment"
+        android:name="com.example.playlistmaker.editPlaylist.ui.fragment.EditPlaylistFragment"
+        android:label="EditPlaylistFragment"
+        tools:layout="@layout/fragment_create_playlist">
+        <argument
+            android:name="playlistId"
+            app:argType="long" />
     </fragment>
 </navigation>
