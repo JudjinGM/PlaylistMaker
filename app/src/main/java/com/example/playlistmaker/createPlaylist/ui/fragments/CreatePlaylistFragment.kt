@@ -82,6 +82,11 @@ open class CreatePlaylistFragment : Fragment() {
         setOnClicksAndTextListeners()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
@@ -265,7 +270,7 @@ open class CreatePlaylistFragment : Fragment() {
         }
     }
 
-    protected fun showToast(message: String) {
+    private fun showToast(message: String) {
         Toast.makeText(
             context, message, Toast.LENGTH_LONG
         ).show()

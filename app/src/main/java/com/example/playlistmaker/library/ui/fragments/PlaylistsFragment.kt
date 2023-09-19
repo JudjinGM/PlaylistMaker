@@ -61,7 +61,6 @@ class PlaylistsFragment : Fragment() {
         binding.playlistRecycleView.adapter = null
         playlistAdapter = null
         _binding = null
-
     }
 
     private fun render(state: PlaylistsState) {

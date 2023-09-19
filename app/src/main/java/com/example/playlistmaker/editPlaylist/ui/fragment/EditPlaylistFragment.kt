@@ -44,7 +44,6 @@ class EditPlaylistFragment : CreatePlaylistFragment() {
 
     }
 
-
     override fun renderBackBehaviour(state: BackState) {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             viewModel.closeScreen()

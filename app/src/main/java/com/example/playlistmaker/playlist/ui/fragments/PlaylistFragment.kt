@@ -82,6 +82,13 @@ class PlaylistFragment : Fragment() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.bottomSheetTracks.playlistsRecycleView.adapter = null
+        tracksAdapter = null
+        _binding = null
+    }
+
     private fun initBottomSheetsTracks() {
         var bottomSheetPeekHeight = 0
 
