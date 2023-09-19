@@ -62,31 +62,29 @@ open class CreatePlaylistViewModel(
         playlistCoverLoaded = uri
     }
 
-    protected fun saveCoverImageToStorage(uri: Uri) {
-        viewModelScope.launch {
-            val result = saveImageToPrivateStorageUseCase.execute(uri)
+    protected suspend fun saveCoverImageToStorage(uri: Uri) {
+        val result = saveImageToPrivateStorageUseCase.execute(uri)
 
-            when (result) {
-                ResultForFile.Error -> {
-                    toastStateLiveData.value =
-                        CreatePlaylistState.Error(CreatePlaylistErrorState.CANNOT_SAVE_IMAGE)
-                }
+        when (result) {
+            ResultForFile.Error -> {
+                toastStateLiveData.value =
+                    CreatePlaylistState.Error(CreatePlaylistErrorState.CANNOT_SAVE_IMAGE)
+            }
 
-                is ResultForFile.Success -> {
-                    playlistCoverSavedToStorage = result.file.toUri()
+            is ResultForFile.Success -> {
+                playlistCoverSavedToStorage = result.file.toUri()
                 }
             }
         }
-    }
+
 
     open fun createButtonClicked() {
-        if (playlistCoverLoaded != null) {
-            playlistCoverLoaded?.let { saveCoverImageToStorage(it) }
-        }
-
         if (createButtonState.value == CreateButtonState.Enabled) {
             viewModelScope.launch {
                 val resultDeferred = async {
+                    if (playlistCoverLoaded != null) {
+                        playlistCoverLoaded?.let { saveCoverImageToStorage(it) }
+                    }
                     createPlaylistUseCase.execute(
                         playlistName, playlistDescription, playlistCoverSavedToStorage
                     )

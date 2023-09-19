@@ -40,22 +40,18 @@ class EditPlaylistViewModel(
     fun observePlaylistInitState(): LiveData<PlaylistModel> = playlistInitState
 
     override fun createButtonClicked() {
-        if (playlistCoverLoaded != null) {
-            playlistCoverLoaded?.let {
-                saveCoverImageToStorage(it)
-                val uriForFileDelete = playlistModel.playlistCoverImage
-                if (uriForFileDelete != null) {
-                    viewModelScope.launch {
-                        deleteImageFromPrivateStorageUseCase.execute(uriForFileDelete)
-                    }
-                }
-            }
-
-        } else playlistCoverSavedToStorage = playlistModel.playlistCoverImage
-
         if (createButtonState.value == CreateButtonState.Enabled) {
             viewModelScope.launch {
                 val resultDeferred = async {
+                    if (playlistCoverLoaded != null) {
+                        playlistCoverLoaded?.let {
+                            saveCoverImageToStorage(it)
+                            val uriForFileDelete = playlistModel.playlistCoverImage
+                            if (uriForFileDelete != null) {
+                                deleteImageFromPrivateStorageUseCase.execute(uriForFileDelete)
+                            }
+                        }
+                    } else playlistCoverSavedToStorage = playlistModel.playlistCoverImage
                     updatePlaylistUseCase.execute(
                         playlistId,
                         playlistName,
