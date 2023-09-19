@@ -11,6 +11,7 @@ class FavoriteTrackEntityToTrackMapper {
             artistName = favoriteTrackEntity.artistName,
             trackTimeMillis = favoriteTrackEntity.trackTimeMillis,
             artworkUrl100 = favoriteTrackEntity.artworkUrl100 ?: "",
+            artworkUrl60 = favoriteTrackEntity.artworkUrl60 ?: "",
             collectionName = favoriteTrackEntity.collectionName ?: "",
             releaseDate = favoriteTrackEntity.releaseDate ?: "",
             country = favoriteTrackEntity.country ?: "",

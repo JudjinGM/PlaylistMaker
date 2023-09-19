@@ -11,6 +11,7 @@ class TrackEntityToTrackMapper {
             artistName = trackEntity.artistName,
             trackTimeMillis = trackEntity.trackTimeMillis,
             artworkUrl100 = trackEntity.artworkUrl100 ?: "",
+            artworkUrl60 = trackEntity.artworkUrl60 ?: "",
             collectionName = trackEntity.collectionName ?: "",
             releaseDate = trackEntity.releaseDate ?: "",
             country = trackEntity.country ?: "",

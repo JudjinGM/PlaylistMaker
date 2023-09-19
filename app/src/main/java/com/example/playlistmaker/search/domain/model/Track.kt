@@ -9,6 +9,7 @@ data class Track(
     val artistName: String = "",
     val trackTimeMillis: Long = 0,
     val artworkUrl100: String = "",
+    val artworkUrl60: String = "",
     val collectionName: String = "",
     val releaseDate: String = "",
     val country: String = "",
@@ -29,6 +30,7 @@ data class Track(
         parcel.readString() ?: "",
         parcel.readString() ?: "",
         parcel.readString() ?: "",
+        parcel.readString() ?: "",
         parcel.readBoolean()
     )
 
@@ -40,6 +42,7 @@ data class Track(
         parcel.writeString(artistName)
         parcel.writeLong(trackTimeMillis)
         parcel.writeString(artworkUrl100)
+        parcel.writeString(artworkUrl60)
         parcel.writeString(collectionName)
         parcel.writeString(releaseDate)
         parcel.writeString(country)

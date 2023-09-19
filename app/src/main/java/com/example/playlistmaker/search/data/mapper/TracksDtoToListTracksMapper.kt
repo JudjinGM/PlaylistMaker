@@ -14,6 +14,7 @@ class TracksDtoToListTracksMapper {
                     artistName = track.artistName,
                     trackTimeMillis = track.trackTimeMillis,
                     artworkUrl100 = track.artworkUrl100.orEmpty(),
+                    artworkUrl60 = track.artworkUrl60.orEmpty(),
                     collectionName = track.collectionName.orEmpty(),
                     releaseDate = track.releaseDate.orEmpty(),
                     country = track.country.orEmpty(),

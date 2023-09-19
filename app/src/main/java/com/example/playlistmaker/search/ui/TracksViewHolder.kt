@@ -17,7 +17,7 @@ class TracksViewHolder(
     RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: Track) {
-        Glide.with(itemView).load(item.artworkUrl100).placeholder(R.drawable.no_album)
+        Glide.with(itemView).load(item.artworkUrl60).placeholder(R.drawable.no_album)
             .centerInside()
             .transform(RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.album_cover_corner_radius)))
             .into(binding.albumCoverImageView)
