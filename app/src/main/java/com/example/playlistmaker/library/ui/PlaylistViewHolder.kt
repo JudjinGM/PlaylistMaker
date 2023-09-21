@@ -22,13 +22,10 @@ class PlaylistViewHolder(
             .into(binding.playlistCoverImageView)
         binding.playlistNameTextView.text = item.playlistName
 
-        if (item.tracks.size == 1) {
-            binding.tracksCountTextView.text =
-                binding.root.context.getString(R.string.count_track, item.tracks.size)
-        } else {
-            binding.tracksCountTextView.text =
-                binding.root.context.getString(R.string.count_tracks, item.tracks.size)
-        }
+        binding.tracksCountTextView.text =
+            binding.root.resources.getQuantityString(
+                R.plurals.tracks_plural, item.tracks.size, item.tracks.size
+            )
 
         itemView.setOnClickListener {
             onPlaylistClicked.invoke(item.playlistId)
