@@ -1,6 +1,7 @@
 package com.example.playlistmaker.playlist.ui.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -52,17 +53,21 @@ class PlaylistFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         playlistId = args.playlistId
+        Log.d("judjin", "onCreate")
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
+        Log.d("judjin", "onCreateView")
+
         _binding = FragmentPlaylistBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d("judjin", "onViewCreated")
 
         initBottomSheetsTracks()
         initBottomSheetsMenu()
@@ -82,11 +87,23 @@ class PlaylistFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        Log.d("judjin", "onResume")
+
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         binding.bottomSheetTracks.playlistsRecycleView.adapter = null
         tracksAdapter = null
         _binding = null
+        Log.d("judjin", "onDestroyView")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
     }
 
     private fun initBottomSheetsTracks() {
@@ -100,8 +117,9 @@ class PlaylistFragment : Fragment() {
                     if (binding.supportingViewTrack.width > 0 && binding.supportingViewTrack.height > 0) {
                         bottomSheetPeekHeight = binding.supportingViewTrack.height
                         bottomSheetBehaviorTracks.peekHeight = bottomSheetPeekHeight
-
-                        viewTreeObserver.removeOnGlobalLayoutListener(this)
+                        if (viewTreeObserver.isAlive) {
+                            viewTreeObserver.removeOnGlobalLayoutListener(this)
+                        }
                     }
                 }
             })
@@ -280,5 +298,4 @@ class PlaylistFragment : Fragment() {
         }
         return SimpleDateFormat("mm", Locale.getDefault()).format(durationSum).toInt()
     }
-
 }

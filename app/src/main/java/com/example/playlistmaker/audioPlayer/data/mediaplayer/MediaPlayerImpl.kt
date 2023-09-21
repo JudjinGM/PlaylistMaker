@@ -14,39 +14,50 @@ class MediaPlayerImpl(
     private var onPauseListener: (() -> Unit)? = null
     private var onStopListener: (() -> Unit)? = null
 
+    private var isPrepared = false
+
     override fun initMediaPlayer(url: String) {
         if (url.isEmpty()) {
             onErrorListener?.invoke()
         } else {
             try {
-                mediaPlayer.setDataSource(url)
-                mediaPlayer.prepareAsync()  // source is url so Async then
                 mediaPlayer.setOnPreparedListener {
                     onPreparedListener?.invoke()
+                    isPrepared = true
                 }
+                mediaPlayer.setDataSource(url)
+                mediaPlayer.prepareAsync()  // source is url so Async then
             } catch (e: java.lang.Exception) {
                 onErrorListener?.invoke()
             }
             mediaPlayer.setOnCompletionListener {
                 onCompletionListener?.invoke()
-                mediaPlayer.seekTo(0) // to reset currentPosition = 0
+                if (isPrepared) {
+                    mediaPlayer.seekTo(0) // reset after complete}
+                }
             }
         }
     }
 
     override fun play() {
-        mediaPlayer.start()
-        onPlayListener?.invoke()
+        if (isPrepared) {
+            mediaPlayer.start()
+            onPlayListener?.invoke()
+        }
     }
 
     override fun pause() {
-        mediaPlayer.pause()
-        onPauseListener?.invoke()
+        if (isPrepared) {
+            mediaPlayer.pause()
+            onPauseListener?.invoke()
+        }
     }
 
     override fun stop() {
-        mediaPlayer.stop()
-        onStopListener?.invoke()
+        if (isPrepared) {
+            mediaPlayer.stop()
+            onStopListener?.invoke()
+        }
     }
 
     override fun release() {
