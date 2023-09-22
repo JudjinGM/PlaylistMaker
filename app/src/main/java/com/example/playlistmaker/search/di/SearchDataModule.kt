@@ -19,6 +19,8 @@ import com.example.playlistmaker.search.data.storage.TracksSearchCacheImpl
 import com.example.playlistmaker.search.domain.repository.ListenHistoryRepository
 import com.example.playlistmaker.search.domain.repository.SearchRepository
 import org.koin.android.ext.koin.androidContext
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -39,37 +41,20 @@ val searchDataModule = module {
             .create(ItunesApi::class.java)
     }
 
-    single {
-        TracksDtoToListTracksMapper()
-    }
+    singleOf(::TracksDtoToListTracksMapper)
 
-    single<TracksSearchRemoteDataSource> {
-        TracksSearchRemoteDataSourceImpl(
-            itunesService = get()
-        )
-    }
+    singleOf(::TracksSearchRemoteDataSourceImpl) { bind<TracksSearchRemoteDataSource>() }
 
-    single<TracksListenHistoryLocalDatabase> {
-        TracksListenHistoryLocalDatabaseImpl(playlistSharedPreferences = get())
-    }
+    singleOf(::TracksListenHistoryLocalDatabaseImpl) { bind<TracksListenHistoryLocalDatabase>() }
 
-    single<TracksSearchCache> {
-        TracksSearchCacheImpl()
-    }
+    singleOf(::TracksSearchCacheImpl) { bind<TracksSearchCache>() }
 
-    single<TracksListenHistoryLocalDataSource> {
-        TracksListenHistoryLocalDataSourceImpl(database = get())
-    }
+    singleOf(::TracksListenHistoryLocalDataSourceImpl) { bind<TracksListenHistoryLocalDataSource>() }
 
-    single<TracksSearchLocalDataSource> {
-        TracksSearchLocalDataSourceImpl(database = get())
-    }
+    singleOf(::TracksSearchLocalDataSourceImpl) { bind<TracksSearchLocalDataSource>() }
 
-    single<ListenHistoryRepository> {
-        ListenHistoryRepositoryImpl(listenHistoryLocalDataSource = get(), favoriteTracksDataSource = get())
-    }
+    singleOf(::ListenHistoryRepositoryImpl) { bind<ListenHistoryRepository>() }
 
-    single<SearchRepository> {
-        SearchRepositoryImpl(remoteDataSource = get(), searchLocalDataSource = get(), mapper = get(), favoriteTrackDataSource = get())
-    }
+    singleOf(::SearchRepositoryImpl) { bind<SearchRepository>() }
+
 }

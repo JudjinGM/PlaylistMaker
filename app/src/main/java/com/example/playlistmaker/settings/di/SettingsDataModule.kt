@@ -9,6 +9,8 @@ import com.example.playlistmaker.settings.data.storage.SettingsLocalDatabase
 import com.example.playlistmaker.settings.data.storage.SettingsLocalDatabaseImpl
 import com.example.playlistmaker.settings.domain.repository.SettingsRepository
 import org.koin.android.ext.koin.androidContext
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val settingsDataModule = module {
@@ -19,16 +21,10 @@ val settingsDataModule = module {
         )
     }
 
-    single<SettingsLocalDatabase> {
-        SettingsLocalDatabaseImpl(sharedPreferencesSettings = get())
-    }
+    singleOf(::SettingsLocalDatabaseImpl) { bind<SettingsLocalDatabase>() }
 
-    single<SettingsLocalDataSource> {
-        SettingsLocalDataSourceImpl(database = get())
-    }
+    singleOf(::SettingsLocalDataSourceImpl) { bind<SettingsLocalDataSource>() }
 
-    single<SettingsRepository> {
-        SettingsRepositoryImpl(dataSource = get())
-    }
+    singleOf(::SettingsRepositoryImpl) { bind<SettingsRepository>() }
 
 }

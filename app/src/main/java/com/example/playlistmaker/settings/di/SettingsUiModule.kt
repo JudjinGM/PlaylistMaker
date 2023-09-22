@@ -7,31 +7,20 @@ import com.example.playlistmaker.settings.ui.theme.ThemeProviderImpl
 import com.example.playlistmaker.settings.ui.theme.ThemeSetterImpl
 import com.example.playlistmaker.settings.ui.view_model.SettingsViewModel
 import com.example.playlistmaker.share.domain.navigator.ExternalNavigator
-import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.androidx.viewmodel.dsl.viewModelOf
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.factoryOf
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val settingsUiModule = module {
 
-    single<ThemeProvider> {
-        ThemeProviderImpl(context = get())
-    }
+    singleOf(::ThemeProviderImpl) { bind<ThemeProvider>() }
 
-    single<ThemeSetter> {
-        ThemeSetterImpl()
-    }
+    singleOf(::ThemeSetterImpl) { bind<ThemeSetter>() }
 
-    factory<ExternalNavigator> {
-        ExternalNavigatorImpl(context = get(), shareResourceRepository = get())
-    }
+    factoryOf(::ExternalNavigatorImpl) { bind<ExternalNavigator>() }
 
-    viewModel {
-        SettingsViewModel(
-            getThemeUseCase = get(),
-            setThemeUseCase = get(),
-            saveThemeUseCase = get(),
-            shareLinkUseCase = get(),
-            openLinkUseCase = get(),
-            openMailUseCase = get()
-        )
-    }
+    viewModelOf(::SettingsViewModel)
+
 }

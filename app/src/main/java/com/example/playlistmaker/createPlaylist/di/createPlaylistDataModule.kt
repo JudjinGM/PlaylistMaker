@@ -12,37 +12,27 @@ import com.example.playlistmaker.createPlaylist.data.mapper.TrackEntityToTrackMa
 import com.example.playlistmaker.createPlaylist.data.mapper.TrackToTracksEntityMapper
 import com.example.playlistmaker.createPlaylist.domain.repository.ImageRepository
 import com.example.playlistmaker.createPlaylist.domain.repository.PlayListRepository
-import org.koin.android.ext.koin.androidContext
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.factoryOf
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val createPlaylistDataModule = module {
 
-    single<PlaylistsDataSource> {
-        PlaylistDataSourceImpl(dataBase = get())
-    }
+    singleOf(::PlaylistDataSourceImpl) { bind<PlaylistsDataSource>() }
 
-    single<ImagePrivateDataSource> {
-        ImagePrivateDataSourceImpl(context = androidContext())
-    }
+    singleOf(::ImagePrivateDataSourceImpl) { bind<ImagePrivateDataSource>() }
 
+    factoryOf(::TrackEntityToTrackMapper)
 
-    factory { TrackEntityToTrackMapper() }
-    factory { TrackToTracksEntityMapper() }
-    factory { PlaylistModelToPlaylistEntityMapper() }
-    factory { PlaylistWithSongToPlaylistModelMapper(get()) }
+    factoryOf(::TrackToTracksEntityMapper)
 
-    single<PlayListRepository> {
-        PlaylistRepositoryImpl(
-            dataSource = get(),
-            favoriteTracksDataSource = get(),
-            playlistModelToPlaylistEntityMapper = get(),
-            playlistWithSongToPlaylistModelMapper = get(),
-            trackToTracksEntityMapper = get()
-        )
-    }
+    factoryOf(::PlaylistModelToPlaylistEntityMapper)
 
-    single<ImageRepository> {
-        ImageRepositoryImpl(imagePrivateDataSource = get())
-    }
+    factoryOf(::PlaylistWithSongToPlaylistModelMapper)
+
+    singleOf(::PlaylistRepositoryImpl) { bind<PlayListRepository>() }
+
+    singleOf(::ImageRepositoryImpl) { bind<ImageRepository>() }
 
 }
