@@ -32,7 +32,7 @@ class MediaPlayerImpl(
             }
             mediaPlayer.setOnCompletionListener {
                 onCompletionListener?.invoke()
-                if (isPrepared) {
+                if (isPrepared && isPlaying()) {
                     mediaPlayer.seekTo(0) // reset after complete}
                 }
             }
@@ -47,7 +47,7 @@ class MediaPlayerImpl(
     }
 
     override fun pause() {
-        if (isPrepared) {
+        if (isPrepared && isPlaying()) {
             mediaPlayer.pause()
             onPauseListener?.invoke()
         }

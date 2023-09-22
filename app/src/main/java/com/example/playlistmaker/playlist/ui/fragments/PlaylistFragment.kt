@@ -1,7 +1,6 @@
 package com.example.playlistmaker.playlist.ui.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -53,13 +52,11 @@ class PlaylistFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         playlistId = args.playlistId
-        Log.d("judjin", "onCreate")
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        Log.d("judjin", "onCreateView")
 
         _binding = FragmentPlaylistBinding.inflate(inflater, container, false)
         return binding.root
@@ -67,7 +64,6 @@ class PlaylistFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("judjin", "onViewCreated")
 
         initBottomSheetsTracks()
         initBottomSheetsMenu()
@@ -89,8 +85,6 @@ class PlaylistFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        Log.d("judjin", "onResume")
-
     }
 
     override fun onDestroyView() {
@@ -98,7 +92,6 @@ class PlaylistFragment : Fragment() {
         binding.bottomSheetTracks.playlistsRecycleView.adapter = null
         tracksAdapter = null
         _binding = null
-        Log.d("judjin", "onDestroyView")
     }
 
     override fun onDestroy() {
@@ -114,11 +107,13 @@ class PlaylistFragment : Fragment() {
             viewTreeObserver.addOnGlobalLayoutListener(object :
                 ViewTreeObserver.OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
-                    if (binding.supportingViewTrack.width > 0 && binding.supportingViewTrack.height > 0) {
-                        bottomSheetPeekHeight = binding.supportingViewTrack.height
-                        bottomSheetBehaviorTracks.peekHeight = bottomSheetPeekHeight
-                        if (viewTreeObserver.isAlive) {
-                            viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    if (_binding != null) {
+                        if (binding.supportingViewTrack.width > 0 && binding.supportingViewTrack.height > 0) {
+                            bottomSheetPeekHeight = binding.supportingViewTrack.height
+                            bottomSheetBehaviorTracks.peekHeight = bottomSheetPeekHeight
+                            if (viewTreeObserver.isAlive) {
+                                viewTreeObserver.removeOnGlobalLayoutListener(this)
+                            }
                         }
                     }
                 }
@@ -251,7 +246,16 @@ class PlaylistFragment : Fragment() {
                         )
 
                     //update recycle view
-                    tracksAdapter?.updateAdapter(state.playlistModel.tracks)
+                    if (state.playlistModel.tracks.isEmpty()) {
+                        binding.bottomSheetTracks.playlistsRecycleView.isVisible = false
+                        binding.bottomSheetTracks.emptyPlaylistTextView.isVisible = true
+                        binding.bottomSheetTracks.placeholderNoPlaylistImage.isVisible = true
+                    } else {
+                        binding.bottomSheetTracks.playlistsRecycleView.isVisible = true
+                        binding.bottomSheetTracks.emptyPlaylistTextView.isVisible = false
+                        binding.bottomSheetTracks.placeholderNoPlaylistImage.isVisible = false
+                        tracksAdapter?.updateAdapter(state.playlistModel.tracks)
+                    }
                 }
 
             }
@@ -273,8 +277,8 @@ class PlaylistFragment : Fragment() {
 
     private fun deleteTrackConfirmDialogRequest(it: Track) {
         confirmDialog?.setTitle(R.string.delete_track_title)?.setMessage(R.string.delete_track)
-            ?.setNegativeButton(R.string.cancel) { _, _ ->
-            }?.setPositiveButton(R.string.yes_delete) { _, _ ->
+            ?.setNegativeButton(R.string.no) { _, _ ->
+            }?.setPositiveButton(R.string.yes) { _, _ ->
                 viewModel.deleteTrack(it)
             }
         confirmDialog?.show()

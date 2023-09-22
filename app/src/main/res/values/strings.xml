@@ -92,4 +92,5 @@
     <string name="yes_delete">Удалить</string>
     <string name="edit">Редактировать</string>
     <string name="save">Сохранить</string>
+    <string name="playlist_have_no_tracks">В этом плейлисте нет треков</string>
 </resources>

@@ -79,5 +79,6 @@
     <string name="yes_delete">Delete</string>
     <string name="edit">Edit</string>
     <string name="save">Save</string>
+    <string name="playlist_have_no_tracks">There are no tracks in this playlist</string>
 
 </resources>

@@ -55,24 +55,15 @@ class PlaylistRepositoryImpl(
     override suspend fun getPlaylistById(playlistId: Long): PlaylistModel {
         val playlistWithSongs = dataSource.getPlaylistById(playlistId)
         val playlistModel = playlistWithSongToPlaylistModelMapper.execute(playlistWithSongs)
-        playlistModel.tracks.forEach {
-            if (favoriteTracksDataSource.getAllFavoriteTrackId().contains(it.trackId)) {
-                it.isFavorite = true
-            }
-        }
+        addFavoriteTracksToTrackList(playlistModel.tracks)
         return playlistModel
     }
 
     override fun getAllPlaylistsFlow(): Flow<List<PlaylistModel>> {
         return dataSource.getAllPlaylists().map { playlistWithSongsList: List<PlaylistWithSongs> ->
             playlistWithSongsList.map { playlistWithSongs ->
-                val playlistModel =
-                    playlistWithSongToPlaylistModelMapper.execute(playlistWithSongs)
-                playlistModel.tracks.forEach {
-                    if (favoriteTracksDataSource.getAllFavoriteTrackId().contains(it.trackId)) {
-                        it.isFavorite = true
-                    }
-                }
+                val playlistModel = playlistWithSongToPlaylistModelMapper.execute(playlistWithSongs)
+                addFavoriteTracksToTrackList(playlistModel.tracks)
                 playlistModel
             }
         }
@@ -81,9 +72,17 @@ class PlaylistRepositoryImpl(
     override suspend fun updatePlaylist(playlistModel: PlaylistModel) {
         dataSource.addPlaylist(
             playlistModelToPlaylistEntityMapper.execute(
-                playlistModel,
-                playlistModel.playlistId
+                playlistModel, playlistModel.playlistId
             )
         )
+    }
+
+    private suspend fun addFavoriteTracksToTrackList(tracks: List<Track>) {
+        tracks.forEach {
+            if (favoriteTracksDataSource.getAllFavoriteTrackId().contains(it.trackId)) {
+                it.isFavorite = true
+            }
+        }
+
     }
 }

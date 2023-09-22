@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottomSheetTracksLinearLayout"
+    style="@style/BottomSheetStyle"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@drawable/bottom_sheet_background"
-    style="@style/BottomSheetStyle"
+    android:orientation="vertical"
     app:behavior_hideable="false"
     app:behavior_peekHeight="0dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
@@ -24,15 +24,36 @@
         android:layout_width="@dimen/progress_bar_width"
         android:layout_height="@dimen/progress_bar_height"
         android:layout_gravity="center"
-        android:indeterminateTint="@color/royal_blue"
         android:layout_marginTop="@dimen/margin_24"
+        android:indeterminateTint="@color/royal_blue"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/placeholder_no_playlist_image"
+        android:layout_width="@dimen/small_placeholder_image_dimens"
+        android:layout_height="@dimen/small_placeholder_image_dimens"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/margin_24"
+        android:contentDescription="@string/error"
+        android:src="@drawable/error_search"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/emptyPlaylistTextView"
+        style="@style/PlaceholderText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/margin_24"
+        android:gravity="center"
+        android:text="@string/playlist_have_no_tracks"
         android:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/playlistsRecycleView"
-        tools:itemCount="10"
-        tools:listitem="@layout/tracks_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/margin_24" />
+        android:layout_marginTop="@dimen/margin_24"
+        tools:itemCount="10"
+        tools:listitem="@layout/tracks_view" />
 </LinearLayout>

@@ -83,6 +83,7 @@
     <dimen name="album_cover_corner_radius">2dp</dimen>
     <dimen name="album_cover_player_corner_radius">8dp</dimen>
     <dimen name="placeholder_image_dimens">120dp</dimen>
+    <dimen name="small_placeholder_image_dimens">80dp</dimen>
     <dimen name="weight_0_dp">0dp</dimen>
     <dimen name="playlist_name_text_size">24sp</dimen>
     <dimen name="playlist_description_text_size">18sp</dimen>

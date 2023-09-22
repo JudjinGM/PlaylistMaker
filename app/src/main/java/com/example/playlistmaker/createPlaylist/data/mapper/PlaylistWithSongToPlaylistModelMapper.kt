@@ -9,21 +9,17 @@ class PlaylistWithSongToPlaylistModelMapper(
 ) {
     fun execute(playlistWithSongs: PlaylistWithSongs?): PlaylistModel {
         if (playlistWithSongs != null) {
-            return PlaylistModel(
-                playlistId = playlistWithSongs.playlist.playlistId,
+            var playlistCoverUri: Uri? = null
+            if (playlistWithSongs.playlist.playlistCover.isNotEmpty()) {
+                playlistCoverUri = Uri.parse(playlistWithSongs.playlist.playlistCover)
+            }
+            return PlaylistModel(playlistId = playlistWithSongs.playlist.playlistId,
                 playlistName = playlistWithSongs.playlist.playlistName,
                 playlistDescription = playlistWithSongs.playlist.playlistDescription,
-                playlistCoverImage = Uri.parse(playlistWithSongs.playlist.playlistCover),
+                playlistCoverImage = playlistCoverUri,
                 tracks = playlistWithSongs.tracks.map { trackEntity ->
                     trackEntityToTrackMapper.execute(trackEntity)
-                }
-            )
-        } else return PlaylistModel(
-            playlistId = 0,
-            playlistName = "",
-            playlistDescription = "",
-            playlistCoverImage = Uri.parse(""),
-            tracks = emptyList()
-        )
+                })
+        } else return PlaylistModel()
     }
 }

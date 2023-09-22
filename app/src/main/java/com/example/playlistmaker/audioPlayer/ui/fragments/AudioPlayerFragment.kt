@@ -49,7 +49,9 @@ class AudioPlayerFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         track = args.track ?: Track()
-        viewModel.initMediaPlayer()
+        if (savedInstanceState == null) {
+            viewModel.initMediaPlayer()
+        }
     }
 
     override fun onCreateView(
@@ -180,17 +182,12 @@ class AudioPlayerFragment : Fragment() {
 
     private fun renderPlayerState(playerState: PlayerState) {
         when (playerState) {
-            is PlayerState.Default -> binding.playImageView.setImageResource(R.drawable.play_button)
-            is PlayerState.Error -> binding.playImageView.setImageResource(R.drawable.play_button)
-            is PlayerState.Paused -> binding.playImageView.setImageResource(R.drawable.play_button)
+
             is PlayerState.Playing -> {
                 binding.playImageView.setImageResource(R.drawable.pause_button)
             }
 
-            is PlayerState.Prepared -> {
-                showToast("Player ready")
-                binding.playImageView.setImageResource(R.drawable.play_button)
-            }
+            else -> binding.playImageView.setImageResource(R.drawable.play_button)
         }
 
         binding.timeTextView.text = playerState.progress

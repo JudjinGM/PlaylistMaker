@@ -28,10 +28,11 @@ class EditPlaylistFragment : CreatePlaylistFragment() {
             binding.playlistNameEditText.setText(it.playlistName)
             binding.playlistDescriptionEditText.setText(it.playlistDescription)
 
-            Glide.with(requireContext()).load(it.playlistCoverImage)
-                .placeholder(R.drawable.add_photo).into(
-                    binding.coverImageView
-                )
+            if (it.playlistCoverImage != null) {
+                Glide.with(requireContext())
+                    .load(it.playlistCoverImage)
+                    .into(binding.coverImageView)
+            }
         }
     }
 
