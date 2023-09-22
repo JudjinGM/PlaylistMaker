@@ -41,9 +41,7 @@ class EditPlaylistFragment : CreatePlaylistFragment() {
         binding.buttonCreateImageView.text = resources.getString(R.string.save)
     }
 
-    override fun renderToast(state: CreatePlaylistState) {
-
-    }
+    override fun renderToast(state: CreatePlaylistState) = Unit
 
     override fun renderBackBehaviour(state: BackState) {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {

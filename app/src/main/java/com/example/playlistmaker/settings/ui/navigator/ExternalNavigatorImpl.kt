@@ -46,28 +46,31 @@ class ExternalNavigatorImpl(
 
     override fun sharePlaylist(playlistModel: PlaylistModel) {
 
-        val playlistName = playlistModel.playlistName
-        val playlistDescription = playlistModel.playlistDescription
-        var playlistNameAndDescription = ""
-        playlistNameAndDescription += if (playlistDescription.isEmpty()) {
-            playlistName
-        } else {
-            playlistName + "\n" + playlistDescription
+        val playlistTextToShare = buildString {
+            append(playlistModel.playlistName)
+            if (playlistModel.playlistDescription.isEmpty()) {
+                appendLine()
+            } else {
+                appendLine()
+                append(playlistModel.playlistDescription)
+                appendLine()
+            }
+            append(
+                context.resources.getQuantityString(
+                    R.plurals.tracks_plural, playlistModel.tracks.size, playlistModel.tracks.size
+                )
+            )
+            playlistModel.tracks.forEachIndexed { index, track ->
+                appendLine()
+                append(
+                    "${index + 1}. ${track.artistName} - ${track.trackName} ${
+                        SimpleDateFormat(
+                            "mm:ss", Locale.getDefault()
+                        ).format(track.trackTimeMillis)
+                    }"
+                )
+            }
         }
-        playlistNameAndDescription += "\n" + context.resources.getQuantityString(
-            R.plurals.tracks_plural, playlistModel.tracks.size, playlistModel.tracks.size
-        )
-        var playlistTracks = ""
-
-        playlistModel.tracks.forEachIndexed { index, track ->
-            playlistTracks += "\n${index + 1}. ${track.artistName} - ${track.trackName} ${
-                SimpleDateFormat(
-                    "mm:ss", Locale.getDefault()
-                ).format(track.trackTimeMillis)
-            }"
-        }
-
-        val playlistTextToShare = playlistNameAndDescription + playlistTracks
 
         val shareIntent = Intent(Intent.ACTION_SEND)
         shareIntent.type = INTENT_EMAIL_TYPE

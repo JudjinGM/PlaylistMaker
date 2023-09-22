@@ -296,10 +296,7 @@ class PlaylistFragment : Fragment() {
     }
 
     private fun getTotalTracksTime(tracks: List<Track>): Int {
-        var durationSum = 0L
-        tracks.forEach {
-            durationSum += it.trackTimeMillis
-        }
+        val durationSum = tracks.fold(0L) { sum, element -> sum + element.trackTimeMillis }
         return SimpleDateFormat("mm", Locale.getDefault()).format(durationSum).toInt()
     }
 }

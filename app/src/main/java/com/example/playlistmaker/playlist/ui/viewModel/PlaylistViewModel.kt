@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.audioPlayer.ui.viewModel.SingleLiveEvent
 import com.example.playlistmaker.createPlaylist.domain.model.PlaylistModel
 import com.example.playlistmaker.editPlaylist.domain.useCase.DeleteImageFromPrivateStorageUseCase
 import com.example.playlistmaker.playlist.domain.useCase.DeletePlaylistUseCase
@@ -27,7 +28,7 @@ class PlaylistViewModel(
 
     private var playlistStateLiveData = MutableLiveData<PlaylistState>()
 
-    private var sharePlaylistStateLiveData = MutableLiveData<SharePlaylistState>()
+    private var sharePlaylistStateLiveData = SingleLiveEvent<SharePlaylistState>()
 
     private var isTracksNotEmpty: Boolean = false
 
