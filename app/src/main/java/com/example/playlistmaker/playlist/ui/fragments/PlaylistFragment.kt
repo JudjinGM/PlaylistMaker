@@ -83,20 +83,11 @@ class PlaylistFragment : Fragment() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         binding.bottomSheetTracks.playlistsRecycleView.adapter = null
         tracksAdapter = null
         _binding = null
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
     }
 
     private fun initBottomSheetsTracks() {

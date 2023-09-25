@@ -28,9 +28,9 @@ class EditPlaylistFragment : CreatePlaylistFragment() {
             binding.playlistNameEditText.setText(it.playlistName)
             binding.playlistDescriptionEditText.setText(it.playlistDescription)
 
-            if (it.playlistCoverImage != null) {
+            it.playlistCoverImage?.let { image ->
                 Glide.with(requireContext())
-                    .load(it.playlistCoverImage)
+                    .load(image)
                     .into(binding.coverImageView)
             }
         }
