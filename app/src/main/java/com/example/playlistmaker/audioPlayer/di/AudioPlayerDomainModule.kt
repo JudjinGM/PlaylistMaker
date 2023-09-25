@@ -6,6 +6,8 @@ import com.example.playlistmaker.audioPlayer.domain.useCase.AddTrackToFavoritesU
 import com.example.playlistmaker.audioPlayer.domain.useCase.AddTrackToPlaylistUseCase
 import com.example.playlistmaker.audioPlayer.domain.useCase.DeleteTrackFromFavoritesUseCase
 import com.example.playlistmaker.audioPlayer.domain.useCase.IsConnectedToNetworkUseCase
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val audioPlayerDomainModule = module {
@@ -22,13 +24,8 @@ val audioPlayerDomainModule = module {
         DeleteTrackFromFavoritesUseCase.Base(favoriteTracksRepository = get())
     }
 
-    single<FavoriteTracksRepository> {
-        FavoriteTracksRepositoryImpl(
-            dataSource = get(),
-            trackToFavoriteTrackEntityMapper = get(),
-            favoriteTrackEntityToTrackMapper = get()
-        )
-    }
+    singleOf(::FavoriteTracksRepositoryImpl) { bind<FavoriteTracksRepository>() }
+
     factory<AddTrackToPlaylistUseCase> {
         AddTrackToPlaylistUseCase.Base(repository = get())
     }

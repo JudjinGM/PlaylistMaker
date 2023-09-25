@@ -2,8 +2,6 @@ package com.example.playlistmaker.search.data.mapper
 
 import com.example.playlistmaker.search.data.model.TrackDto
 import com.example.playlistmaker.search.domain.model.Track
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class TracksDtoToListTracksMapper {
     fun execute(tracksDto: List<TrackDto>): List<Track> {
@@ -14,11 +12,9 @@ class TracksDtoToListTracksMapper {
                     trackId = track.trackId,
                     trackName = track.trackName,
                     artistName = track.artistName,
-                    trackTimeMillis = SimpleDateFormat(
-                        "mm:ss",
-                        Locale.getDefault()
-                    ).format(track.trackTimeMillis),
+                    trackTimeMillis = track.trackTimeMillis,
                     artworkUrl100 = track.artworkUrl100.orEmpty(),
+                    artworkUrl60 = track.artworkUrl60.orEmpty(),
                     collectionName = track.collectionName.orEmpty(),
                     releaseDate = track.releaseDate.orEmpty(),
                     country = track.country.orEmpty(),

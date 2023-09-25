@@ -7,8 +7,9 @@ data class Track(
     val trackId: Long = 0L,
     val trackName: String = "Unknown song",
     val artistName: String = "",
-    val trackTimeMillis: String = "",
+    val trackTimeMillis: Long = 0,
     val artworkUrl100: String = "",
+    val artworkUrl60: String = "",
     val collectionName: String = "",
     val releaseDate: String = "",
     val country: String = "",
@@ -22,6 +23,7 @@ data class Track(
         parcel.readLong(),
         parcel.readString() ?: "",
         parcel.readString() ?: "",
+        parcel.readLong() ?: 0,
         parcel.readString() ?: "",
         parcel.readString() ?: "",
         parcel.readString() ?: "",
@@ -38,8 +40,9 @@ data class Track(
         parcel.writeLong(trackId)
         parcel.writeString(trackName)
         parcel.writeString(artistName)
-        parcel.writeString(trackTimeMillis)
+        parcel.writeLong(trackTimeMillis)
         parcel.writeString(artworkUrl100)
+        parcel.writeString(artworkUrl60)
         parcel.writeString(collectionName)
         parcel.writeString(releaseDate)
         parcel.writeString(country)

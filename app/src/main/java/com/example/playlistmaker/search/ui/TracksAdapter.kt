@@ -8,14 +8,17 @@ import com.example.playlistmaker.databinding.TracksViewBinding
 import com.example.playlistmaker.search.domain.model.Track
 
 class TracksAdapter(
-    var onTrackClicked: ((Track) -> Unit) = { }
+    var onTrackClicked: ((Track) -> Unit) = { },
+    var onTrackClickedLong: ((Track) -> Unit) = { }
 ) : RecyclerView.Adapter<TracksViewHolder>() {
 
     var tracks: List<Track> = listOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TracksViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         return TracksViewHolder(
-            TracksViewBinding.inflate(layoutInflater, parent, false), onTrackClicked
+            TracksViewBinding.inflate(layoutInflater, parent, false),
+            onTrackClicked,
+            onTrackClickedLong
         )
     }
 

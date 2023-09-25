@@ -9,7 +9,7 @@ interface GetPlaylistListUseCase {
 
     class Base(private val playListRepository: PlayListRepository) : GetPlaylistListUseCase {
         override suspend fun execute(): Flow<List<PlaylistModel>> {
-            return playListRepository.getAllPlaylists()
+            return playListRepository.getAllPlaylistsFlow()
         }
     }
 }

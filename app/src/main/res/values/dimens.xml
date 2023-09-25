@@ -55,7 +55,9 @@
     <dimen name="margin_12">12dp</dimen>
     <dimen name="margin_14">14dp</dimen>
     <dimen name="margin_16">16dp</dimen>
+    <dimen name="margin_21">21dp</dimen>
     <dimen name="margin_24">24dp</dimen>
+    <dimen name="margin_29">29dp</dimen>
     <dimen name="margin_28">28dp</dimen>
     <dimen name="margin_30">30dp</dimen>
     <dimen name="margin_32">32dp</dimen>
@@ -81,7 +83,10 @@
     <dimen name="album_cover_corner_radius">2dp</dimen>
     <dimen name="album_cover_player_corner_radius">8dp</dimen>
     <dimen name="placeholder_image_dimens">120dp</dimen>
+    <dimen name="small_placeholder_image_dimens">80dp</dimen>
     <dimen name="weight_0_dp">0dp</dimen>
+    <dimen name="playlist_name_text_size">24sp</dimen>
+    <dimen name="playlist_description_text_size">18sp</dimen>
     <dimen name="primary_text_size">22sp</dimen>
     <dimen name="placeholder_text_size">19sp</dimen>
     <dimen name="button_text_size">14sp</dimen>

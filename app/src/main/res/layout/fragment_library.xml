@@ -6,7 +6,7 @@
     tools:context=".library.ui.fragments.LibraryFragment">
 
     <TextView
-        android:id="@+id/toolbarLibrary"
+        android:id="@+id/toolbarPlaylist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/title_text_margin_start"
@@ -24,7 +24,7 @@
         android:layout_marginTop="@dimen/top_margin_library_tab_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbarLibrary"
+        app:layout_constraintTop_toBottomOf="@id/toolbarPlaylist"
         app:tabIndicator="@drawable/tab_layout_indicator"
         app:tabTextAppearance="@style/MediumVariantText" />
 

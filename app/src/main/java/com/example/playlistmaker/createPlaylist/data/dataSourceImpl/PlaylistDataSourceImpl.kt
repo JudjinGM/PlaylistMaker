@@ -14,13 +14,21 @@ class PlaylistDataSourceImpl(private val dataBase: AppDatabase) : PlaylistsDataS
     }
 
     override suspend fun removePlaylist(playlistEntity: PlaylistEntity) {
-        dataBase.playlistDao().deletePlaylist(playlistEntity)
         dataBase.playlistTrackCrossRefDao()
             .deletePlaylistFromPlaylistTrackCrossRef(playlistEntity.playlistId)
+        dataBase.playlistDao().deletePlaylist(playlistEntity)
     }
 
     override fun getAllPlaylists(): Flow<List<PlaylistWithSongs>> {
         return dataBase.playlistDao().getPlaylistWithSongsFlow()
+    }
+
+    override fun getPlaylistByIdFlow(playlistId: Long): Flow<PlaylistWithSongs?> {
+        return dataBase.playlistDao().getPlaylistByIdFlow(playlistId)
+    }
+
+    override suspend fun getPlaylistById(playlistId: Long): PlaylistWithSongs? {
+        return dataBase.playlistDao().getPlaylistById(playlistId)
     }
 
     override suspend fun addTrackToPlaylist(playlistId: Long, trackEntity: TrackEntity) {
@@ -32,10 +40,11 @@ class PlaylistDataSourceImpl(private val dataBase: AppDatabase) : PlaylistsDataS
         )
     }
 
-
     override suspend fun removeTrackFromPlaylist(playlistId: Long, trackEntity: TrackEntity) {
         dataBase.playlistTrackCrossRefDao()
             .deleteTrackFromPlaylistTrackCrossRef(playlistId, trackEntity.trackId)
-        dataBase.trackDao().deleteTrack(trackEntity)
+        if (!dataBase.playlistTrackCrossRefDao().isTrackIdExistCrossRef(trackEntity.trackId)) {
+            dataBase.trackDao().deleteTrack(trackEntity)
+        }
     }
 }

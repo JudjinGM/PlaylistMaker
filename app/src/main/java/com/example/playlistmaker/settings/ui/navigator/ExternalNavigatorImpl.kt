@@ -3,12 +3,15 @@ package com.example.playlistmaker.settings.ui.navigator
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import com.example.playlistmaker.R
+import com.example.playlistmaker.createPlaylist.domain.model.PlaylistModel
 import com.example.playlistmaker.share.domain.navigator.ExternalNavigator
 import com.example.playlistmaker.share.domain.repository.ShareResourceRepository
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class ExternalNavigatorImpl(
-    private val context: Context,
-    private val shareResourceRepository: ShareResourceRepository
+    private val context: Context, private val shareResourceRepository: ShareResourceRepository
 ) : ExternalNavigator {
     override fun shareLink() {
         val shareIntent = Intent(Intent.ACTION_SEND)
@@ -39,6 +42,43 @@ class ExternalNavigatorImpl(
         agreementIntent.data = Uri.parse(shareResourceRepository.getTermsLink())
         agreementIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         context.startActivity(agreementIntent)
+    }
+
+    override fun sharePlaylist(playlistModel: PlaylistModel) {
+
+        val playlistTextToShare = buildString {
+            append(playlistModel.playlistName)
+            if (playlistModel.playlistDescription.isEmpty()) {
+                appendLine()
+            } else {
+                appendLine()
+                append(playlistModel.playlistDescription)
+                appendLine()
+            }
+            append(
+                context.resources.getQuantityString(
+                    R.plurals.tracks_plural, playlistModel.tracks.size, playlistModel.tracks.size
+                )
+            )
+            playlistModel.tracks.forEachIndexed { index, track ->
+                appendLine()
+                append(
+                    "${index + 1}. ${track.artistName} - ${track.trackName} ${
+                        SimpleDateFormat(
+                            "mm:ss", Locale.getDefault()
+                        ).format(track.trackTimeMillis)
+                    }"
+                )
+            }
+        }
+
+        val shareIntent = Intent(Intent.ACTION_SEND)
+        shareIntent.type = INTENT_EMAIL_TYPE
+        shareIntent.putExtra(Intent.EXTRA_TEXT, playlistTextToShare)
+
+        val chooserIntent = Intent.createChooser(shareIntent, CHOOSER_TITLE)
+        chooserIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        context.startActivity(chooserIntent)
     }
 
     private companion object {

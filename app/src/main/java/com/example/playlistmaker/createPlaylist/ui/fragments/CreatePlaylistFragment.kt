@@ -19,6 +19,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.createPlaylist.ui.model.BackState
 import com.example.playlistmaker.createPlaylist.ui.model.CreateButtonState
 import com.example.playlistmaker.createPlaylist.ui.model.CreatePlaylistErrorState
+import com.example.playlistmaker.createPlaylist.ui.model.CreatePlaylistScreenState
 import com.example.playlistmaker.createPlaylist.ui.model.CreatePlaylistState
 import com.example.playlistmaker.createPlaylist.ui.viewModel.CreatePlaylistViewModel
 import com.example.playlistmaker.databinding.FragmentCreatePlaylistBinding
@@ -27,16 +28,17 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class CreatePlaylistFragment : Fragment() {
+open class CreatePlaylistFragment : Fragment() {
 
     private var _binding: FragmentCreatePlaylistBinding? = null
-    private val binding get() = _binding!!
+    protected val binding get() = _binding!!
 
     private var textWatcherName: TextWatcher? = null
 
     private var textWatcherDescription: TextWatcher? = null
     private var pickMedia: ActivityResultLauncher<PickVisualMediaRequest>? = null
-    private val viewModel: CreatePlaylistViewModel by viewModel()
+
+    open val viewModel: CreatePlaylistViewModel by viewModel()
 
     private var confirmDialog: MaterialAlertDialogBuilder? = null
 
@@ -56,16 +58,8 @@ class CreatePlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        confirmDialog = MaterialAlertDialogBuilder(
-            requireContext(), R.style.MaterialAlertDialogText
-        ).setTitle(R.string.finish_creating_playlist)
-            .setMessage(R.string.all_unsaved_data_will_be_lost)
-            .setNegativeButton(R.string.cancel) { _, _ ->
 
-            }.setPositiveButton(R.string.finish) { _, _ ->
-                findNavController().popBackStack()
-            }
-
+        initConfirmDialog()
         initView()
         initMediaPicker()
 
@@ -81,7 +75,16 @@ class CreatePlaylistFragment : Fragment() {
             renderBackBehaviour(it)
         }
 
+        viewModel.observeCreatePlaylistScreenState().observe(viewLifecycleOwner) {
+            renderCreatePlaylistScreenState(it)
+        }
+
         setOnClicksAndTextListeners()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onDestroy() {
@@ -102,6 +105,18 @@ class CreatePlaylistFragment : Fragment() {
 
         binding.playlistDescriptionTextLayout.defaultHintTextColor =
             ContextCompat.getColorStateList(requireContext(), R.color.hint_state_color_selector)
+    }
+
+    open fun initConfirmDialog() {
+        confirmDialog = MaterialAlertDialogBuilder(
+            requireContext(), R.style.CustomDialogTheme
+        ).setTitle(R.string.finish_creating_playlist)
+            .setMessage(R.string.all_unsaved_data_will_be_lost)
+            .setNegativeButton(R.string.cancel) { _, _ ->
+
+            }.setPositiveButton(R.string.finish) { _, _ ->
+                findNavController().popBackStack()
+            }
     }
 
 
@@ -146,7 +161,6 @@ class CreatePlaylistFragment : Fragment() {
         binding.buttonCreateImageView.setOnClickListener {
             if (it.isEnabled) {
                 viewModel.createButtonClicked()
-                findNavController().popBackStack()
             }
         }
     }
@@ -192,7 +206,7 @@ class CreatePlaylistFragment : Fragment() {
         }
     }
 
-    private fun renderToast(state: CreatePlaylistState) {
+    open fun renderToast(state: CreatePlaylistState) {
         when (state) {
             is CreatePlaylistState.Success -> showToast(
                 requireContext().getString(
@@ -215,7 +229,7 @@ class CreatePlaylistFragment : Fragment() {
         }
     }
 
-    private fun renderBackBehaviour(state: BackState) {
+    open fun renderBackBehaviour(state: BackState) {
         when (state) {
             BackState.Error -> {
                 requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
@@ -229,16 +243,21 @@ class CreatePlaylistFragment : Fragment() {
 
             BackState.Success -> {
                 requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-                    findNavController().popBackStack()
+                    viewModel.closeScreen()
                 }
                 binding.backImageView.setOnClickListener {
-                    findNavController().popBackStack()
+                    viewModel.closeScreen()
                 }
 
             }
         }
     }
 
+    private fun renderCreatePlaylistScreenState(state: CreatePlaylistScreenState) {
+        when (state) {
+            CreatePlaylistScreenState.CloseScreen -> findNavController().popBackStack()
+        }
+    }
 
     private fun initMediaPicker() {
         pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->

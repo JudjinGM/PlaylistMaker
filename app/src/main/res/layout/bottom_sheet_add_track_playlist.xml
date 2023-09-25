@@ -2,14 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/bottomsheetLinearLayout"
+    android:id="@+id/bottomSheetAddTracksLinearLayout"
+    style="@style/BottomSheetStyle"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@drawable/bottom_sheet_background"
-    style="@style/BottomSheetStyle"
+    android:orientation="vertical"
     app:behavior_hideable="true"
-    app:behavior_peekHeight="504dp"
+    app:behavior_peekHeight="505dp"
+    android:clickable="true"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
     <ImageView
@@ -48,17 +49,15 @@
         android:layout_width="@dimen/progress_bar_width"
         android:layout_height="@dimen/progress_bar_height"
         android:layout_gravity="center"
-        android:indeterminateTint="@color/royal_blue"
         android:layout_marginTop="@dimen/margin_24"
+        android:indeterminateTint="@color/royal_blue"
         android:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/playlistsRecycleView"
-        tools:itemCount="10"
-        tools:listitem="@layout/playlist_small_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/margin_24" />
-
-
+        android:layout_marginTop="@dimen/margin_24"
+        tools:itemCount="10"
+        tools:listitem="@layout/playlist_small_view" />
 </LinearLayout>

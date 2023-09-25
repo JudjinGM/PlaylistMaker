@@ -27,6 +27,8 @@ import com.example.playlistmaker.search.domain.model.Track
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class AudioPlayerFragment : Fragment() {
 
@@ -47,6 +49,9 @@ class AudioPlayerFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         track = args.track ?: Track()
+        if (savedInstanceState == null) {
+            viewModel.initMediaPlayer()
+        }
     }
 
     override fun onCreateView(
@@ -113,7 +118,9 @@ class AudioPlayerFragment : Fragment() {
 
         binding.songNamePlayerTextView.text = track.trackName
         binding.artistNamePlayerTextView.text = track.artistName
-        binding.durationTextView.text = track.trackTimeMillis
+        binding.durationTextView.text = SimpleDateFormat(
+            "mm:ss", Locale.getDefault()
+        ).format(track.trackTimeMillis)
         binding.albumTextView.text = track.collectionName
         binding.yearTextView.text = track.getShortReleaseDate()
         binding.genreTextView.text = track.primaryGenreName
@@ -122,7 +129,7 @@ class AudioPlayerFragment : Fragment() {
 
 
     private fun initBottomSheet() {
-        val bottomSheetContainer = binding.bottomSheetLayout.bottomsheetLinearLayout
+        val bottomSheetContainer = binding.bottomSheetLayout.bottomSheetAddTracksLinearLayout
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer)
 
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -174,9 +181,14 @@ class AudioPlayerFragment : Fragment() {
     }
 
     private fun renderPlayerState(playerState: PlayerState) {
-        if (playerState.isPlaying) {
-            binding.playImageView.setImageResource(R.drawable.pause_button)
-        } else binding.playImageView.setImageResource(R.drawable.play_button)
+        when (playerState) {
+
+            is PlayerState.Playing -> {
+                binding.playImageView.setImageResource(R.drawable.pause_button)
+            }
+
+            else -> binding.playImageView.setImageResource(R.drawable.play_button)
+        }
 
         binding.timeTextView.text = playerState.progress
     }

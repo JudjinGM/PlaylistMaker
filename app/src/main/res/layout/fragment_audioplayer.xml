@@ -289,7 +289,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <include
-        layout="@layout/bottom_sheet_layout"
+        layout="@layout/bottom_sheet_add_track_playlist"
         android:id="@+id/bottomSheetLayout" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

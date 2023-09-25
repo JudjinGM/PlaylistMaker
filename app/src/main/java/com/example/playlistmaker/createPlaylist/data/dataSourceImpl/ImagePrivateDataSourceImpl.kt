@@ -33,6 +33,11 @@ class ImagePrivateDataSourceImpl(private val context: Context) : ImagePrivateDat
         }
     }
 
+    override suspend fun deleteImageFromPrivateStorage(uri: Uri) {
+
+        uri.path?.let { File(it) }?.delete()
+    }
+
     companion object {
         const val DIRECTORY_PATH = "playlist_covers"
         const val COVER_IMAGE_FILE_NAME = "playlist_cover.jpg"

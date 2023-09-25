@@ -7,7 +7,10 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.createPlaylist.domain.model.PlaylistModel
 import com.example.playlistmaker.databinding.PlaylistViewBinding
 
-class PlaylistViewHolder(private val binding: PlaylistViewBinding) :
+class PlaylistViewHolder(
+    private val binding: PlaylistViewBinding,
+    private val onPlaylistClicked: (Long) -> Unit
+) :
     RecyclerView.ViewHolder(binding.root) {
     fun onBind(item: PlaylistModel) {
 
@@ -19,12 +22,13 @@ class PlaylistViewHolder(private val binding: PlaylistViewBinding) :
             .into(binding.playlistCoverImageView)
         binding.playlistNameTextView.text = item.playlistName
 
-        if (item.tracks.size == 1) {
-            binding.tracksCountTextView.text =
-                binding.root.context.getString(R.string.count_track, item.tracks.size)
-        } else {
-            binding.tracksCountTextView.text =
-                binding.root.context.getString(R.string.count_tracks, item.tracks.size)
+        binding.tracksCountTextView.text =
+            binding.root.resources.getQuantityString(
+                R.plurals.tracks_plural, item.tracks.size, item.tracks.size
+            )
+
+        itemView.setOnClickListener {
+            onPlaylistClicked.invoke(item.playlistId)
         }
     }
 }

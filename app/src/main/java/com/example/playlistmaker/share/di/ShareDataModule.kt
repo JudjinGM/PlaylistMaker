@@ -3,6 +3,8 @@ package com.example.playlistmaker.share.di
 import com.example.playlistmaker.share.data.ShareDataSource
 import com.example.playlistmaker.share.data.ShareResourceRepositoryImpl
 import com.example.playlistmaker.share.domain.repository.ShareResourceRepository
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val shareDataModule = module {
@@ -11,7 +13,5 @@ val shareDataModule = module {
         ShareDataSource.Base(context = get())
     }
 
-    single<ShareResourceRepository> {
-        ShareResourceRepositoryImpl(shareDataSource = get())
-    }
+    singleOf(::ShareResourceRepositoryImpl) { bind<ShareResourceRepository>() }
 }

@@ -48,10 +48,9 @@ class AudioPlayerViewModel(
     private val playlistListState = MutableLiveData<PlaylistListState>()
 
     private var timerJob: Job? = null
+    private var isPrepared = false
 
     init {
-        initMediaPlayer()
-
         if (track.isFavorite) {
             setFavoriteState(FavoriteState.Favorite)
         } else setFavoriteState(FavoriteState.NotFavorite)
@@ -78,7 +77,6 @@ class AudioPlayerViewModel(
 
     fun observePlaylistListState(): LiveData<PlaylistListState> = playlistListState
 
-
     fun togglePlay() {
         when (playerStateLiveData.value) {
             is PlayerState.Default -> setToastState(PlayerError.NOT_READY)
@@ -101,12 +99,13 @@ class AudioPlayerViewModel(
         favoriteStateLiveData.value = favoriteState
     }
 
-    private fun initMediaPlayer() {
+    fun initMediaPlayer() {
         mediaPlayerContract.setOnPreparedListener {
+            isPrepared = true
             setPlayerState(PlayerState.Prepared())
         }
         mediaPlayerContract.setOnPlayListener {
-            setPlayerState(PlayerState.Playing(getCurrentPosition()))
+            startTimer()
         }
         mediaPlayerContract.setOnPauseListener {
             setPlayerState(PlayerState.Paused(getCurrentPosition()))
@@ -130,8 +129,9 @@ class AudioPlayerViewModel(
     }
 
     fun pausePlayer() {
-        mediaPlayerContract.pause()
-        stopTimer()
+        if (isPrepared) {
+            mediaPlayerContract.pause()
+        }
     }
 
     fun onFavoriteClicked() {
@@ -179,8 +179,8 @@ class AudioPlayerViewModel(
     private fun startTimer() {
         timerJob = viewModelScope.launch {
             while (mediaPlayerContract.isPlaying()) {
-                delay(DELAY_MILLIS)
                 setPlayerState(PlayerState.Playing(getCurrentPosition()))
+                delay(DELAY_MILLIS)
             }
         }
     }
@@ -193,11 +193,10 @@ class AudioPlayerViewModel(
     private fun getCurrentPosition(): String {
         return SimpleDateFormat(
             "mm:ss", Locale.getDefault()
-        ).format(mediaPlayerContract.getCurrentPosition()) ?: DEFAULT_TIME
+        ).format(mediaPlayerContract.getCurrentPosition())
     }
 
     companion object {
         private const val DELAY_MILLIS = 300L
-        private const val DEFAULT_TIME = "00:00"
     }
 }
