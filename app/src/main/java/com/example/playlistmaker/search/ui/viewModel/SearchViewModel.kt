@@ -20,6 +20,9 @@ import com.example.playlistmaker.search.ui.model.ErrorStatusUi
 import com.example.playlistmaker.search.ui.model.SavedTracks
 import com.example.playlistmaker.search.ui.model.SearchState
 import com.example.playlistmaker.utils.debounce
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
@@ -42,6 +45,15 @@ class SearchViewModel(
     private val tracksSearchDebounce =
         debounce<String>(SEARCH_DEBOUNCE_DELAY_MILLIS, viewModelScope, true) {
             searchRequest(it)
+        }
+
+    private var isClickAllowed = true
+
+    private var job: Job? = null
+
+    private val coroutineExceptionHandler =
+        CoroutineExceptionHandler { _, _ ->
+            setState(SearchState.Error(ErrorStatusUi.NO_CONNECTION))
         }
 
     init {
@@ -69,11 +81,17 @@ class SearchViewModel(
         tracksSearchDebounce(changedText)
     }
 
+    fun refreshSearchDebounced() {
+        if (isClickDebounce()) {
+            latestSearchText?.let { searchDebounced(it) }
+        }
+    }
+
     private fun searchRequest(inputSearchText: String) {
         if (inputSearchText.isNotEmpty()) {
             setState(SearchState.Loading)
 
-            viewModelScope.launch {
+            job = viewModelScope.launch(coroutineExceptionHandler) {
                 searchSongsUseCase.execute(inputSearchText).collect {
                     processResult(it.first, it.second)
                 }
@@ -106,16 +124,13 @@ class SearchViewModel(
         }
     }
 
-    fun addToListenHistory(track: Track) {
-        addTrackToListenHistoryUseCase.execute(track)
-    }
-
     fun clearListenHistory() {
         clearListenHistoryTracksUseCase.execute()
         updateState()
     }
 
     fun clearSearchInput() {
+        job?.cancel()
         clearSearchResultTracksUseCase.execute()
         savedStateHandle[SAVED_SEARCH_TRACKS] = SavedTracks(arrayListOf())
         updateState()
@@ -134,8 +149,44 @@ class SearchViewModel(
         }
     }
 
+    fun onTrackClicked(track: Track) {
+        if (isClickDebounce()) {
+            addTrackToListenHistoryUseCase.execute(track)
+            val currentState: SearchState? = getCurrentState()
+            setState(SearchState.NavigateToPlayer(track))
+            currentState?.let { setState(it) }
+        }
+    }
+
+    private fun getCurrentState(): SearchState? {
+        val currentState = when (stateLiveData.value) {
+            is SearchState.Error -> (stateLiveData.value as SearchState.Error).copy()
+            SearchState.Loading -> (stateLiveData.value as SearchState.Loading)
+            SearchState.Success.Empty -> (stateLiveData.value as SearchState.Success.Empty)
+            is SearchState.Success.ListenHistoryContent -> (stateLiveData.value as SearchState.Success.ListenHistoryContent).copy()
+            is SearchState.Success.SearchContent -> (stateLiveData.value as SearchState.Success.SearchContent).copy()
+            is SearchState.NavigateToPlayer -> (stateLiveData.value as SearchState.NavigateToPlayer).copy()
+            null -> null
+        }
+        return currentState
+    }
+
+    private fun isClickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+
+            viewModelScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY_MILLIS)
+                isClickAllowed = true
+            }
+        }
+        return current
+    }
+
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY_MILLIS = 2000L
+        private const val CLICK_DEBOUNCE_DELAY_MILLIS = 1000L
         private const val DEFAULT_TEXT = ""
         private const val SAVED_SEARCH_TRACKS = "SAVED_SEARCH_TRACKS"
     }
