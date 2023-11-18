@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
@@ -21,8 +20,6 @@ import com.example.playlistmaker.search.ui.model.PlaceholderStatus
 import com.example.playlistmaker.search.ui.model.SearchState
 import com.example.playlistmaker.search.ui.model.TextWatcherJustOnTextChanged
 import com.example.playlistmaker.search.ui.viewModel.SearchViewModel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
@@ -34,20 +31,11 @@ class SearchFragment : Fragment() {
     private var textWatcher: TextWatcher? = null
     private var tracksAdapter: TracksAdapter? = null
 
-    private var inputSearchText: String = DEFAULT_TEXT
-    private var isClickAllowed = true
-    private var isFragmentJustCreated = false
+    private var inputMethodManager: InputMethodManager? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        isFragmentJustCreated = true
-
-    }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
@@ -59,8 +47,6 @@ class SearchFragment : Fragment() {
         recycleViewInit()
         setOnClicksAndActions()
 
-        isClickAllowed = true
-
         viewModel.updateState()
 
         viewModel.observeState().observe(viewLifecycleOwner) {
@@ -68,24 +54,11 @@ class SearchFragment : Fragment() {
         }
     }
 
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
-        if (savedInstanceState != null) {
-            inputSearchText = savedInstanceState.getString(SAVED_TEXT, DEFAULT_TEXT)
-        }
-        binding.inputSearchFieldEditText.setText(inputSearchText)
-    }
-
 
     override fun onResume() {
         super.onResume()
         setOnTextWatchersTextChangeListeners()
-        setClearInputTextImageViewVisibility(inputSearchText)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(SAVED_TEXT, inputSearchText)
+        setClearInputTextImageViewVisibility(binding.inputSearchFieldEditText.text)
     }
 
     override fun onPause() {
@@ -112,12 +85,17 @@ class SearchFragment : Fragment() {
                     is SearchState.Success.Empty -> showEmpty()
                 }
             }
+
+            is SearchState.NavigateToPlayer -> navigateToPlayer(state.track)
         }
     }
 
     private fun showLoading() {
         tracksAdapter?.updateAdapter(listOf())
         showPlaceholder(PlaceholderStatus.PROGRESS_BAR)
+        inputMethodManager?.hideSoftInputFromWindow(
+            binding.inputSearchFieldEditText.windowToken, 0
+        )
     }
 
     private fun showError(errorStatus: ErrorStatusUi) {
@@ -198,6 +176,11 @@ class SearchFragment : Fragment() {
         }
     }
 
+    private fun navigateToPlayer(track: Track) {
+        val directions = SearchFragmentDirections.actionSearchFragmentToAudioPlayerFragment(track)
+        findNavController().navigate(directions)
+    }
+
     private fun recycleViewInit() {
         tracksAdapter = TracksAdapter()
         binding.tracksRecyclerView.layoutManager =
@@ -206,12 +189,12 @@ class SearchFragment : Fragment() {
     }
 
     private fun setOnClicksAndActions() {
+        inputMethodManager =
+            activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
 
         binding.clearImageView.setOnClickListener {
             viewModel.clearSearchInput()
 
-            val inputMethodManager =
-                activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(
                 binding.inputSearchFieldEditText.windowToken, 0
             )
@@ -223,19 +206,11 @@ class SearchFragment : Fragment() {
         }
 
         tracksAdapter?.onTrackClicked = { track ->
-            if (isClickDebounce()) {
-                viewModel.addToListenHistory(track)
-
-                val directions =
-                    SearchFragmentDirections.actionSearchFragmentToAudioPlayerFragment(track)
-                findNavController().navigate(directions)
-            }
+            viewModel.onTrackClicked(track)
         }
 
         binding.refreshButton.setOnClickListener {
-            if (isClickDebounce()) {
-                viewModel.searchDebounced(inputSearchText)
-            }
+            viewModel.refreshSearchDebounced()
         }
     }
 
@@ -245,31 +220,17 @@ class SearchFragment : Fragment() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 setClearInputTextImageViewVisibility(s)
-                inputSearchText = binding.inputSearchFieldEditText.text.toString()
 
                 if (binding.inputSearchFieldEditText.hasFocus() && (s?.isEmpty() == true || s?.isBlank() == true)) {
                     viewModel.clearSearchInput()
                 }
                 viewModel.searchDebounced(
-                    changedText = s?.toString() ?: ""
+                    changedText = s?.toString() ?: DEFAULT_TEXT
                 )
             }
         }
 
         textWatcher?.let { binding.inputSearchFieldEditText.addTextChangedListener(it) }
-    }
-
-    private fun isClickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-
-            viewLifecycleOwner.lifecycleScope.launch {
-                delay(CLICK_DEBOUNCE_DELAY_MILLIS)
-                isClickAllowed = true
-            }
-        }
-        return current
     }
 
     private fun setClearInputTextImageViewVisibility(charSequence: CharSequence?) {
@@ -281,8 +242,6 @@ class SearchFragment : Fragment() {
     }
 
     companion object {
-        const val SAVED_TEXT = "SAVED_TEXT"
         const val DEFAULT_TEXT = ""
-        private const val CLICK_DEBOUNCE_DELAY_MILLIS = 1000L
     }
 }

@@ -21,5 +21,5 @@ sealed interface SearchState {
         val errorStatus: ErrorStatusUi
     ) : SearchState
 
-
+    data class NavigateToPlayer(val track: Track) : SearchState
 }
