@@ -123,56 +123,46 @@ class SearchFragment : Fragment() {
 
     private fun showPlaceholder(status: PlaceholderStatus) {
         when (status) {
-            PlaceholderStatus.NO_PLACEHOLDER -> {
-                binding.placeholderImage.visibility = View.GONE
-                binding.errorTextTextView.visibility = View.GONE
-                binding.refreshButton.visibility = View.GONE
-                binding.headerSearchHistoryTextView.visibility = View.GONE
-                binding.buttonClearHistory.visibility = View.GONE
-                binding.progressBar.visibility = View.GONE
+            PlaceholderStatus.NO_PLACEHOLDER -> hideAll()
+
+            PlaceholderStatus.NOTHING_FOUND -> with(binding) {
+                hideAll()
+                placeholderImage.visibility = View.VISIBLE
+                errorTextTextView.visibility = View.VISIBLE
+                errorTextTextView.text = getText(R.string.error_search)
+                placeholderImage.setImageResource(R.drawable.error_search)
             }
 
-            PlaceholderStatus.NOTHING_FOUND -> {
-                binding.refreshButton.visibility = View.GONE
-                binding.placeholderImage.visibility = View.VISIBLE
-                binding.placeholderImage.setImageResource(R.drawable.error_search)
-                binding.errorTextTextView.visibility = View.VISIBLE
-                binding.errorTextTextView.text = getText(R.string.error_search)
-                binding.headerSearchHistoryTextView.visibility = View.GONE
-                binding.buttonClearHistory.visibility = View.GONE
-                binding.progressBar.visibility = View.GONE
+            PlaceholderStatus.NO_CONNECTION -> with(binding) {
+                hideAll()
+                placeholderImage.visibility = View.VISIBLE
+                placeholderImage.setImageResource(R.drawable.error_internet)
+                errorTextTextView.visibility = View.VISIBLE
+                errorTextTextView.text = getText(R.string.error_internet)
+                refreshButton.visibility = View.VISIBLE
             }
 
-            PlaceholderStatus.NO_CONNECTION -> {
-                binding.placeholderImage.visibility = View.VISIBLE
-                binding.placeholderImage.setImageResource(R.drawable.error_internet)
-                binding.errorTextTextView.visibility = View.VISIBLE
-                binding.errorTextTextView.text = getText(R.string.error_internet)
-                binding.refreshButton.visibility = View.VISIBLE
-                binding.headerSearchHistoryTextView.visibility = View.GONE
-                binding.buttonClearHistory.visibility = View.GONE
-                binding.progressBar.visibility = View.GONE
-            }
-
-            PlaceholderStatus.LISTEN_HISTORY -> {
-                binding.placeholderImage.visibility = View.GONE
-                binding.errorTextTextView.visibility = View.GONE
-                binding.refreshButton.visibility = View.GONE
-                binding.headerSearchHistoryTextView.visibility = View.GONE
-                binding.buttonClearHistory.visibility = View.GONE
-                binding.headerSearchHistoryTextView.visibility = View.VISIBLE
-                binding.buttonClearHistory.visibility = View.VISIBLE
-                binding.progressBar.visibility = View.GONE
+            PlaceholderStatus.LISTEN_HISTORY -> with(binding){
+                hideAll()
+                headerSearchHistoryTextView.visibility = View.VISIBLE
+                buttonClearHistory.visibility = View.VISIBLE
             }
 
             PlaceholderStatus.PROGRESS_BAR -> {
-                binding.placeholderImage.visibility = View.GONE
-                binding.errorTextTextView.visibility = View.GONE
-                binding.refreshButton.visibility = View.GONE
-                binding.headerSearchHistoryTextView.visibility = View.GONE
-                binding.buttonClearHistory.visibility = View.GONE
+                hideAll()
                 binding.progressBar.visibility = View.VISIBLE
             }
+        }
+    }
+
+    private fun hideAll() {
+        with(binding) {
+            placeholderImage.visibility = View.GONE
+            errorTextTextView.visibility = View.GONE
+            refreshButton.visibility = View.GONE
+            headerSearchHistoryTextView.visibility = View.GONE
+            buttonClearHistory.visibility = View.GONE
+            progressBar.visibility = View.GONE
         }
     }
 
