@@ -9,10 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.createPlaylist.data.model.ResultForFile
 import com.example.playlistmaker.createPlaylist.domain.useCase.CreatePlaylistUseCase
 import com.example.playlistmaker.createPlaylist.domain.useCase.SaveImageToPrivateStorageUseCase
-import com.example.playlistmaker.createPlaylist.ui.model.BackState
-import com.example.playlistmaker.createPlaylist.ui.model.CreateButtonState
 import com.example.playlistmaker.createPlaylist.ui.model.CreatePlaylistErrorState
-import com.example.playlistmaker.createPlaylist.ui.model.CreatePlaylistScreenState
 import com.example.playlistmaker.createPlaylist.ui.model.CreatePlaylistState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -22,30 +19,21 @@ open class CreatePlaylistViewModel(
     private val saveImageToPrivateStorageUseCase: SaveImageToPrivateStorageUseCase
 ) : ViewModel() {
 
-    private val toastStateLiveData = MutableLiveData<CreatePlaylistState>()
-    protected val createButtonState = MutableLiveData<CreateButtonState>(CreateButtonState.Disabled)
-    private val backBehaviourState = MutableLiveData<BackState>(BackState.Success)
-    private val createPlaylistScreenState = MutableLiveData<CreatePlaylistScreenState>()
+    protected val stateLiveData = MutableLiveData<CreatePlaylistState>()
 
     protected var playlistName: String = DEFAULT_TEXT
     protected var playlistDescription: String = DEFAULT_TEXT
     protected var playlistCoverLoaded: Uri? = null
     protected var playlistCoverSavedToStorage: Uri? = null
 
-    fun observeToastState(): LiveData<CreatePlaylistState> = toastStateLiveData
-    fun observeCreateButtonState(): LiveData<CreateButtonState> = createButtonState
-
-    fun observeBackBehaviourState(): LiveData<BackState> = backBehaviourState
-
-    fun observeCreatePlaylistScreenState(): LiveData<CreatePlaylistScreenState> =
-        createPlaylistScreenState
+    fun observeState(): LiveData<CreatePlaylistState> = stateLiveData
 
     fun getNameInput(s: CharSequence?) {
         if (s.isNullOrEmpty()) {
-            createButtonState.value = CreateButtonState.Disabled
+            stateLiveData.value = CreatePlaylistState.ButtonState(isEnable = false)
             playlistName = DEFAULT_TEXT
         } else {
-            createButtonState.value = CreateButtonState.Enabled
+            stateLiveData.value = CreatePlaylistState.ButtonState(isEnable = true)
             playlistName = s.toString()
         }
     }
@@ -63,47 +51,45 @@ open class CreatePlaylistViewModel(
     }
 
     protected suspend fun saveCoverImageToStorage(uri: Uri) {
-        val result = saveImageToPrivateStorageUseCase.execute(uri)
-
-        when (result) {
+        when (val result = saveImageToPrivateStorageUseCase.execute(uri)) {
             ResultForFile.Error -> {
-                toastStateLiveData.value =
-                    CreatePlaylistState.Error(CreatePlaylistErrorState.CANNOT_SAVE_IMAGE)
+                stateLiveData.value =
+                    CreatePlaylistState.SaveNotSuccess(CreatePlaylistErrorState.CANNOT_SAVE_IMAGE)
             }
 
             is ResultForFile.Success -> {
                 playlistCoverSavedToStorage = result.file.toUri()
-                }
             }
         }
+    }
 
 
     open fun createButtonClicked() {
-        if (createButtonState.value == CreateButtonState.Enabled) {
-            viewModelScope.launch {
-                val resultDeferred = async {
-                    if (playlistCoverLoaded != null) {
-                        playlistCoverLoaded?.let { saveCoverImageToStorage(it) }
-                    }
-                    createPlaylistUseCase.execute(
-                        playlistName, playlistDescription, playlistCoverSavedToStorage
-                    )
+        viewModelScope.launch {
+            val resultDeferred = async {
+                if (playlistCoverLoaded != null) {
+                    playlistCoverLoaded?.let { saveCoverImageToStorage(it) }
                 }
-                resultDeferred.await()
-                closeScreen()
-                toastStateLiveData.value = CreatePlaylistState.Success(playlistName)
+                createPlaylistUseCase.execute(
+                    playlistName, playlistDescription, playlistCoverSavedToStorage
+                )
             }
+            resultDeferred.await()
+            showAfterCreate()
+            closeScreen()
         }
     }
 
-    fun closeScreen() {
-        createPlaylistScreenState.value = CreatePlaylistScreenState.CloseScreen
+    open fun showAfterCreate() {
+        stateLiveData.value = CreatePlaylistState.SaveSuccess(playlistName)
     }
 
-    fun backStateBehaviour() {
+    open fun closeScreen() {
         if (playlistName.isBlank() && playlistDescription.isBlank() && playlistCoverLoaded == null) {
-            backBehaviourState.value = BackState.Success
-        } else backBehaviourState.value = BackState.Error
+            stateLiveData.value = CreatePlaylistState.Navigate.Back(isNeedToConfirm = true)
+        } else {
+            stateLiveData.value = CreatePlaylistState.Navigate.Back(isNeedToConfirm = false)
+        }
     }
 
     companion object {

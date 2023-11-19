@@ -117,7 +117,7 @@
         android:hint="@string/playlist_description_hint"
         app:boxStrokeColor="@color/box_stroke_color_selector_grey"
         app:hintTextColor="@color/box_stroke_color_selector_blue"
-        app:layout_constraintBottom_toTopOf="@id/buttonCreateImageView"
+        app:layout_constraintBottom_toTopOf="@id/buttonCreateTextView"
         app:layout_constraintEnd_toStartOf="@+id/guidLineEnd"
         app:layout_constraintStart_toStartOf="@+id/guidLineStart"
         app:layout_constraintTop_toBottomOf="@+id/playlistNameTextLayout">
@@ -130,7 +130,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
-        android:id="@+id/buttonCreateImageView"
+        android:id="@+id/buttonCreateTextView"
         style="@style/ButtonText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

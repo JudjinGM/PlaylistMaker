@@ -1,12 +1,10 @@
 package com.example.playlistmaker.editPlaylist.ui.viewModel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.createPlaylist.domain.model.PlaylistModel
 import com.example.playlistmaker.createPlaylist.domain.useCase.CreatePlaylistUseCase
 import com.example.playlistmaker.createPlaylist.domain.useCase.SaveImageToPrivateStorageUseCase
-import com.example.playlistmaker.createPlaylist.ui.model.CreateButtonState
+import com.example.playlistmaker.createPlaylist.ui.model.CreatePlaylistState
 import com.example.playlistmaker.createPlaylist.ui.viewModel.CreatePlaylistViewModel
 import com.example.playlistmaker.editPlaylist.domain.useCase.DeleteImageFromPrivateStorageUseCase
 import com.example.playlistmaker.editPlaylist.domain.useCase.GetPlaylistByIdUseCase
@@ -24,45 +22,50 @@ class EditPlaylistViewModel(
 ) : CreatePlaylistViewModel(createPlaylistUseCase, saveImageToPrivateStorageUseCase) {
 
     lateinit var playlistModel: PlaylistModel
-    private val playlistInitState = MutableLiveData<PlaylistModel>()
 
     init {
+        stateLiveData.value = CreatePlaylistState.ButtonState(isEnable = true)
         viewModelScope.launch {
             val resultDeferred = async {
                 playlistModel = getPlaylistByIdUseCase.execute(playlistId)
 
             }
             resultDeferred.await()
-            playlistInitState.value = playlistModel
+            stateLiveData.value = CreatePlaylistState.InitState(playlistModel)
         }
     }
-
-    fun observePlaylistInitState(): LiveData<PlaylistModel> = playlistInitState
 
     override fun createButtonClicked() {
-        if (createButtonState.value == CreateButtonState.Enabled) {
-            viewModelScope.launch {
-                val resultDeferred = async {
-                    if (playlistCoverLoaded != null) {
-                        playlistCoverLoaded?.let {
-                            saveCoverImageToStorage(it)
-                            val uriForFileDelete = playlistModel.playlistCoverImage
-                            if (uriForFileDelete != null) {
-                                deleteImageFromPrivateStorageUseCase.execute(uriForFileDelete)
-                            }
+        viewModelScope.launch {
+            val resultDeferred = async {
+                if (playlistCoverLoaded != null) {
+                    playlistCoverLoaded?.let {
+                        saveCoverImageToStorage(it)
+                        val uriForFileDelete = playlistModel.playlistCoverImage
+                        if (uriForFileDelete != null) {
+                            deleteImageFromPrivateStorageUseCase.execute(
+                                uriForFileDelete
+                            )
                         }
-                    } else playlistCoverSavedToStorage = playlistModel.playlistCoverImage
-                    updatePlaylistUseCase.execute(
-                        playlistId,
-                        playlistName,
-                        playlistDescription,
-                        playlistCoverSavedToStorage,
-                        playlistModel.tracks
-                    )
-                }
-                resultDeferred.await()
-                closeScreen()
+                    }
+                } else playlistCoverSavedToStorage = playlistModel.playlistCoverImage
+
+                updatePlaylistUseCase.execute(
+                    playlistId,
+                    playlistName,
+                    playlistDescription,
+                    playlistCoverSavedToStorage,
+                    playlistModel.tracks
+                )
             }
+            resultDeferred.await()
+            closeScreen()
         }
     }
+
+    override fun closeScreen() {
+        stateLiveData.value = CreatePlaylistState.Navigate.Back(isNeedToConfirm = false)
+    }
+
+    override fun showAfterCreate() {}
 }
