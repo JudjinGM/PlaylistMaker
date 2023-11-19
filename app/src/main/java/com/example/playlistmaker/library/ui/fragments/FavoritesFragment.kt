@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
@@ -16,8 +15,6 @@ import com.example.playlistmaker.library.ui.model.FavoritesState
 import com.example.playlistmaker.library.ui.view_model.FavoritesViewModel
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.ui.TracksAdapter
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -26,8 +23,6 @@ class FavoritesFragment : Fragment() {
     private val binding get() = _binding!!
 
     private var tracksAdapter: TracksAdapter? = null
-
-    private var isClickAllowed = true
 
     private val viewModel: FavoritesViewModel by viewModel()
 
@@ -42,8 +37,6 @@ class FavoritesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        isClickAllowed = true
 
         recycleViewInit()
 
@@ -66,6 +59,11 @@ class FavoritesFragment : Fragment() {
             is FavoritesState.Error -> showError(state.error)
             FavoritesState.Loading -> showLoading()
             is FavoritesState.Success.FavoriteContent -> showContent(state.tracks)
+            is FavoritesState.NavigateToPlayer -> {
+                val directions =
+                    LibraryFragmentDirections.actionLibraryFragmentToAudioPlayerFragment(state.track)
+                findNavController().navigate(directions)
+            }
         }
     }
 
@@ -95,19 +93,6 @@ class FavoritesFragment : Fragment() {
         }
     }
 
-    private fun isClickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-
-            viewLifecycleOwner.lifecycleScope.launch {
-                delay(CLICK_DEBOUNCE_DELAY_MILLIS)
-                isClickAllowed = true
-            }
-        }
-        return current
-    }
-
     private fun recycleViewInit() {
         tracksAdapter = TracksAdapter()
         binding.tracksRecyclerView.layoutManager =
@@ -116,19 +101,12 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun onClicksInit() {
-
         tracksAdapter?.onTrackClicked = { track ->
-            if (isClickDebounce()) {
-                viewModel.addToListenHistory(track)
-                val directions =
-                    LibraryFragmentDirections.actionLibraryFragmentToAudioPlayerFragment(track)
-                findNavController().navigate(directions)
-            }
+            viewModel.onTrackClicked(track)
         }
     }
 
-    companion object {
+    companion object{
         fun newInstance() = FavoritesFragment()
-        private const val CLICK_DEBOUNCE_DELAY_MILLIS = 1000L
     }
 }
