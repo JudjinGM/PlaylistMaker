@@ -15,11 +15,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
-import com.example.playlistmaker.createPlaylist.ui.model.BackState
-import com.example.playlistmaker.createPlaylist.ui.model.CreateButtonState
 import com.example.playlistmaker.createPlaylist.ui.model.CreatePlaylistErrorState
-import com.example.playlistmaker.createPlaylist.ui.model.CreatePlaylistScreenState
 import com.example.playlistmaker.createPlaylist.ui.model.CreatePlaylistState
 import com.example.playlistmaker.createPlaylist.ui.viewModel.CreatePlaylistViewModel
 import com.example.playlistmaker.databinding.FragmentCreatePlaylistBinding
@@ -58,25 +56,12 @@ open class CreatePlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         initConfirmDialog()
         initView()
         initMediaPicker()
 
-        viewModel.observeCreateButtonState().observe(viewLifecycleOwner) {
-            renderCreateButton(it)
-        }
-
-        viewModel.observeToastState().observe(viewLifecycleOwner) {
-            renderToast(it)
-        }
-
-        viewModel.observeBackBehaviourState().observe(viewLifecycleOwner) {
-            renderBackBehaviour(it)
-        }
-
-        viewModel.observeCreatePlaylistScreenState().observe(viewLifecycleOwner) {
-            renderCreatePlaylistScreenState(it)
+        viewModel.observeState().observe(viewLifecycleOwner) {
+            renderState(it)
         }
 
         setOnClicksAndTextListeners()
@@ -92,6 +77,52 @@ open class CreatePlaylistFragment : Fragment() {
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
     }
 
+    private fun renderState(state: CreatePlaylistState) {
+        when (state) {
+            is CreatePlaylistState.ButtonState -> binding.buttonCreateTextView.isEnabled =
+                state.isEnable
+
+            is CreatePlaylistState.Navigate.Back -> {
+                if (state.isNeedToConfirm) {
+                    confirmDialog?.show()
+                } else {
+                    findNavController().popBackStack()
+                }
+            }
+
+            is CreatePlaylistState.SaveSuccess -> showToast(
+                requireContext().getString(
+                    R.string.playlist_name_created, state.name
+                ),
+            )
+
+            is CreatePlaylistState.SaveNotSuccess -> {
+                when (state.error) {
+
+                    CreatePlaylistErrorState.CANNOT_SAVE_IMAGE -> showToast(
+                        requireContext().getString(R.string.cannot_save_image)
+                    )
+
+                    CreatePlaylistErrorState.CANNOT_CREATE_PLAYLIST -> showToast(
+                        requireContext().getString(
+                            R.string.cannot_create_playlist
+                        )
+                    )
+                }
+            }
+
+            is CreatePlaylistState.InitState -> {
+                binding.playlistNameEditText.setText(state.playlistModel?.playlistName)
+                binding.playlistDescriptionEditText.setText(state.playlistModel?.playlistDescription)
+
+                state.playlistModel?.playlistCoverImage?.let { image ->
+                    Glide.with(requireContext())
+                        .load(image)
+                        .into(binding.coverImageView)
+                }
+            }
+        }
+    }
 
     private fun initView() {
         binding.playlistNameTextLayout.boxStrokeColor =
@@ -107,7 +138,7 @@ open class CreatePlaylistFragment : Fragment() {
             ContextCompat.getColorStateList(requireContext(), R.color.hint_state_color_selector)
     }
 
-    open fun initConfirmDialog() {
+    private fun initConfirmDialog() {
         confirmDialog = MaterialAlertDialogBuilder(
             requireContext(), R.style.CustomDialogTheme
         ).setTitle(R.string.finish_creating_playlist)
@@ -119,13 +150,11 @@ open class CreatePlaylistFragment : Fragment() {
             }
     }
 
-
     private fun setOnClicksAndTextListeners() {
         textWatcherName = object : TextWatcherJustOnTextChanged {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 textInputLayoutBoxStrokeBehaviour(binding.playlistNameTextLayout, s)
                 viewModel.getNameInput(s)
-                viewModel.backStateBehaviour()
             }
         }
 
@@ -139,7 +168,6 @@ open class CreatePlaylistFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 textInputLayoutBoxStrokeBehaviour(binding.playlistDescriptionTextLayout, s)
                 viewModel.getDescriptionInput(s)
-                viewModel.backStateBehaviour()
             }
         }
 
@@ -158,10 +186,18 @@ open class CreatePlaylistFragment : Fragment() {
             pickMedia?.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
-        binding.buttonCreateImageView.setOnClickListener {
+        binding.buttonCreateTextView.setOnClickListener {
             if (it.isEnabled) {
                 viewModel.createButtonClicked()
             }
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            viewModel.closeScreen()
+        }
+
+        binding.backImageView.setOnClickListener {
+            viewModel.closeScreen()
         }
     }
 
@@ -196,76 +232,12 @@ open class CreatePlaylistFragment : Fragment() {
         }
     }
 
-    private fun renderCreateButton(state: CreateButtonState) {
-        when (state) {
-            CreateButtonState.Disabled -> {
-                binding.buttonCreateImageView.isEnabled = false
-            }
-
-            CreateButtonState.Enabled -> binding.buttonCreateImageView.isEnabled = true
-        }
-    }
-
-    open fun renderToast(state: CreatePlaylistState) {
-        when (state) {
-            is CreatePlaylistState.Success -> showToast(
-                requireContext().getString(
-                    R.string.playlist_name_created, state.name
-                ),
-            )
-
-            is CreatePlaylistState.Error -> when (state.error) {
-
-                CreatePlaylistErrorState.CANNOT_SAVE_IMAGE -> showToast(
-                    requireContext().getString(R.string.cannot_save_image)
-                )
-
-                CreatePlaylistErrorState.CANNOT_CREATE_PLAYLIST -> showToast(
-                    requireContext().getString(
-                        R.string.cannot_create_playlist
-                    )
-                )
-            }
-        }
-    }
-
-    open fun renderBackBehaviour(state: BackState) {
-        when (state) {
-            BackState.Error -> {
-                requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-                    confirmDialog?.show()
-                }
-                binding.backImageView.setOnClickListener {
-                    confirmDialog?.show()
-
-                }
-            }
-
-            BackState.Success -> {
-                requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-                    viewModel.closeScreen()
-                }
-                binding.backImageView.setOnClickListener {
-                    viewModel.closeScreen()
-                }
-
-            }
-        }
-    }
-
-    private fun renderCreatePlaylistScreenState(state: CreatePlaylistScreenState) {
-        when (state) {
-            CreatePlaylistScreenState.CloseScreen -> findNavController().popBackStack()
-        }
-    }
-
     private fun initMediaPicker() {
         pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
                 binding.coverImageView.scaleType = ImageView.ScaleType.CENTER_CROP
                 binding.coverImageView.setImageURI(uri)
                 viewModel.getCoverImageLoadedUri(uri)
-                viewModel.backStateBehaviour()
             }
         }
     }
