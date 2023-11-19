@@ -9,6 +9,7 @@ import com.example.playlistmaker.library.ui.model.FavoritesError
 import com.example.playlistmaker.library.ui.model.FavoritesState
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.domain.useCase.AddTrackToListenHistoryUseCase
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class FavoritesViewModel(
@@ -16,6 +17,7 @@ class FavoritesViewModel(
     private val addTrackToListenHistoryUseCase: AddTrackToListenHistoryUseCase
 ) : ViewModel() {
 
+    private var isClickAllowed = true
     private var stateLiveData = MutableLiveData<FavoritesState>()
 
     init {
@@ -23,6 +25,25 @@ class FavoritesViewModel(
     }
 
     fun observeState(): LiveData<FavoritesState> = stateLiveData
+
+    fun onTrackClicked(track: Track) {
+        if (isClickDebounce()) {
+            val currentState = getCurrentState()
+            addTrackToListenHistoryUseCase.execute(track)
+            setState(FavoritesState.NavigateToPlayer(track))
+            currentState?.let { setState(it) }
+        }
+    }
+
+    private fun getCurrentState(): FavoritesState? {
+        return when (stateLiveData.value) {
+            is FavoritesState.Error -> (stateLiveData.value as FavoritesState.Error).copy()
+            FavoritesState.Loading -> (stateLiveData.value as FavoritesState.Loading)
+            is FavoritesState.NavigateToPlayer -> (stateLiveData.value as FavoritesState.NavigateToPlayer).copy()
+            is FavoritesState.Success.FavoriteContent -> (stateLiveData.value as FavoritesState.Success.FavoriteContent).copy()
+            null -> null
+        }
+    }
 
     private fun setState(state: FavoritesState) {
         stateLiveData.value = state
@@ -40,7 +61,20 @@ class FavoritesViewModel(
         }
     }
 
-    fun addToListenHistory(track: Track) {
-        addTrackToListenHistoryUseCase.execute(track)
+    private fun isClickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+
+            viewModelScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY_MILLIS)
+                isClickAllowed = true
+            }
+        }
+        return current
+    }
+
+    companion object {
+        private const val CLICK_DEBOUNCE_DELAY_MILLIS = 1000L
     }
 }
