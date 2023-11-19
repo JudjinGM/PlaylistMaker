@@ -15,15 +15,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.audioPlayer.ui.PlaylistSmallAdapter
-import com.example.playlistmaker.audioPlayer.ui.model.AddPlaylistState
-import com.example.playlistmaker.audioPlayer.ui.model.BottomSheetState
-import com.example.playlistmaker.audioPlayer.ui.model.FavoriteState
+import com.example.playlistmaker.audioPlayer.ui.model.AudioPlayerState
 import com.example.playlistmaker.audioPlayer.ui.model.PlayerError
-import com.example.playlistmaker.audioPlayer.ui.model.PlayerState
-import com.example.playlistmaker.audioPlayer.ui.model.PlaylistListState
 import com.example.playlistmaker.audioPlayer.ui.viewModel.AudioPlayerViewModel
 import com.example.playlistmaker.databinding.FragmentAudioplayerBinding
-import com.example.playlistmaker.search.domain.model.Track
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -32,7 +27,6 @@ import java.util.Locale
 
 class AudioPlayerFragment : Fragment() {
 
-    private lateinit var track: Track
     private var _binding: FragmentAudioplayerBinding? = null
     private val binding get() = _binding!!
 
@@ -48,7 +42,6 @@ class AudioPlayerFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        track = args.track ?: Track()
         if (savedInstanceState == null) {
             viewModel.initMediaPlayer()
         }
@@ -64,33 +57,14 @@ class AudioPlayerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewContentInit()
+        viewModel.initState()
+
         initBottomSheet()
         recycleViewInit()
         onClicks()
 
-        viewModel.observePlayerState().observe(viewLifecycleOwner) {
-            renderPlayerState(it)
-        }
-
-        viewModel.observeErrorToastState().observe(viewLifecycleOwner) {
-            renderToastErrorState(it)
-        }
-
-        viewModel.observeFavoriteState().observe(viewLifecycleOwner) {
-            renderFavoriteState(it)
-        }
-
-        viewModel.observePlaylistToastState().observe(viewLifecycleOwner) {
-            renderToastPlaylistState(it)
-        }
-
-        viewModel.observeBottomSheetState().observe(viewLifecycleOwner) {
-            renderBottomSheetState(it)
-        }
-
-        viewModel.observePlaylistListState().observe(viewLifecycleOwner) {
-            renderPlaylistListState(it)
+        viewModel.observeAudioPlayerState().observe(viewLifecycleOwner) {
+            renderState(it)
         }
     }
 
@@ -111,23 +85,6 @@ class AudioPlayerFragment : Fragment() {
         _binding = null
     }
 
-    private fun viewContentInit() {
-        Glide.with(this).load(track.getCoverArtwork()).placeholder(R.drawable.album).centerInside()
-            .transform(RoundedCorners(resources.getDimensionPixelSize(R.dimen.album_cover_player_corner_radius)))
-            .into(binding.albumCoverPlayerImageView)
-
-        binding.songNamePlayerTextView.text = track.trackName
-        binding.artistNamePlayerTextView.text = track.artistName
-        binding.durationTextView.text = SimpleDateFormat(
-            "mm:ss", Locale.getDefault()
-        ).format(track.trackTimeMillis)
-        binding.albumTextView.text = track.collectionName
-        binding.yearTextView.text = track.getShortReleaseDate()
-        binding.genreTextView.text = track.primaryGenreName
-        binding.countryTextView.text = track.country
-    }
-
-
     private fun initBottomSheet() {
         val bottomSheetContainer = binding.bottomSheetLayout.bottomSheetAddTracksLinearLayout
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer)
@@ -143,8 +100,7 @@ class AudioPlayerFragment : Fragment() {
                 }
             }
 
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-            }
+            override fun onSlide(bottomSheet: View, slideOffset: Float) { }
         })
     }
 
@@ -156,89 +112,104 @@ class AudioPlayerFragment : Fragment() {
     }
 
     private fun onClicks() {
-        binding.backImageView.setOnClickListener {
-            findNavController().popBackStack()
-        }
-
-        binding.playImageView.setOnClickListener {
-            viewModel.togglePlay()
-        }
-
-        binding.likeImageView.setOnClickListener {
-            viewModel.onFavoriteClicked()
-        }
-
-        playlistAdapter?.onPlaylistClicked = { playlist ->
-            viewModel.addTrackToPlaylist(playlist)
-        }
-
-        binding.libraryImageView.setOnClickListener {
-            viewModel.onLibraryClicked()
-        }
-        binding.bottomSheetLayout.newPlaylistButton.setOnClickListener {
-            findNavController().navigate(R.id.action_audioPlayerFragment_to_createPlaylistFragment)
-        }
-    }
-
-    private fun renderPlayerState(playerState: PlayerState) {
-        when (playerState) {
-
-            is PlayerState.Playing -> {
-                binding.playImageView.setImageResource(R.drawable.pause_button)
+        with(binding) {
+            backImageView.setOnClickListener {
+                findNavController().popBackStack()
             }
 
-            else -> binding.playImageView.setImageResource(R.drawable.play_button)
-        }
+            playImageView.setOnClickListener {
+                viewModel.togglePlay()
+            }
 
-        binding.timeTextView.text = playerState.progress
+            likeImageView.setOnClickListener {
+                viewModel.onFavoriteClicked()
+            }
+
+            playlistAdapter?.onPlaylistClicked = { playlist ->
+                viewModel.addTrackToPlaylist(playlist)
+            }
+
+            libraryImageView.setOnClickListener {
+                viewModel.onLibraryClicked()
+            }
+            bottomSheetLayout.newPlaylistButton.setOnClickListener {
+                findNavController().navigate(R.id.action_audioPlayerFragment_to_createPlaylistFragment)
+            }
+        }
     }
 
-    private fun renderToastErrorState(playerError: PlayerError) {
+    private fun renderState(state: AudioPlayerState) {
+        when (state) {
+            is AudioPlayerState.InitState -> {
+                with(binding) {
+                    Glide.with(this@AudioPlayerFragment)
+                        .load(state.track.getCoverArtwork())
+                        .placeholder(R.drawable.album)
+                        .centerInside()
+                        .transform(RoundedCorners(resources.getDimensionPixelSize(R.dimen.album_cover_player_corner_radius)))
+                        .into(albumCoverPlayerImageView)
+
+                    songNamePlayerTextView.text = state.track.trackName
+                    artistNamePlayerTextView.text = state.track.artistName
+                    durationTextView.text = SimpleDateFormat(
+                        "mm:ss", Locale.getDefault()
+                    ).format(state.track.trackTimeMillis)
+                    albumTextView.text = state.track.collectionName
+                    yearTextView.text = state.track.getShortReleaseDate()
+                    genreTextView.text = state.track.primaryGenreName
+                    countryTextView.text = state.track.country
+                    playlistAdapter?.updateAdapter(state.playlists)
+                }
+            }
+
+            is AudioPlayerState.TrackState -> {
+                if (state.isFavorite) {
+                    binding.likeImageView.setImageResource(R.drawable.like_button_like)
+                } else binding.likeImageView.setImageResource(R.drawable.like_button_no_like)
+            }
+
+            is AudioPlayerState.PlayerState -> with(binding) {
+                when (state) {
+                    is AudioPlayerState.PlayerState.Playing -> {
+                        playImageView.setImageResource(R.drawable.pause_button)
+                    }
+
+                    AudioPlayerState.PlayerState.Default -> {
+                        playImageView.setImageResource(R.drawable.play_button)
+                    }
+
+                    is AudioPlayerState.PlayerState.Error -> {
+                        showToastPlayerError(state.error)
+                        playImageView.setImageResource(R.drawable.play_button)
+                    }
+
+                    is AudioPlayerState.PlayerState.Paused -> {
+                        playImageView.setImageResource(R.drawable.play_button)
+                    }
+
+                    AudioPlayerState.PlayerState.Prepared -> {
+                        playImageView.setImageResource(R.drawable.play_button)
+                    }
+                }
+                binding.timeTextView.text = state.progress
+            }
+
+            AudioPlayerState.PlayListState.Success -> showToast(getString(R.string.track_added_to_playlist))
+            AudioPlayerState.PlayListState.Error.AlreadyHaveTrack -> showToast(getString(R.string.track_already_in_playlist))
+            AudioPlayerState.PlayListState.Error.ErrorOccurred -> showToast(getString(R.string.error))
+            AudioPlayerState.BottomSheetState.Hide -> bottomSheetBehavior.state =
+                BottomSheetBehavior.STATE_HIDDEN
+
+            AudioPlayerState.BottomSheetState.Show -> bottomSheetBehavior.state =
+                BottomSheetBehavior.STATE_COLLAPSED
+        }
+    }
+
+    private fun showToastPlayerError(playerError: PlayerError) {
         when (playerError) {
             PlayerError.NOT_READY -> showToast(getString(R.string.player_not_ready))
             PlayerError.ERROR_OCCURRED -> showToast(getString(R.string.cant_play_song))
             PlayerError.NO_CONNECTION -> showToast(getString(R.string.error_network))
-        }
-    }
-
-    private fun renderToastPlaylistState(state: AddPlaylistState) {
-        when (state) {
-            is AddPlaylistState.Success -> showToast(getString(R.string.track_added_to_playlist))
-            is AddPlaylistState.Error -> {
-                when (state) {
-                    is AddPlaylistState.Error.ErrorOccurred -> showToast(getString(R.string.error))
-                    is AddPlaylistState.Error.AlreadyHaveTrack -> {
-                        showToast(getString(R.string.track_already_in_playlist))
-                    }
-                }
-            }
-        }
-    }
-
-    private fun renderBottomSheetState(state: BottomSheetState) {
-        when (state) {
-            BottomSheetState.Hide -> {
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            }
-
-            is BottomSheetState.Show -> {
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-            }
-        }
-    }
-
-    private fun renderPlaylistListState(state: PlaylistListState) {
-        when (state) {
-            is PlaylistListState.Success -> {
-                playlistAdapter?.updateAdapter(state.playlists)
-            }
-        }
-    }
-
-    private fun renderFavoriteState(state: FavoriteState) {
-        when (state) {
-            FavoriteState.Favorite -> binding.likeImageView.setImageResource(R.drawable.like_button_like)
-            FavoriteState.NotFavorite -> binding.likeImageView.setImageResource(R.drawable.like_button_no_like)
         }
     }
 

@@ -9,12 +9,8 @@ import com.example.playlistmaker.audioPlayer.domain.useCase.AddTrackToFavoritesU
 import com.example.playlistmaker.audioPlayer.domain.useCase.AddTrackToPlaylistUseCase
 import com.example.playlistmaker.audioPlayer.domain.useCase.DeleteTrackFromFavoritesUseCase
 import com.example.playlistmaker.audioPlayer.domain.useCase.IsConnectedToNetworkUseCase
-import com.example.playlistmaker.audioPlayer.ui.model.AddPlaylistState
-import com.example.playlistmaker.audioPlayer.ui.model.BottomSheetState
-import com.example.playlistmaker.audioPlayer.ui.model.FavoriteState
+import com.example.playlistmaker.audioPlayer.ui.model.AudioPlayerState
 import com.example.playlistmaker.audioPlayer.ui.model.PlayerError
-import com.example.playlistmaker.audioPlayer.ui.model.PlayerState
-import com.example.playlistmaker.audioPlayer.ui.model.PlaylistListState
 import com.example.playlistmaker.createPlaylist.domain.model.PlaylistModel
 import com.example.playlistmaker.library.domain.useCase.GetPlaylistListUseCase
 import com.example.playlistmaker.search.domain.model.Track
@@ -35,29 +31,27 @@ class AudioPlayerViewModel(
 
 ) : ViewModel() {
 
-    private val playerStateLiveData = MutableLiveData<PlayerState>(PlayerState.Default())
+    private val playerStateLiveData =
+        MutableLiveData<AudioPlayerState>(AudioPlayerState.PlayerState.Default)
 
-    private val favoriteStateLiveData = MutableLiveData<FavoriteState>()
-
-    private val bottomSheetStateLiveData = MutableLiveData<BottomSheetState>()
-
-    private val toastErrorStateLiveData = SingleLiveEvent<PlayerError>()
-
-    private val toastStateLiveData = SingleLiveEvent<AddPlaylistState>()
-
-    private val playlistListState = MutableLiveData<PlaylistListState>()
 
     private var timerJob: Job? = null
     private var isPrepared = false
 
-    init {
-        if (track.isFavorite) {
-            setFavoriteState(FavoriteState.Favorite)
-        } else setFavoriteState(FavoriteState.NotFavorite)
+    private var isFavorite = false
 
+    fun observeAudioPlayerState(): LiveData<AudioPlayerState> = playerStateLiveData
+
+    init {
+        isFavorite = track.isFavorite
+    }
+
+    fun initState() {
         viewModelScope.launch {
             getPlaylistListUseCase.execute().collect {
-                playlistListState.value = PlaylistListState.Success(it)
+                val currentState = getCurrentState()
+                setState(AudioPlayerState.InitState(track, it))
+                currentState?.let { setState(currentState) }
             }
         }
     }
@@ -67,60 +61,47 @@ class AudioPlayerViewModel(
         mediaPlayerContract.release()
     }
 
-    fun observeErrorToastState(): LiveData<PlayerError> = toastErrorStateLiveData
-    fun observePlayerState(): LiveData<PlayerState> = playerStateLiveData
-
-    fun observeFavoriteState(): LiveData<FavoriteState> = favoriteStateLiveData
-    fun observePlaylistToastState(): LiveData<AddPlaylistState> = toastStateLiveData
-
-    fun observeBottomSheetState(): LiveData<BottomSheetState> = bottomSheetStateLiveData
-
-    fun observePlaylistListState(): LiveData<PlaylistListState> = playlistListState
-
     fun togglePlay() {
         when (playerStateLiveData.value) {
-            is PlayerState.Default -> setToastState(PlayerError.NOT_READY)
-            is PlayerState.Paused, is PlayerState.Prepared -> startPlayer()
-            is PlayerState.Playing -> pausePlayer()
-            else -> {
+            is AudioPlayerState.PlayerState.Default -> {
+                val currentState = getCurrentState()
+                setState(AudioPlayerState.PlayerState.Error(PlayerError.NOT_READY))
+                currentState?.let { setState(it) }
             }
+
+            is AudioPlayerState.PlayerState.Paused, is AudioPlayerState.PlayerState.Prepared -> startPlayer()
+
+            is AudioPlayerState.PlayerState.Playing -> pausePlayer()
+            else -> {}
         }
     }
 
-    private fun setPlayerState(state: PlayerState) {
+    private fun setState(state: AudioPlayerState) {
         playerStateLiveData.value = state
-    }
-
-    private fun setToastState(playerError: PlayerError) {
-        toastErrorStateLiveData.value = playerError
-    }
-
-    private fun setFavoriteState(favoriteState: FavoriteState) {
-        favoriteStateLiveData.value = favoriteState
     }
 
     fun initMediaPlayer() {
         mediaPlayerContract.setOnPreparedListener {
             isPrepared = true
-            setPlayerState(PlayerState.Prepared())
+            setState(AudioPlayerState.PlayerState.Prepared)
         }
         mediaPlayerContract.setOnPlayListener {
             startTimer()
         }
         mediaPlayerContract.setOnPauseListener {
-            setPlayerState(PlayerState.Paused(getCurrentPosition()))
+            setState(AudioPlayerState.PlayerState.Paused(getCurrentPosition()))
         }
         mediaPlayerContract.setOnCompletionListener {
-            setPlayerState(PlayerState.Prepared())
+            setState(AudioPlayerState.PlayerState.Prepared)
             stopTimer()
         }
         mediaPlayerContract.setOnErrorListener {
-            setToastState(PlayerError.ERROR_OCCURRED)
+            setState(AudioPlayerState.PlayerState.Error(PlayerError.ERROR_OCCURRED))
         }
 
         if (isConnectedToNetworkUseCase.execute()) {
             mediaPlayerContract.initMediaPlayer(track.previewUrl)
-        } else setToastState(PlayerError.NO_CONNECTION)
+        } else setState(AudioPlayerState.PlayerState.Error(PlayerError.NO_CONNECTION))
     }
 
     private fun startPlayer() {
@@ -135,28 +116,32 @@ class AudioPlayerViewModel(
     }
 
     fun onFavoriteClicked() {
-        if (track.isFavorite) {
-            track.isFavorite = false
-            setFavoriteState(FavoriteState.NotFavorite)
+        if (isFavorite) {
+            isFavorite = false
             viewModelScope.launch {
                 deleteTrackFromFavoritesUseCase.execute(track)
             }
         } else {
-            track.isFavorite = true
-            setFavoriteState(FavoriteState.Favorite)
+            isFavorite = true
             viewModelScope.launch {
                 addTrackToFavoritesUseCase.execute(track)
             }
         }
+        val currentState = getCurrentState()
+        setState(AudioPlayerState.TrackState(isFavorite))
+        currentState?.let { setState(it) }
     }
 
     fun onLibraryClicked() {
-        bottomSheetStateLiveData.value = BottomSheetState.Show
+        val currentState = getCurrentState()
+        setState(AudioPlayerState.BottomSheetState.Show)
+        currentState?.let { setState(it) }
     }
 
     fun addTrackToPlaylist(playlist: PlaylistModel) {
 
-        var isPlaylistHaveTrack: Boolean = false
+        val currentState = getCurrentState()
+        var isPlaylistHaveTrack = false
 
         playlist.tracks.forEach {
             if (it.trackId == track.trackId) {
@@ -165,21 +150,22 @@ class AudioPlayerViewModel(
         }
 
         if (isPlaylistHaveTrack) {
-            toastStateLiveData.value = AddPlaylistState.Error.AlreadyHaveTrack
+            setState(AudioPlayerState.PlayListState.Error.AlreadyHaveTrack)
         } else {
-            bottomSheetStateLiveData.value = BottomSheetState.Hide
+            setState(AudioPlayerState.BottomSheetState.Hide)
 
             viewModelScope.launch {
                 addTrackToPlaylistUseCase.execute(playlist.playlistId, track)
             }
-            toastStateLiveData.value = AddPlaylistState.Success
+            setState(AudioPlayerState.PlayListState.Success)
         }
+        currentState?.let { setState(it) }
     }
 
     private fun startTimer() {
         timerJob = viewModelScope.launch {
             while (mediaPlayerContract.isPlaying()) {
-                setPlayerState(PlayerState.Playing(getCurrentPosition()))
+                setState(AudioPlayerState.PlayerState.Playing(getCurrentPosition()))
                 delay(DELAY_MILLIS)
             }
         }
@@ -194,6 +180,24 @@ class AudioPlayerViewModel(
         return SimpleDateFormat(
             "mm:ss", Locale.getDefault()
         ).format(mediaPlayerContract.getCurrentPosition())
+    }
+
+    private fun getCurrentState(): AudioPlayerState? {
+        return when (playerStateLiveData.value) {
+            is AudioPlayerState.InitState -> (playerStateLiveData.value as AudioPlayerState.InitState).copy()
+            AudioPlayerState.PlayListState.Error.AlreadyHaveTrack -> (playerStateLiveData.value as AudioPlayerState.PlayListState.Error.AlreadyHaveTrack)
+            AudioPlayerState.PlayListState.Error.ErrorOccurred -> (playerStateLiveData.value as AudioPlayerState.PlayListState.Error.ErrorOccurred)
+            AudioPlayerState.PlayListState.Success -> (playerStateLiveData.value as AudioPlayerState.PlayListState.Success)
+            AudioPlayerState.BottomSheetState.Hide -> (playerStateLiveData.value as AudioPlayerState.BottomSheetState.Hide)
+            AudioPlayerState.BottomSheetState.Show -> (playerStateLiveData.value as AudioPlayerState.BottomSheetState.Show)
+            AudioPlayerState.PlayerState.Default -> (playerStateLiveData.value as AudioPlayerState.PlayerState.Default)
+            is AudioPlayerState.PlayerState.Error -> (playerStateLiveData.value as AudioPlayerState.PlayerState.Error).copy()
+            is AudioPlayerState.PlayerState.Paused -> (playerStateLiveData.value as AudioPlayerState.PlayerState.Paused).copy()
+            is AudioPlayerState.PlayerState.Playing -> (playerStateLiveData.value as AudioPlayerState.PlayerState.Playing).copy()
+            AudioPlayerState.PlayerState.Prepared -> (playerStateLiveData.value as AudioPlayerState.PlayerState.Prepared)
+            is AudioPlayerState.TrackState -> (playerStateLiveData.value as AudioPlayerState.TrackState).copy()
+            null -> null
+        }
     }
 
     companion object {
