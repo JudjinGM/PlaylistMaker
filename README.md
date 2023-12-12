@@ -46,6 +46,6 @@ Enable dark theme for app. Write to support, share app, read term of use.
 <img src="https://github.com/JudjinGM/PlaylistMaker/blob/master/info/setings_gif.gif" width=30% height=30%>
 
 ## Technology stack
-Kotlin, MVVM с Clean Architecture, Kotlin Coroutines, Koin, Navigation Component, Retrofit2 (for interaction with iTunes API), ViewModel, LiveData,  RecyclerView, SharedPreferences, MediaPlayer, BottomNavigationView, Fragment, ViewPager2, TabLayout, ConstrainLayout, Git, Android SDK, Gson, Room, Glide, SavedState. 
+Kotlin, MVVM with Clean Architecture, Kotlin Coroutines, Koin, Navigation Component, Retrofit2 (for interaction with iTunes API), ViewModel, LiveData,  RecyclerView, SharedPreferences, MediaPlayer, BottomNavigationView, Fragment, ViewPager2, TabLayout, ConstrainLayout, Git, Android SDK, Gson, Room, Glide, SavedState. 
 
 
