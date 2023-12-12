@@ -24,7 +24,8 @@ Explorу tracks information as album cover, duration, year, genre etc. Listen tr
 ### Favorite tracks
 Add track to favorites. Explore your favorite tracks.
 
-<img src="https://github.com/JudjinGM/PlaylistMaker/blob/master/info/favorites_gif.gif" width=30% height=30%>
+<img src="https://github.com/JudjinGM/PlaylistMaker/blob/master/info/favorites_image.png" width=30% height=30%> <img src="https://github.com/JudjinGM/PlaylistMaker/blob/master/info/favorites_2_image.png" width=30% height=30%>
+
 
 ### Playlists
 Create playslits with tracks with any cover and name. 
