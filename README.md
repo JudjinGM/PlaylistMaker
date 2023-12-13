@@ -3,7 +3,7 @@ An Android application in Kotlin for searching, playing, and adding tracks to fa
 
 Developed as part of my education project on Yandex.Practicum.
 
-[Click to download "Playlist Maker"](https://github.com/JudjinGM/PlaylistMaker/blob/master/info/PlaylistMaker.apk)
+[Click to download "Playlist Maker"](https://github.com/JudjinGM/PlaylistMaker/releases/download/beta_v.1.0/PlaylistMaker.apk)
 
 ## Device requirements
 Compatible from Android 10 (Android API 29)
