@@ -1,7 +1,9 @@
 # Playlist Maker
 An Android application in Kotlin for searching, playing, and adding tracks to favorites, creating playlists with tracks, and saving them to local storage.
+
+Developed as part of my education project on Yandex.Practicum.
 ## Device requirements
-Compatible from Android 8 (Android API 28)
+Compatible from Android 10 (Android API 29)
 
 ## App features
 
@@ -40,10 +42,14 @@ Edit playlists.
 
 <img src="https://github.com/JudjinGM/PlaylistMaker/blob/master/info/edit_playlist.gif" width=30% height=30%>
 
-### Settngs
-Enable dark theme for app. Write to support, share app, read term of use.
+### Settings
+Enable dark/light theme for app. Write to support, share app, read term of use.
 
 <img src="https://github.com/JudjinGM/PlaylistMaker/blob/master/info/setings_gif.gif" width=30% height=30%>
+
+Playlist Maker app supports light theme as well as dark theme.
+
+<img src="https://github.com/JudjinGM/PlaylistMaker/blob/master/info/light_theme_1.png" width=30% height=30%> <img src="https://github.com/JudjinGM/PlaylistMaker/blob/master/info/light_theme_2.png" width=30% height=30%>
 
 ## Technology stack
 Kotlin, MVVM with Clean Architecture, Kotlin Coroutines, Koin, Navigation Component, Retrofit2 (for interaction with iTunes API), ViewModel, LiveData,  RecyclerView, SharedPreferences, MediaPlayer, BottomNavigationView, Fragment, ViewPager2, TabLayout, ConstrainLayout, Git, Android SDK, Gson, Room, Glide, SavedState. 
