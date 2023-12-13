@@ -1,7 +1,9 @@
 # Playlist Maker
 An Android application in Kotlin for searching, playing, and adding tracks to favorites, creating playlists with tracks, and saving them to local storage.
+
+Developed as part of my education project on Yandex.Practicum.
 ## Device requirements
-Compatible from Android 8 (Android API 28)
+Compatible from Android 10 (Android API 29)
 
 ## App features
 
